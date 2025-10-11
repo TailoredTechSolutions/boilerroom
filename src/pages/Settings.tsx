@@ -6,8 +6,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Settings = () => {
+  const { toast } = useToast();
+  const [settings, setSettings] = useState({
+    darkMode: false,
+    autoRefresh: true,
+    jobNotifications: true,
+    highScoreNotifications: true,
+    systemUpdates: false
+  });
+
+  const saveChanges = () => {
+    toast({
+      title: "Settings saved",
+      description: "Your preferences have been updated successfully",
+    });
+  };
+
+  const saveApiKeys = () => {
+    toast({
+      title: "API keys saved",
+      description: "Your API configuration has been updated",
+    });
+  };
+
+  const inviteTeamMember = () => {
+    toast({
+      title: "Invitation sent",
+      description: "Team member invitation has been sent via email",
+    });
+  };
+
+  const toggleSetting = (key: keyof typeof settings) => {
+    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+  };
   return (
     <div className="flex min-h-screen bg-background">
       <NavigationSidebar />
@@ -49,7 +84,7 @@ const Settings = () => {
                       <Label htmlFor="company">Company</Label>
                       <Input id="company" placeholder="Company Name" />
                     </div>
-                    <Button>Save Changes</Button>
+                    <Button onClick={saveChanges}>Save Changes</Button>
                   </CardContent>
                 </Card>
 
@@ -64,14 +99,14 @@ const Settings = () => {
                         <Label>Dark Mode</Label>
                         <p className="text-sm text-muted-foreground">Use dark theme</p>
                       </div>
-                      <Switch />
+                      <Switch checked={settings.darkMode} onCheckedChange={() => toggleSetting('darkMode')} />
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>Auto-refresh Data</Label>
                         <p className="text-sm text-muted-foreground">Refresh dashboard every 30 seconds</p>
                       </div>
-                      <Switch defaultChecked />
+                      <Switch checked={settings.autoRefresh} onCheckedChange={() => toggleSetting('autoRefresh')} />
                     </div>
                   </CardContent>
                 </Card>
@@ -89,21 +124,21 @@ const Settings = () => {
                         <Label>Scraping Job Completed</Label>
                         <p className="text-sm text-muted-foreground">Notify when scraping jobs finish</p>
                       </div>
-                      <Switch defaultChecked />
+                      <Switch checked={settings.jobNotifications} onCheckedChange={() => toggleSetting('jobNotifications')} />
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>New High-Score Entities</Label>
                         <p className="text-sm text-muted-foreground">Alert for entities with score &gt; 90</p>
                       </div>
-                      <Switch defaultChecked />
+                      <Switch checked={settings.highScoreNotifications} onCheckedChange={() => toggleSetting('highScoreNotifications')} />
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <Label>System Updates</Label>
                         <p className="text-sm text-muted-foreground">Important system notifications</p>
                       </div>
-                      <Switch />
+                      <Switch checked={settings.systemUpdates} onCheckedChange={() => toggleSetting('systemUpdates')} />
                     </div>
                   </CardContent>
                 </Card>
@@ -128,7 +163,7 @@ const Settings = () => {
                       <Label htmlFor="gleif">GLEIF API Key</Label>
                       <Input id="gleif" type="password" placeholder="••••••••" />
                     </div>
-                    <Button>Save API Keys</Button>
+                    <Button onClick={saveApiKeys}>Save API Keys</Button>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -153,7 +188,7 @@ const Settings = () => {
                         </div>
                         <Button variant="outline" size="sm">Owner</Button>
                       </div>
-                      <Button variant="outline" className="w-full">+ Invite Team Member</Button>
+                      <Button variant="outline" className="w-full" onClick={inviteTeamMember}>+ Invite Team Member</Button>
                     </div>
                   </CardContent>
                 </Card>

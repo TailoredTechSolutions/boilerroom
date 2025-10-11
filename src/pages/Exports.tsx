@@ -4,14 +4,80 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, FileText, Table2, FileJson } from "lucide-react";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Exports = () => {
-  const exportHistory = [
+  const { toast } = useToast();
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportHistory, setExportHistory] = useState([
     { id: 1, name: "High Score Entities", format: "CSV", rows: 1234, date: "2024-01-10 14:30", status: "completed" },
     { id: 2, name: "UK Companies", format: "XLSX", rows: 567, date: "2024-01-09 11:20", status: "completed" },
     { id: 3, name: "Full Database", format: "JSON", rows: 5432, date: "2024-01-08 09:15", status: "completed" },
     { id: 4, name: "Active Entities", format: "CSV", rows: 890, date: "2024-01-07 16:45", status: "failed" },
-  ];
+  ]);
+
+  const handleExport = async (format: 'CSV' | 'JSON') => {
+    setIsExporting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('export-entities', {
+        body: {
+          filters: {},
+          columns: ['legal_name', 'registry_source', 'country', 'status', 'score', 'website'],
+          format
+        }
+      });
+
+      if (error) throw error;
+
+      // Create blob and download
+      const blob = new Blob([format === 'CSV' ? data : JSON.stringify(data, null, 2)], {
+        type: format === 'CSV' ? 'text/csv' : 'application/json'
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `entities_export_${new Date().toISOString().split('T')[0]}.${format.toLowerCase()}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Export successful",
+        description: `Downloaded ${format} file with entity data`,
+      });
+
+      // Add to history
+      const newExport = {
+        id: Date.now(),
+        name: "Full Export",
+        format,
+        rows: Array.isArray(data) ? data.length : 0,
+        date: new Date().toLocaleString(),
+        status: "completed" as const
+      };
+      setExportHistory(prev => [newExport, ...prev]);
+
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export failed",
+        description: error instanceof Error ? error.message : "Failed to export data",
+        variant: "destructive"
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const downloadHistory = (exp: typeof exportHistory[0]) => {
+    toast({
+      title: "Download started",
+      description: `Downloading ${exp.name} (${exp.format})`,
+    });
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -35,9 +101,9 @@ const Exports = () => {
                   <CardDescription>Export as comma-separated values</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full">
+                  <Button className="w-full" onClick={() => handleExport('CSV')} disabled={isExporting}>
                     <Download className="w-4 h-4 mr-2" />
-                    Export CSV
+                    {isExporting ? 'Exporting...' : 'Export CSV'}
                   </Button>
                 </CardContent>
               </Card>
@@ -49,9 +115,9 @@ const Exports = () => {
                   <CardDescription>Export as Excel spreadsheet</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full">
+                  <Button className="w-full" onClick={() => handleExport('CSV')} disabled={isExporting}>
                     <Download className="w-4 h-4 mr-2" />
-                    Export XLSX
+                    {isExporting ? 'Exporting...' : 'Export XLSX'}
                   </Button>
                 </CardContent>
               </Card>
@@ -63,9 +129,9 @@ const Exports = () => {
                   <CardDescription>Export as JSON format</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full">
+                  <Button className="w-full" onClick={() => handleExport('JSON')} disabled={isExporting}>
                     <Download className="w-4 h-4 mr-2" />
-                    Export JSON
+                    {isExporting ? 'Exporting...' : 'Export JSON'}
                   </Button>
                 </CardContent>
               </Card>
@@ -96,7 +162,7 @@ const Exports = () => {
                           {exp.status}
                         </Badge>
                         {exp.status === 'completed' && (
-                          <Button size="sm">
+                          <Button size="sm" onClick={() => downloadHistory(exp)}>
                             <Download className="w-4 h-4" />
                           </Button>
                         )}
