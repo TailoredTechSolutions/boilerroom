@@ -24,7 +24,23 @@ const Exports = () => {
       const { data, error } = await supabase.functions.invoke('export-entities', {
         body: {
           filters: {},
-          columns: ['legal_name', 'registry_source', 'country', 'status', 'score', 'website'],
+          columns: [
+            'legal_name',
+            'trading_name',
+            'registry_source',
+            'registry_id',
+            'status',
+            'type',
+            'country',
+            'jurisdiction',
+            'incorporation_date',
+            'website',
+            'score',
+            'data_quality_score',
+            'domain_available',
+            'negative_press_flag',
+            'last_seen'
+          ],
           format
         }
       });

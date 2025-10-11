@@ -50,17 +50,41 @@ serve(async (req) => {
 
     console.log(`Exporting ${entities.length} entities as ${format}`)
 
-    // Convert to CSV (basic implementation)
+    // Convert to CSV with proper formatting
     if (format === 'CSV') {
+      // Create human-readable headers
+      const headerMap: Record<string, string> = {
+        'legal_name': 'Company Name',
+        'trading_name': 'Trading Name',
+        'registry_source': 'Registry',
+        'registry_id': 'Registry ID',
+        'status': 'Active Status',
+        'type': 'Company Type',
+        'country': 'Country',
+        'jurisdiction': 'Jurisdiction',
+        'incorporation_date': 'Incorporation Date',
+        'website': 'Website',
+        'score': 'Score',
+        'data_quality_score': 'Data Quality Score',
+        'domain_available': 'Domain Available',
+        'negative_press_flag': 'Negative Press Flag',
+        'last_seen': 'Last Seen'
+      }
+      
+      const headers = columns.map((c: string) => headerMap[c] || c)
+      
       const csv = [
-        columns.join(','),
+        headers.join(','),
         ...entities.map((e: any) => 
           columns.map((c: string) => {
             const value = e[c]
             // Handle different data types
             if (value === null || value === undefined) return ''
-            if (typeof value === 'object') return JSON.stringify(value).replace(/"/g, '""')
-            if (typeof value === 'string' && value.includes(',')) return `"${value}"`
+            if (typeof value === 'boolean') return value ? 'Yes' : 'No'
+            if (typeof value === 'object') return `"${JSON.stringify(value).replace(/"/g, '""')}"`
+            if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+              return `"${value.replace(/"/g, '""')}"`
+            }
             return value
           }).join(',')
         )
