@@ -1,23 +1,26 @@
 import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useLocation } from "react-router-dom";
 
 interface NavItem {
   name: string;
   icon: React.ElementType;
-  active?: boolean;
+  path: string;
 }
 
 const navItems: NavItem[] = [
-  { name: "Overview", icon: Grid },
-  { name: "Entities Explorer", icon: Database, active: true },
-  { name: "Data Sources", icon: Globe },
-  { name: "Rules & Scoring", icon: Sliders },
-  { name: "Exports", icon: Download },
-  { name: "Settings", icon: Settings },
+  { name: "Overview", icon: Grid, path: "/overview" },
+  { name: "Entities Explorer", icon: Database, path: "/" },
+  { name: "Data Sources", icon: Globe, path: "/data-sources" },
+  { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
+  { name: "Exports", icon: Download, path: "/exports" },
+  { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
 export const NavigationSidebar = () => {
+  const location = useLocation();
+
   return (
     <aside className="w-[280px] h-screen bg-sidebar border-r border-sidebar-border flex flex-col sticky top-0">
       {/* Logo */}
@@ -52,18 +55,20 @@ export const NavigationSidebar = () => {
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
+          const isActive = location.pathname === item.path;
           return (
-            <button
+            <Link
               key={item.name}
+              to={item.path}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                item.active
+                isActive
                   ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-md"
                   : "text-sidebar-foreground hover:bg-sidebar-accent/50"
               }`}
             >
               <Icon className="w-5 h-5" />
               <span className="text-sm">{item.name}</span>
-            </button>
+            </Link>
           );
         })}
       </nav>
