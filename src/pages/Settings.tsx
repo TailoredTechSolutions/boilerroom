@@ -19,6 +19,8 @@ const Settings = () => {
     systemUpdates: false
   });
 
+  const [webhookUrl, setWebhookUrl] = useState("https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper");
+
   const saveChanges = () => {
     toast({
       title: "Settings saved",
@@ -153,7 +155,13 @@ const Settings = () => {
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="n8n">n8n Webhook URL</Label>
-                      <Input id="n8n" placeholder="https://your-n8n.app/webhook/..." />
+                      <Input 
+                        id="n8n" 
+                        placeholder="https://your-n8n.app/webhook/..." 
+                        value={webhookUrl}
+                        onChange={(e) => setWebhookUrl(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">Test webhook configured for VC Registry Scraper</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="companieshouse">Companies House API Key</Label>
