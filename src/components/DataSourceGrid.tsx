@@ -1,0 +1,53 @@
+interface DataSource {
+  id: string;
+  name: string;
+  flag: string;
+  enabled: boolean;
+  comingSoon?: boolean;
+}
+
+const dataSources: DataSource[] = [
+  { id: "uk", name: "UK Companies House", flag: "🇬🇧", enabled: true },
+  { id: "gleif", name: "GLEIF (Global)", flag: "🌍", enabled: true },
+  { id: "sec", name: "SEC EDGAR (US)", flag: "🇺🇸", enabled: false, comingSoon: true },
+  { id: "asic", name: "ASIC (Australia)", flag: "🇦🇺", enabled: false, comingSoon: true },
+];
+
+interface DataSourceGridProps {
+  selectedSource: string;
+  onSelectSource: (id: string) => void;
+}
+
+export const DataSourceGrid = ({ selectedSource, onSelectSource }: DataSourceGridProps) => {
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-foreground">Select Data Source</h3>
+      <div className="grid grid-cols-2 gap-3">
+        {dataSources.map((source) => (
+          <button
+            key={source.id}
+            onClick={() => !source.comingSoon && onSelectSource(source.id)}
+            disabled={source.comingSoon}
+            className={`relative p-4 rounded-lg border-2 transition-all text-left ${
+              selectedSource === source.id
+                ? "border-primary bg-primary/10 shadow-lg shadow-primary/20"
+                : source.comingSoon
+                ? "border-border bg-muted/30 opacity-50 cursor-not-allowed"
+                : "border-border bg-card hover:border-primary/50 hover:bg-card/80"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{source.flag}</span>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">{source.name}</p>
+                {source.comingSoon && (
+                  <p className="text-xs text-muted-foreground mt-1">Coming Soon</p>
+                )}
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
