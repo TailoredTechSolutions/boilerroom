@@ -59,7 +59,7 @@ serve(async (req) => {
         'registry_source': 'Registry',
         'registry_id': 'Registry ID',
         'status': 'Active Status',
-        'type': 'Company Type',
+        'company_type': 'Company Type',
         'country': 'Country',
         'jurisdiction': 'Jurisdiction',
         'incorporation_date': 'Incorporation Date',

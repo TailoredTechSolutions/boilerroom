@@ -30,7 +30,7 @@ const Exports = () => {
             'registry_source',
             'registry_id',
             'status',
-            'type',
+            'company_type',
             'country',
             'jurisdiction',
             'incorporation_date',
