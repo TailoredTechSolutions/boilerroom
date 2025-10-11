@@ -14,7 +14,258 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_log: {
+        Row: {
+          action: string
+          after_data: Json | null
+          before_data: Json | null
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      entities: {
+        Row: {
+          address: Json | null
+          company_type: string | null
+          country: string
+          created_at: string | null
+          data_quality_score: number | null
+          domain_available: boolean | null
+          email_contacts: Json | null
+          filings: Json | null
+          id: string
+          incorporation_date: string | null
+          jurisdiction: string | null
+          last_seen: string | null
+          legal_name: string
+          merged_from: Json | null
+          negative_press_flag: boolean | null
+          officers: Json | null
+          psc: Json | null
+          raw_payload: Json | null
+          registry_id: string
+          registry_source: string
+          score: number | null
+          sic_codes: string[] | null
+          status: string | null
+          trading_name: string | null
+          updated_at: string | null
+          web_presence_score: number | null
+          website: string | null
+        }
+        Insert: {
+          address?: Json | null
+          company_type?: string | null
+          country: string
+          created_at?: string | null
+          data_quality_score?: number | null
+          domain_available?: boolean | null
+          email_contacts?: Json | null
+          filings?: Json | null
+          id?: string
+          incorporation_date?: string | null
+          jurisdiction?: string | null
+          last_seen?: string | null
+          legal_name: string
+          merged_from?: Json | null
+          negative_press_flag?: boolean | null
+          officers?: Json | null
+          psc?: Json | null
+          raw_payload?: Json | null
+          registry_id: string
+          registry_source: string
+          score?: number | null
+          sic_codes?: string[] | null
+          status?: string | null
+          trading_name?: string | null
+          updated_at?: string | null
+          web_presence_score?: number | null
+          website?: string | null
+        }
+        Update: {
+          address?: Json | null
+          company_type?: string | null
+          country?: string
+          created_at?: string | null
+          data_quality_score?: number | null
+          domain_available?: boolean | null
+          email_contacts?: Json | null
+          filings?: Json | null
+          id?: string
+          incorporation_date?: string | null
+          jurisdiction?: string | null
+          last_seen?: string | null
+          legal_name?: string
+          merged_from?: Json | null
+          negative_press_flag?: boolean | null
+          officers?: Json | null
+          psc?: Json | null
+          raw_payload?: Json | null
+          registry_id?: string
+          registry_source?: string
+          score?: number | null
+          sic_codes?: string[] | null
+          status?: string | null
+          trading_name?: string | null
+          updated_at?: string | null
+          web_presence_score?: number | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      export_jobs: {
+        Row: {
+          columns: string[] | null
+          completed_at: string | null
+          created_at: string | null
+          download_url: string | null
+          expires_at: string | null
+          filter_json: Json | null
+          format: string | null
+          id: string
+          row_count: number | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          columns?: string[] | null
+          completed_at?: string | null
+          created_at?: string | null
+          download_url?: string | null
+          expires_at?: string | null
+          filter_json?: Json | null
+          format?: string | null
+          id?: string
+          row_count?: number | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          columns?: string[] | null
+          completed_at?: string | null
+          created_at?: string | null
+          download_url?: string | null
+          expires_at?: string | null
+          filter_json?: Json | null
+          format?: string | null
+          id?: string
+          row_count?: number | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      saved_views: {
+        Row: {
+          columns: string[] | null
+          created_at: string | null
+          filters: Json
+          id: string
+          is_public: boolean | null
+          name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          columns?: string[] | null
+          created_at?: string | null
+          filters: Json
+          id?: string
+          is_public?: boolean | null
+          name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          columns?: string[] | null
+          created_at?: string | null
+          filters?: Json
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      scraping_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          error_message: string | null
+          filters: Json | null
+          id: string
+          records_fetched: number | null
+          records_processed: number | null
+          search_term: string | null
+          source: string
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          filters?: Json | null
+          id?: string
+          records_fetched?: number | null
+          records_processed?: number | null
+          search_term?: string | null
+          source: string
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          filters?: Json | null
+          id?: string
+          records_fetched?: number | null
+          records_processed?: number | null
+          search_term?: string | null
+          source?: string
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

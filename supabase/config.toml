@@ -1,1 +1,10 @@
 project_id = "utzxdzkebdgwxgqhieee"
+
+[functions.trigger-scrape]
+verify_jwt = false
+
+[functions.scrape-callback]
+verify_jwt = false
+
+[functions.export-entities]
+verify_jwt = false
