@@ -6,6 +6,46 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Dummy data generator for testing
+function generateDummyEntities(source: string, count: number) {
+  const companies = [
+    'Acme Ventures Ltd', 'TechGrowth Capital', 'Innovation Partners LLC', 'Digital Horizons Group',
+    'NextGen Investments', 'Pioneer Capital Partners', 'Velocity Ventures', 'Catalyst Growth Fund',
+    'Horizon Technology Partners', 'Apex Innovation Capital', 'Momentum Ventures', 'Eclipse Capital Group',
+    'Zenith Investment Partners', 'Quantum Leap Ventures', 'Frontier Growth Capital'
+  ]
+  
+  const countries = source === 'COMPANIES_HOUSE' ? ['GB'] : source === 'GLEIF' ? ['US', 'GB', 'DE', 'FR'] : ['US']
+  const statuses = ['Active', 'Active', 'Active', 'Inactive']
+  
+  return Array.from({ length: count }, (_, i) => {
+    const company = companies[Math.floor(Math.random() * companies.length)]
+    const country = countries[Math.floor(Math.random() * countries.length)]
+    const status = statuses[Math.floor(Math.random() * statuses.length)]
+    const score = Math.floor(Math.random() * 40) + 60 // 60-100
+    
+    return {
+      legal_name: company,
+      registry_id: `${source}-${Date.now()}-${i}`,
+      registry_source: source,
+      country,
+      status,
+      score,
+      website: `https://www.${company.toLowerCase().replace(/\s+/g, '')}.com`,
+      data_quality_score: (Math.random() * 0.3 + 0.7).toFixed(2),
+      web_presence_score: (Math.random() * 0.4 + 0.6).toFixed(2),
+      incorporation_date: new Date(Date.now() - Math.random() * 365 * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      company_type: 'Private Limited Company',
+      sic_codes: ['62012', '62020'],
+      address: {
+        line1: `${Math.floor(Math.random() * 200)} Main Street`,
+        city: country === 'GB' ? 'London' : country === 'US' ? 'New York' : 'Berlin',
+        postcode: country === 'GB' ? 'SW1A 1AA' : '10001'
+      }
+    }
+  })
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -79,12 +119,28 @@ serve(async (req) => {
           .eq('id', job.id)
       }
     } else {
-      console.log('N8N_WEBHOOK_URL not configured, marking job as completed')
-      // If no webhook configured, mark as completed
+      console.log('N8N_WEBHOOK_URL not configured, inserting dummy data for testing')
+      
+      // Generate and insert dummy entities
+      const dummyEntities = generateDummyEntities(source, 8)
+      
+      const { error: entitiesError } = await supabase
+        .from('entities')
+        .upsert(dummyEntities, { onConflict: 'registry_id' })
+      
+      if (entitiesError) {
+        console.error('Error inserting dummy entities:', entitiesError)
+      } else {
+        console.log(`Inserted ${dummyEntities.length} dummy entities`)
+      }
+      
+      // Mark job as completed with dummy stats
       await supabase
         .from('scraping_jobs')
         .update({ 
           status: 'completed',
+          records_fetched: dummyEntities.length,
+          records_processed: dummyEntities.length,
           completed_at: new Date().toISOString()
         })
         .eq('id', job.id)
