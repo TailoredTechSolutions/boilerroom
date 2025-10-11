@@ -83,7 +83,7 @@ serve(async (req) => {
     console.log('Job created:', job.id)
 
     // Check if N8N webhook is configured
-    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL')
+    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper'
     
     if (n8nWebhookUrl) {
       console.log('Calling n8n webhook...')
