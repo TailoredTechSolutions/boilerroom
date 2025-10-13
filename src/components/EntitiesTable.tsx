@@ -20,16 +20,18 @@ export interface Entity {
   country: string;
   countryFlag: string;
   lastUpdated: string;
+  rawData?: any; // Add raw data for detail view
 }
 
 interface EntitiesTableProps {
   entities: Entity[];
+  onViewDetails?: (entityId: string) => void;
 }
 
 type SortField = "companyName" | "score" | "lastUpdated";
 type SortDirection = "asc" | "desc";
 
-export const EntitiesTable = ({ entities }: EntitiesTableProps) => {
+export const EntitiesTable = ({ entities, onViewDetails }: EntitiesTableProps) => {
   const [sortField, setSortField] = useState<SortField>("score");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
@@ -172,7 +174,9 @@ export const EntitiesTable = ({ entities }: EntitiesTableProps) => {
                       variant="outline"
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log("View details:", entity.id);
+                        if (onViewDetails) {
+                          onViewDetails(entity.id);
+                        }
                       }}
                       className="text-xs"
                     >

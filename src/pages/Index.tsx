@@ -6,6 +6,7 @@ import { KPICard } from "@/components/KPICard";
 import { DataSourceGrid } from "@/components/DataSourceGrid";
 import { FilterPanel, FilterState } from "@/components/FilterPanel";
 import { EntitiesTable } from "@/components/EntitiesTable";
+import { CompanyDetailView } from "@/components/CompanyDetailView";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -15,8 +16,13 @@ import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 const Index = () => {
   const [selectedSource, setSelectedSource] = useState("uk");
   const [activeTab, setActiveTab] = useState("high-score");
+  const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const { entities, filteredEntities, isLoading, applyFilters, triggerScrape, exportEntities } = useEntities();
   const { jobs, activeJobs } = useScrapingJobs();
+  
+  const selectedEntity = selectedEntityId 
+    ? entities.find(e => e.id === selectedEntityId)
+    : null;
   
   // Calculate stats from real data
   const totalEntities = entities.length;
@@ -57,6 +63,14 @@ const Index = () => {
       country: 'all'
     };
     exportEntities(filters, 'CSV');
+  };
+
+  const handleViewDetails = (entityId: string) => {
+    setSelectedEntityId(entityId);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedEntityId(null);
   };
 
   return (
@@ -168,6 +182,14 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Company Detail View */}
+          {selectedEntity && selectedEntity.registry_source === 'UK Companies House' && (
+            <CompanyDetailView 
+              company={selectedEntity as any}
+              onClose={handleCloseDetails}
+            />
+          )}
+
           {/* Filters */}
           <div className="rounded-xl bg-card border border-border p-6 backdrop-blur-sm">
             <FilterPanel onFilterChange={handleFilterChange} />
@@ -181,17 +203,21 @@ const Index = () => {
                   Results ({filteredEntities.length})
                 </h2>
               </div>
-              <EntitiesTable entities={filteredEntities.map(e => ({
-                id: e.id,
-                companyName: e.legal_name,
-                registrySource: e.registry_source,
-                companyNumber: e.registry_id,
-                status: e.status as "Active" | "Inactive",
-                score: e.score,
-                country: e.country,
-                countryFlag: e.country === 'GB' ? '🇬🇧' : e.country === 'US' ? '🇺🇸' : e.country === 'DE' ? '🇩🇪' : e.country === 'FR' ? '🇫🇷' : '🌍',
-                lastUpdated: new Date(e.updated_at).toISOString().split('T')[0]
-              }))} />
+              <EntitiesTable 
+                entities={filteredEntities.map(e => ({
+                  id: e.id,
+                  companyName: e.legal_name,
+                  registrySource: e.registry_source,
+                  companyNumber: e.registry_id,
+                  status: e.status as "Active" | "Inactive",
+                  score: e.score,
+                  country: e.country,
+                  countryFlag: e.country === 'GB' ? '🇬🇧' : e.country === 'US' ? '🇺🇸' : e.country === 'DE' ? '🇩🇪' : e.country === 'FR' ? '🇫🇷' : '🌍',
+                  lastUpdated: new Date(e.updated_at).toISOString().split('T')[0],
+                  rawData: e
+                }))}
+                onViewDetails={handleViewDetails}
+              />
             </div>
           )}
         </main>
