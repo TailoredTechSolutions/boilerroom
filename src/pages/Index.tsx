@@ -138,8 +138,6 @@ const Index = () => {
               onSelectSource={setSelectedSource}
             />
 
-            <FilterPanel onFilterChange={handleFilterChange} />
-
             <Alert className="bg-info/10 border-info/50 text-info-foreground">
               <AlertCircle className="h-4 w-4 text-info" />
               <AlertDescription className="text-info-foreground">
@@ -175,6 +173,11 @@ const Index = () => {
                 Download CSV
               </Button>
             </div>
+          </div>
+
+          {/* Filters */}
+          <div className="rounded-xl bg-card border border-border p-6 backdrop-blur-sm">
+            <FilterPanel onFilterChange={handleFilterChange} />
           </div>
 
           {/* Results Table */}
