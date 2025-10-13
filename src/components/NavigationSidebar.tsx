@@ -22,7 +22,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Venture Capital", icon: Database, path: "/" },
-  { name: "CRM Core", icon: Briefcase, path: "/crm" },
+  { name: "Marketing and Analytics", icon: Briefcase, path: "/crm" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
   { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
