@@ -9,7 +9,7 @@ interface DataSource {
 const dataSources: DataSource[] = [
   { id: "uk", name: "UK Companies House", flag: "🇬🇧", enabled: true },
   { id: "gleif", name: "GLEIF (Global)", flag: "🌍", enabled: true },
-  { id: "sec", name: "SEC EDGAR (US)", flag: "🇺🇸", enabled: false, comingSoon: true },
+  { id: "hk", name: "Hong Kong ICRIS", flag: "🇭🇰", enabled: false, comingSoon: true },
   { id: "asic", name: "ASIC (Australia)", flag: "🇦🇺", enabled: false, comingSoon: true },
 ];
 

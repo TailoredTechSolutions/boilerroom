@@ -39,7 +39,7 @@ const Index = () => {
     const sourceMap: Record<string, string> = {
       uk: 'CH',
       gleif: 'GLEIF',
-      sec: 'EDGAR',
+      hk: 'HK',
       asic: 'ASIC'
     };
     
