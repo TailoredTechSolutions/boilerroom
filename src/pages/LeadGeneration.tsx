@@ -3,6 +3,8 @@ import { Users, Target, TrendingUp, Mail, Phone, Building2, Search, Filter } fro
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { KPICard } from "@/components/KPICard";
+import { LeadDetailModal } from "@/components/LeadDetailModal";
+import { ContactOptionsModal } from "@/components/ContactOptionsModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +12,9 @@ import { Card } from "@/components/ui/card";
 
 const LeadGeneration = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLead, setSelectedLead] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   // Sample lead data
   const leads = [
@@ -54,6 +59,16 @@ const LeadGeneration = () => {
     if (status === "Hot") return "bg-destructive/20 text-destructive border-destructive/50";
     if (status === "Warm") return "bg-warning/20 text-warning border-warning/50";
     return "bg-info/20 text-info border-info/50";
+  };
+
+  const handleViewLead = (lead: any) => {
+    setSelectedLead(lead);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleContactLead = (lead: any) => {
+    setSelectedLead(lead);
+    setIsContactModalOpen(true);
   };
 
   return (
@@ -195,10 +210,18 @@ const LeadGeneration = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewLead(lead)}
+                          >
                             View
                           </Button>
-                          <Button size="sm" className="bg-gradient-primary">
+                          <Button 
+                            size="sm" 
+                            className="bg-gradient-primary"
+                            onClick={() => handleContactLead(lead)}
+                          >
                             Contact
                           </Button>
                         </div>
@@ -211,6 +234,18 @@ const LeadGeneration = () => {
           </div>
         </main>
       </div>
+
+      <LeadDetailModal
+        lead={selectedLead}
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+      />
+
+      <ContactOptionsModal
+        lead={selectedLead}
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </div>
   );
 };
