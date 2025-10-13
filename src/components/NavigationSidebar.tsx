@@ -1,8 +1,9 @@
-import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase, ShieldCheck, FolderLock, Target, Activity, BookOpen, GitBranch, LineChart, MoreVertical, Cog, Layers, Brain, Library, GitMerge, BarChart2, MessagesSquare, CalendarDays, Lock, Gauge } from "lucide-react";
+import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase, ShieldCheck, FolderLock, Target, Activity, BookOpen, GitBranch, LineChart, MoreVertical, Cog, Layers, Brain, Library, GitMerge, BarChart2, MessagesSquare, CalendarDays, Lock, Gauge, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
 import logoImage from "@/assets/dcg-logo.png";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,22 +15,29 @@ interface NavItem {
   name: string;
   icon: React.ElementType;
   path: string;
+  children?: NavItem[];
 }
 
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Venture Capital", icon: Database, path: "/" },
-  { name: "CRM Core", icon: Briefcase, path: "/crm" },
+  { 
+    name: "CRM Core", 
+    icon: Briefcase, 
+    path: "/crm",
+    children: [
+      { name: "Marketing", icon: Megaphone, path: "/marketing" },
+      { name: "Analytics", icon: BarChart3, path: "/analytics" },
+      { name: "Pipeline Performance", icon: BarChart2, path: "/pipeline-performance" },
+    ]
+  },
   { name: "AI Agent Panel", icon: Bot, path: "/ai-agent" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
-  { name: "Marketing", icon: Megaphone, path: "/marketing" },
-  { name: "Analytics", icon: BarChart3, path: "/analytics" },
   { name: "Registry Management", icon: Cog, path: "/registry-management" },
   { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
   { name: "AI Model Training", icon: Brain, path: "/ai-training" },
   { name: "Content Library", icon: Library, path: "/content-library" },
   { name: "Workflow Builder", icon: GitMerge, path: "/workflow-builder" },
-  { name: "Pipeline Performance", icon: BarChart2, path: "/pipeline-performance" },
   { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
   { name: "Task Scheduler", icon: CalendarDays, path: "/task-scheduler" },
   { name: "Credential Vault", icon: Lock, path: "/credential-vault" },
@@ -49,6 +57,15 @@ const navItems: NavItem[] = [
 
 export const NavigationSidebar = () => {
   const location = useLocation();
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  const toggleExpand = (itemName: string) => {
+    setExpandedItems(prev => 
+      prev.includes(itemName) 
+        ? prev.filter(name => name !== itemName)
+        : [...prev, itemName]
+    );
+  };
 
   return (
     <aside className="w-[220px] h-screen bg-sidebar border-r border-sidebar-border flex flex-col sticky top-0">
@@ -83,19 +100,63 @@ export const NavigationSidebar = () => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
+          const hasChildren = item.children && item.children.length > 0;
+          const isExpanded = expandedItems.includes(item.name);
+          const isChildActive = hasChildren && item.children.some(child => location.pathname === child.path);
+
           return (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-md"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-sm">{item.name}</span>
-            </Link>
+            <div key={item.name}>
+              {hasChildren ? (
+                <>
+                  <button
+                    onClick={() => toggleExpand(item.name)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                      isActive || isChildActive
+                        ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-md"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-sm flex-1 text-left">{item.name}</span>
+                    <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                  </button>
+                  {isExpanded && (
+                    <div className="ml-6 mt-1 space-y-1">
+                      {item.children.map((child) => {
+                        const ChildIcon = child.icon;
+                        const isChildItemActive = location.pathname === child.path;
+                        return (
+                          <Link
+                            key={child.name}
+                            to={child.path}
+                            className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
+                              isChildItemActive
+                                ? "bg-sidebar-accent text-sidebar-primary font-medium"
+                                : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                            }`}
+                          >
+                            <ChildIcon className="w-4 h-4" />
+                            <span className="text-sm">{child.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link
+                  to={item.path}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-md"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="text-sm">{item.name}</span>
+                </Link>
+              )}
+            </div>
           );
         })}
       </nav>
