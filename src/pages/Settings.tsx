@@ -60,10 +60,9 @@ const Settings = () => {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="notifications">Notifications</TabsTrigger>
-                <TabsTrigger value="api">API Keys</TabsTrigger>
                 <TabsTrigger value="team">Team</TabsTrigger>
               </TabsList>
 
@@ -142,36 +141,6 @@ const Settings = () => {
                       </div>
                       <Switch checked={settings.systemUpdates} onCheckedChange={() => toggleSetting('systemUpdates')} />
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="api" className="space-y-6 mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>API Configuration</CardTitle>
-                    <CardDescription>Manage external API integrations</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="n8n">n8n Webhook URL</Label>
-                      <Input 
-                        id="n8n" 
-                        placeholder="https://your-n8n.app/webhook/..." 
-                        value={webhookUrl}
-                        onChange={(e) => setWebhookUrl(e.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground">Test webhook configured for VC Registry Scraper</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="companieshouse">Companies House API Key</Label>
-                      <Input id="companieshouse" type="password" placeholder="••••••••" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="gleif">GLEIF API Key</Label>
-                      <Input id="gleif" type="password" placeholder="••••••••" />
-                    </div>
-                    <Button onClick={saveApiKeys}>Save API Keys</Button>
                   </CardContent>
                 </Card>
               </TabsContent>
