@@ -182,7 +182,7 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
 
         {/* All Data Headers Section */}
         <div className="space-y-4 border-t border-border pt-4">
-          <h3 className="text-lg font-semibold text-foreground">All Data Headers</h3>
+          <h3 className="text-lg font-semibold text-foreground">All Company Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {allDataHeaders.map((header) => (
               <div key={header.key} className="space-y-1 p-3 bg-muted/30 rounded-lg">
@@ -191,6 +191,28 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 justify-end pt-4 border-t border-border">
+          <Button
+            variant="outline"
+            onClick={() => {
+              const domainName = company.legal_name.replace(/\s+/g, '').toLowerCase() + ".com";
+              alert(`Checking domain: ${domainName}\n\nThis feature will check domain availability.`);
+            }}
+          >
+            <Globe className="w-4 h-4 mr-2" />
+            Domain
+          </Button>
+          <Button
+            onClick={() => {
+              alert(`Website creation initiated for ${company.legal_name}!\n\nThis will create a website for this company.`);
+            }}
+          >
+            <Building2 className="w-4 h-4 mr-2" />
+            Create Website
+          </Button>
         </div>
 
         {/* LEI Number - Basic Fields for now */}
