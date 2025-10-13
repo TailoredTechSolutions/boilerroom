@@ -34,7 +34,7 @@ const InvestorFundScraper = () => {
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Hero Section */}
             <div className="space-y-4">
-              <h1 className="text-4xl font-bold text-foreground">PitchBook Scraper Suite</h1>
+              <h1 className="text-4xl font-bold text-foreground">Andrews Extras Scraper Suite</h1>
               <p className="text-xl text-muted-foreground">Complete Investor & Fund Intelligence</p>
               <p className="text-lg text-foreground max-w-4xl">
                 Access detailed data from 150,000+ funds and 727,000+ investors worldwide with advanced filtering. 
