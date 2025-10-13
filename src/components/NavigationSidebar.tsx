@@ -22,13 +22,19 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Venture Capital", icon: Database, path: "/" },
-  { name: "Marketing and Analytics", icon: Briefcase, path: "/crm" },
+  { 
+    name: "Marketing and Analytics", 
+    icon: Briefcase, 
+    path: "/crm",
+    children: [
+      { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
+      { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
+      { name: "Investor Intelligence", icon: Target, path: "/investor-intelligence" },
+      { name: "Knowledge Hub", icon: BookOpen, path: "/knowledge" },
+      { name: "Integration Logs", icon: GitBranch, path: "/integration-logs" },
+    ]
+  },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
-  { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
-  { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
-  { name: "Investor Intelligence", icon: Target, path: "/investor-intelligence" },
-  { name: "Knowledge Hub", icon: BookOpen, path: "/knowledge" },
-  { name: "Integration Logs", icon: GitBranch, path: "/integration-logs" },
   { name: "Feedback & Optimization", icon: LineChart, path: "/feedback" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
