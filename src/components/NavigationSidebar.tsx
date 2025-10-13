@@ -91,7 +91,7 @@ export const NavigationSidebar = () => {
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-3 border-t border-sidebar-border flex justify-center">
+      <div className="p-3 border-t border-sidebar-border/20 flex justify-start">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
@@ -102,7 +102,7 @@ export const NavigationSidebar = () => {
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuContent align="start" className="w-48">
             <DropdownMenuItem className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Account Settings</span>

@@ -108,7 +108,7 @@ const Index = () => {
         <main className="flex-1 p-8 space-y-8">
           {/* Page Title & Tabs */}
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-foreground uppercase">let's make some fucking money</h1>
+            <h1 className="text-4xl font-bold text-foreground uppercase">LET'S MAKE SOME MONEY</h1>
             
             <div className="flex gap-2 border-b border-border">
               {tabs.map((tab) => (
