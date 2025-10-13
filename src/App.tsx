@@ -34,6 +34,7 @@ import Feedback from "./pages/Feedback";
 import RulesScoring from "./pages/RulesScoring";
 import Exports from "./pages/Exports";
 import Settings from "./pages/Settings";
+import InvestorFundScraper from "./pages/InvestorFundScraper";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/overview" element={<Overview />} />
             <Route path="/data-sources" element={<DataSources />} />
+            <Route path="/investor-fund-scraper" element={<InvestorFundScraper />} />
             <Route path="/lead-generation" element={<LeadGeneration />} />
             <Route path="/crm" element={<CRM />} />
             <Route path="/investor-intelligence" element={<InvestorIntelligence />} />
