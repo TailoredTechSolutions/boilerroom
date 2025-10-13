@@ -1,4 +1,4 @@
-import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown } from "lucide-react";
+import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
@@ -13,6 +13,7 @@ const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Entities Explorer", icon: Database, path: "/" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
+  { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
   { name: "Exports", icon: Download, path: "/exports" },
   { name: "Settings", icon: Settings, path: "/settings" },
@@ -30,8 +31,8 @@ export const NavigationSidebar = () => {
             <Database className="w-6 h-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-foreground">Registry Data</h1>
-            <p className="text-xs text-muted-foreground">Scraper</p>
+            <h1 className="text-lg font-bold text-foreground">IPO Firm</h1>
+            <p className="text-xs text-muted-foreground">Data Platform</p>
           </div>
         </div>
       </div>
@@ -44,7 +45,7 @@ export const NavigationSidebar = () => {
             <AvatarFallback>AD</AvatarFallback>
           </Avatar>
           <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-foreground">Admin User</p>
+            <p className="text-sm font-medium text-foreground">Administration</p>
             <p className="text-xs text-muted-foreground">admin@vc.com</p>
           </div>
           <ChevronDown className="w-4 h-4 text-muted-foreground" />
@@ -72,22 +73,6 @@ export const NavigationSidebar = () => {
           );
         })}
       </nav>
-
-      {/* Download Card */}
-      <div className="p-4 m-4 rounded-xl bg-gradient-primary text-primary-foreground">
-        <div className="text-center space-y-3">
-          <div className="w-12 h-12 mx-auto bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-            <Download className="w-6 h-6" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-sm">Download Desktop App</h3>
-            <p className="text-xs opacity-90 mt-1">Get faster scraping</p>
-          </div>
-          <Button size="sm" variant="secondary" className="w-full">
-            Download
-          </Button>
-        </div>
-      </div>
 
       {/* Bottom Actions */}
       <div className="p-4 border-t border-sidebar-border space-y-2">

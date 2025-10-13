@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Overview from "./pages/Overview";
 import DataSources from "./pages/DataSources";
+import LeadGeneration from "./pages/LeadGeneration";
 import RulesScoring from "./pages/RulesScoring";
 import Exports from "./pages/Exports";
 import Settings from "./pages/Settings";
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/overview" element={<Overview />} />
           <Route path="/data-sources" element={<DataSources />} />
+          <Route path="/lead-generation" element={<LeadGeneration />} />
           <Route path="/rules-scoring" element={<RulesScoring />} />
           <Route path="/exports" element={<Exports />} />
           <Route path="/settings" element={<Settings />} />
