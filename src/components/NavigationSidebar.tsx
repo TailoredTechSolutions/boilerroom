@@ -31,13 +31,11 @@ const navItems: NavItem[] = [
       { name: "Pipeline Performance", icon: BarChart2, path: "/pipeline-performance" },
     ]
   },
-  { name: "AI Agent Panel", icon: Bot, path: "/ai-agent" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Registry Management", icon: Cog, path: "/registry-management" },
   { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
   { name: "AI Model Training", icon: Brain, path: "/ai-training" },
   { name: "Content Library", icon: Library, path: "/content-library" },
-  { name: "Workflow Builder", icon: GitMerge, path: "/workflow-builder" },
   { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
   { name: "Task Scheduler", icon: CalendarDays, path: "/task-scheduler" },
   { name: "Credential Vault", icon: Lock, path: "/credential-vault" },
