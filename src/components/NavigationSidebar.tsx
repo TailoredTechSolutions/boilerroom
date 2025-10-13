@@ -1,4 +1,4 @@
-import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users } from "lucide-react";
+import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
@@ -13,8 +13,12 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Venture Capital", icon: Database, path: "/" },
-  { name: "Data Sources", icon: Globe, path: "/data-sources" },
+  { name: "CRM Core", icon: Briefcase, path: "/crm" },
+  { name: "AI Agent Panel", icon: Bot, path: "/ai-agent" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
+  { name: "Marketing", icon: Megaphone, path: "/marketing" },
+  { name: "Analytics", icon: BarChart3, path: "/analytics" },
+  { name: "Data Sources", icon: Globe, path: "/data-sources" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
   { name: "Exports", icon: Download, path: "/exports" },
   { name: "Settings", icon: Settings, path: "/settings" },

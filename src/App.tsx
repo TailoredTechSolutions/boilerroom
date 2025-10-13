@@ -7,6 +7,10 @@ import Index from "./pages/Index";
 import Overview from "./pages/Overview";
 import DataSources from "./pages/DataSources";
 import LeadGeneration from "./pages/LeadGeneration";
+import CRM from "./pages/CRM";
+import AIAgent from "./pages/AIAgent";
+import Marketing from "./pages/Marketing";
+import Analytics from "./pages/Analytics";
 import RulesScoring from "./pages/RulesScoring";
 import Exports from "./pages/Exports";
 import Settings from "./pages/Settings";
@@ -25,6 +29,10 @@ const App = () => (
           <Route path="/overview" element={<Overview />} />
           <Route path="/data-sources" element={<DataSources />} />
           <Route path="/lead-generation" element={<LeadGeneration />} />
+          <Route path="/crm" element={<CRM />} />
+          <Route path="/ai-agent" element={<AIAgent />} />
+          <Route path="/marketing" element={<Marketing />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/rules-scoring" element={<RulesScoring />} />
           <Route path="/exports" element={<Exports />} />
           <Route path="/settings" element={<Settings />} />
