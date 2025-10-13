@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -151,11 +152,22 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error in trigger-scrape:', error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    console.error('Error in trigger-scrape:', error);
+    
+    // Return generic error message to client
+    let statusCode = 400;
+    let message = 'Invalid request data';
+    
+    if (error instanceof z.ZodError) {
+      message = 'Invalid request data';
+    } else if (error instanceof Error && error.message.includes('auth')) {
+      statusCode = 401;
+      message = 'Authentication required';
+    }
+    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      JSON.stringify({ error: message }),
+      { status: statusCode, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
-})
+});

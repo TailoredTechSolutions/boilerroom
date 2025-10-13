@@ -1,10 +1,30 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
+
+const ALLOWED_COLUMNS = [
+  'id', 'legal_name', 'trading_name', 'registry_source', 'registry_id',
+  'status', 'company_type', 'country', 'jurisdiction', 'incorporation_date',
+  'website', 'score', 'data_quality_score', 'domain_available',
+  'negative_press_flag', 'last_seen'
+] as const;
+
+const ExportSchema = z.object({
+  filters: z.object({
+    source: z.array(z.string()).optional(),
+    status: z.array(z.string()).optional(),
+    country: z.string().optional(),
+    minScore: z.number().min(0).max(100).optional(),
+    maxScore: z.number().min(0).max(100).optional()
+  }).optional(),
+  columns: z.array(z.enum(ALLOWED_COLUMNS)).min(1).max(20),
+  format: z.enum(['CSV', 'JSON'])
+});
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -13,14 +33,34 @@ serve(async (req) => {
   }
 
   try {
-    const { filters, columns, format } = await req.json()
-    
-    console.log('Export entities request:', { filters, columns, format })
-    
+    // Authenticate user
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate input
+    const rawBody = await req.json();
+    const { filters, columns, format } = ExportSchema.parse(rawBody);
+    
+    console.log('Export entities request for user:', user.id, { filters, columns, format });
 
     // Build query based on filters
     let query = supabase.from('entities').select(columns.join(','))
@@ -111,11 +151,22 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error in export-entities:', error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    console.error('Error in export-entities:', error);
+    
+    // Return generic error message
+    let statusCode = 400;
+    let message = 'Unable to process export';
+    
+    if (error instanceof z.ZodError) {
+      message = 'Invalid request data';
+    } else if (error instanceof Error && error.message.includes('auth')) {
+      statusCode = 401;
+      message = 'Authentication required';
+    }
+    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      JSON.stringify({ error: message }),
+      { status: statusCode, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
-})
+});
