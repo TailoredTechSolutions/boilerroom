@@ -51,16 +51,6 @@ const DataSources = () => {
                     </div>
                     <Badge>Active</Badge>
                   </div>
-                  <div className="flex items-center justify-between p-4 border border-border rounded-lg opacity-50">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">🇺🇸</span>
-                      <div>
-                        <p className="font-medium text-foreground">SEC EDGAR</p>
-                        <p className="text-sm text-muted-foreground">Coming soon</p>
-                      </div>
-                    </div>
-                    <Badge variant="secondary">Coming Soon</Badge>
-                  </div>
                 </div>
               </CardContent>
             </Card>
