@@ -24,7 +24,7 @@ export const NavigationSidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="w-[280px] h-screen bg-sidebar border-r border-sidebar-border flex flex-col sticky top-0">
+    <aside className="w-[220px] h-screen bg-sidebar border-r border-sidebar-border flex flex-col sticky top-0">
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
