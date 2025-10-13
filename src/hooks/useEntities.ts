@@ -111,8 +111,12 @@ export const useEntities = () => {
     toast.loading('Initiating scrape...');
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const { data, error } = await supabase.functions.invoke('trigger-scrape', {
         body: { source, searchTerm, filters: {} },
+        headers: session?.access_token ? {
+          Authorization: `Bearer ${session.access_token}`,
+        } : undefined,
       });
 
       if (error) throw error;
@@ -134,6 +138,7 @@ export const useEntities = () => {
     try {
       toast.loading('Generating export...');
 
+      const { data: { session } } = await supabase.auth.getSession();
       const { data, error } = await supabase.functions.invoke('export-entities', {
         body: {
           filters: {
@@ -155,6 +160,9 @@ export const useEntities = () => {
           ],
           format,
         },
+        headers: session?.access_token ? {
+          Authorization: `Bearer ${session.access_token}`,
+        } : undefined,
       });
 
       if (error) throw error;

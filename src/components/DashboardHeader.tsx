@@ -1,7 +1,6 @@
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const DashboardHeader = () => {
   return (
@@ -24,10 +23,9 @@ export const DashboardHeader = () => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
           </Button>
 
-          <Avatar className="w-9 h-9">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
-            <AvatarFallback>AD</AvatarFallback>
-          </Avatar>
+          <Button size="icon" variant="ghost">
+            <User className="w-5 h-5" />
+          </Button>
         </div>
       </div>
     </header>

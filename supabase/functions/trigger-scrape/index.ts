@@ -47,47 +47,70 @@ function generateDummyEntities(source: string, count: number) {
   })
 }
 
+const TriggerScrapeSchema = z.object({
+  source: z.enum(['COMPANIES_HOUSE', 'GLEIF', 'SEC_EDGAR', 'ASIC']),
+  searchTerm: z.string().max(500).optional(),
+  filters: z.record(z.unknown()).optional()
+});
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { source, searchTerm, filters } = await req.json()
+    // Get user from auth header (optional for now)
+    const authHeader = req.headers.get('Authorization');
+    let userId = null;
+
+    if (authHeader) {
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+        { global: { headers: { Authorization: authHeader } } }
+      );
+
+      const { data: { user } } = await supabase.auth.getUser();
+      userId = user?.id;
+    }
+
+    // Validate input
+    const rawBody = await req.json();
+    const { source, searchTerm, filters } = TriggerScrapeSchema.parse(rawBody);
     
-    console.log('Trigger scrape request:', { source, searchTerm, filters })
-    
-    const supabase = createClient(
+    console.log('Creating scraping job', userId ? `for user: ${userId}` : '(no auth)', { source, searchTerm });
+
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    );
 
-    // Create job record
-    const { data: job, error: jobError } = await supabase
+    // Create a job record with optional user tracking
+    const { data: job, error: jobError } = await supabaseAdmin
       .from('scraping_jobs')
       .insert({
         source,
         search_term: searchTerm,
         filters,
         status: 'pending',
+        created_by: userId,
         started_at: new Date().toISOString()
       })
       .select()
-      .single()
+      .single();
 
     if (jobError) {
-      console.error('Error creating job:', jobError)
-      throw jobError
+      console.error('Error creating job:', jobError);
+      throw jobError;
     }
 
-    console.log('Job created:', job.id)
+    console.log('Job created:', job.id);
 
     // Check if N8N webhook is configured
-    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper'
+    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper';
     
     if (n8nWebhookUrl) {
-      console.log('Calling n8n webhook...')
+      console.log('Calling n8n webhook...');
       const response = await fetch(n8nWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -98,45 +121,41 @@ serve(async (req) => {
           filters,
           callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
         })
-      })
+      });
 
       if (!response.ok) {
-        console.error('N8N webhook failed:', await response.text())
-        // Update job status to failed
-        await supabase
+        console.error('N8N webhook failed:', await response.text());
+        await supabaseAdmin
           .from('scraping_jobs')
           .update({ 
             status: 'failed', 
             error_message: 'N8N webhook failed',
             completed_at: new Date().toISOString()
           })
-          .eq('id', job.id)
+          .eq('id', job.id);
       } else {
-        console.log('N8N webhook called successfully')
-        // Update job status to running
-        await supabase
+        console.log('N8N webhook called successfully');
+        await supabaseAdmin
           .from('scraping_jobs')
           .update({ status: 'running' })
-          .eq('id', job.id)
+          .eq('id', job.id);
       }
     } else {
-      console.log('N8N_WEBHOOK_URL not configured, inserting dummy data for testing')
+      console.log('N8N_WEBHOOK_URL not configured, inserting dummy data for testing');
       
-      // Generate and insert dummy entities
-      const dummyEntities = generateDummyEntities(source, 8)
+      const dummyEntities = generateDummyEntities(source, 8);
       
-      const { error: entitiesError } = await supabase
+      const { error: entitiesError } = await supabaseAdmin
         .from('entities')
-        .upsert(dummyEntities, { onConflict: 'registry_id' })
+        .upsert(dummyEntities, { onConflict: 'registry_id' });
       
       if (entitiesError) {
-        console.error('Error inserting dummy entities:', entitiesError)
+        console.error('Error inserting dummy entities:', entitiesError);
       } else {
-        console.log(`Inserted ${dummyEntities.length} dummy entities`)
+        console.log(`Inserted ${dummyEntities.length} dummy entities`);
       }
       
-      // Mark job as completed with dummy stats
-      await supabase
+      await supabaseAdmin
         .from('scraping_jobs')
         .update({ 
           status: 'completed',
@@ -144,17 +163,16 @@ serve(async (req) => {
           records_processed: dummyEntities.length,
           completed_at: new Date().toISOString()
         })
-        .eq('id', job.id)
+        .eq('id', job.id);
     }
 
     return new Response(
       JSON.stringify({ success: true, jobId: job.id }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    );
   } catch (error) {
     console.error('Error in trigger-scrape:', error);
     
-    // Return generic error message to client
     let statusCode = 400;
     let message = 'Invalid request data';
     
