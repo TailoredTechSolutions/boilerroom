@@ -16,10 +16,15 @@ interface CompanyDetail {
   jurisdiction: string | null;
   raw_payload: any;
   psc: any[] | null;
+  officers: any[] | null;
+  email_contacts: string[] | null;
   website: string | null;
   domain_available: boolean | null;
   web_presence_score: number | null;
   negative_press_flag: boolean | null;
+  country: string | null;
+  last_seen: string | null;
+  data_quality_score: number | null;
 }
 
 interface CompanyDetailViewProps {
@@ -356,140 +361,483 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
         {/* Companies House Specific Fields */}
         {isCompaniesHouse && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Company Number */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <FileText className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Company Number</span>
+            {/* Entity Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Entity Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Company Name</span>
+                  </div>
+                  <p className="text-foreground">{company.legal_name}</p>
                 </div>
-                <p className="text-foreground font-mono">{company.registry_id}</p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Company Number</span>
+                  </div>
+                  <p className="text-foreground font-mono">{company.registry_id}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Company Type</span>
+                  </div>
+                  <p className="text-foreground">{company.company_type || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Incorporation Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.incorporation_date 
+                      ? new Date(company.incorporation_date).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Status</span>
+                  </div>
+                  <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                    {company.status}
+                  </Badge>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-sm font-semibold">SIC Code(s)</span>
+                  </div>
+                  <p className="text-foreground">{renderSICCodes()}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Industry Description</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.industry_description || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Country of Registration</span>
+                  </div>
+                  <p className="text-foreground">{company.country || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Jurisdiction</span>
+                  </div>
+                  <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Company Category</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.company_category || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Company Subtype</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.company_subtype || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Building2 className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Nature of Business</span>
+                  </div>
+                  <p className="text-foreground">{getNatureOfBusiness()}</p>
+                </div>
               </div>
 
-              {/* Incorporation Date */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Incorporation Date</span>
-                </div>
-                <p className="text-foreground">
-                  {company.incorporation_date 
-                    ? new Date(company.incorporation_date).toLocaleDateString() 
-                    : "N/A"}
-                </p>
-              </div>
-
-              {/* Status */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <TrendingUp className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Company Status</span>
-                </div>
-                <Badge variant={company.status === "Active" ? "default" : "secondary"}>
-                  {company.status}
-                </Badge>
-              </div>
-
-              {/* Company Type */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Building2 className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Company Type</span>
-                </div>
-                <p className="text-foreground">{company.company_type || "N/A"}</p>
-              </div>
-
-              {/* Region */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Region</span>
+                  <span className="text-sm font-semibold">Registered Office Address</span>
                 </div>
-                <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
-              </div>
-
-              {/* Website / Domain Availability */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Globe className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Website / Domain</span>
-                </div>
-                <p className="text-foreground">
-                  {company.website || (company.domain_available === false ? "Domain Taken" : "N/A")}
-                </p>
+                <p className="text-foreground">{renderAddress()}</p>
               </div>
             </div>
 
-            {/* SIC Codes */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <FileText className="w-4 h-4" />
-                <span className="text-sm font-semibold">SIC Codes</span>
-              </div>
-              <p className="text-foreground">{renderSICCodes()}</p>
-            </div>
-
-            {/* Registered Office Address */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm font-semibold">Registered Office Address</span>
-              </div>
-              <p className="text-foreground">{renderAddress()}</p>
-            </div>
-
-            {/* Nature of Business */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Building2 className="w-4 h-4" />
-                <span className="text-sm font-semibold">Nature of Business</span>
-              </div>
-              <p className="text-foreground">{getNatureOfBusiness()}</p>
-            </div>
-
-            {/* People with Significant Control */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Users className="w-4 h-4" />
-                <span className="text-sm font-semibold">People with Significant Control (PSC)</span>
-              </div>
-              {renderPSC()}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Filing History Available */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <FileText className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Filing History</span>
+            {/* Filing & Compliance */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Filing & Compliance</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Last Accounts Filed Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.raw_payload?.last_accounts_filed 
+                      ? new Date(company.raw_payload.last_accounts_filed).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
                 </div>
-                <Badge variant="outline">
-                  {company.raw_payload?.has_filing_history ? "Available" : "Not Available"}
-                </Badge>
-              </div>
 
-              {/* Online Presence Strength */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <TrendingUp className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Online Presence</span>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Next Accounts Due Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.raw_payload?.next_accounts_due 
+                      ? new Date(company.raw_payload.next_accounts_due).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
                 </div>
-                <p className="text-foreground">
-                  {company.web_presence_score !== null 
-                    ? `${company.web_presence_score}/100` 
-                    : "N/A"}
-                </p>
-              </div>
 
-              {/* Negative Press Check */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <AlertCircle className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Negative Press</span>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Last Confirmation Statement Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.raw_payload?.last_confirmation_statement 
+                      ? new Date(company.raw_payload.last_confirmation_statement).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
                 </div>
-                <Badge variant={company.negative_press_flag ? "destructive" : "default"}>
-                  {company.negative_press_flag ? "Flagged" : "Clear"}
-                </Badge>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Next Confirmation Statement Due Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.raw_payload?.next_confirmation_statement_due 
+                      ? new Date(company.raw_payload.next_confirmation_statement_due).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Accounting Reference Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.raw_payload?.accounting_reference_date 
+                      ? new Date(company.raw_payload.accounting_reference_date).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Filing Status</span>
+                  </div>
+                  <Badge variant={company.raw_payload?.filing_status === "Up to Date" ? "default" : "secondary"}>
+                    {company.raw_payload?.filing_status || "N/A"}
+                  </Badge>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Document Filing History Link</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.filing_history_link || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Annual Return Status</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.annual_return_status || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <AlertCircle className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Insolvency Notices</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.insolvency_notices || "N/A"}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* People & Officers */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">People & Officers</h3>
+              {company.officers && company.officers.length > 0 ? (
+                <div className="space-y-3">
+                  {company.officers.map((officer: any, index: number) => (
+                    <div key={index} className="p-4 bg-muted/30 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Director Name</span>
+                        <p className="font-medium text-foreground">{officer.name || officer.officer_name || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Role</span>
+                        <p className="text-foreground">{officer.officer_role || officer.role || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Appointment Date</span>
+                        <p className="text-foreground">
+                          {officer.appointed_on 
+                            ? new Date(officer.appointed_on).toLocaleDateString() 
+                            : "N/A"}
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Nationality</span>
+                        <p className="text-foreground">{officer.nationality || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Country of Residence</span>
+                        <p className="text-foreground">{officer.country_of_residence || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Occupation</span>
+                        <p className="text-foreground">{officer.occupation || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Date of Birth (Year)</span>
+                        <p className="text-foreground">{officer.date_of_birth?.year || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Officer ID</span>
+                        <p className="text-foreground font-mono text-xs">{officer.officer_id || "N/A"}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No officer information available</p>
+              )}
+            </div>
+
+            {/* Ownership & Control */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Ownership & Control</h3>
+              {company.psc && company.psc.length > 0 ? (
+                <div className="space-y-3">
+                  {company.psc.map((person: any, index: number) => (
+                    <div key={index} className="p-4 bg-muted/30 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">PSC Name</span>
+                        <p className="font-medium text-foreground">{person.name || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">PSC Type</span>
+                        <p className="text-foreground">{person.kind || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">PSC Nationality</span>
+                        <p className="text-foreground">{person.nationality || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">PSC Country of Residence</span>
+                        <p className="text-foreground">{person.country_of_residence || "N/A"}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">Nature of Control</span>
+                        <p className="text-foreground">
+                          {person.natures_of_control 
+                            ? (Array.isArray(person.natures_of_control) 
+                                ? person.natures_of_control.join(", ") 
+                                : person.natures_of_control)
+                            : "N/A"}
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">PSC Notified Date</span>
+                        <p className="text-foreground">
+                          {person.notified_on 
+                            ? new Date(person.notified_on).toLocaleDateString() 
+                            : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No PSC information available</p>
+              )}
+            </div>
+
+            {/* Financial Summary */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Financial Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Total Assets</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.total_assets || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Current Liabilities</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.current_liabilities || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Net Worth / Shareholder Equity</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.net_worth || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Turnover</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.turnover || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Cash at Bank</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.cash_at_bank || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Number of Employees</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.employees || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Annual Revenue (estimated)</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.annual_revenue || "N/A"}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact & Communication */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Contact & Communication</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Globe className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Company Website</span>
+                  </div>
+                  <p className="text-foreground">{company.website || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Globe className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Domain Availability</span>
+                  </div>
+                  <Badge variant={company.domain_available === false ? "secondary" : "default"}>
+                    {company.domain_available === null ? "N/A" : company.domain_available ? "Available" : "Taken"}
+                  </Badge>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Globe className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Contact Email</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.email_contacts && Array.isArray(company.email_contacts) && company.email_contacts.length > 0
+                      ? company.email_contacts.join(", ")
+                      : "N/A"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Globe className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Phone Number</span>
+                  </div>
+                  <p className="text-foreground">{company.raw_payload?.phone || "N/A"}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Online Presence Score</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.web_presence_score !== null 
+                      ? `${Math.round(company.web_presence_score * 100)}/100` 
+                      : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Metadata */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Metadata</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Data Source</span>
+                  </div>
+                  <p className="text-foreground">{getRegistrySourceLabel()}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Last Synced Date</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.last_seen 
+                      ? new Date(company.last_seen).toLocaleDateString() 
+                      : "N/A"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Sync Status</span>
+                  </div>
+                  <Badge variant="default">Active</Badge>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-semibold">Record Confidence Score</span>
+                  </div>
+                  <p className="text-foreground">
+                    {company.data_quality_score !== null 
+                      ? `${Math.round(company.data_quality_score * 100)}/100` 
+                      : "N/A"}
+                  </p>
+                </div>
               </div>
             </div>
           </>
