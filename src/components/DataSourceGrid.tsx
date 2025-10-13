@@ -1,5 +1,6 @@
 import gleifLogo from "@/assets/gleif-logo.png";
 import hkIcrisLogo from "@/assets/hk-icris-logo.png";
+import ukCompaniesHouseLogo from "@/assets/uk-companies-house-logo.png";
 
 interface DataSource {
   id: string;
@@ -11,7 +12,7 @@ interface DataSource {
 }
 
 const dataSources: DataSource[] = [
-  { id: "uk", name: "UK Companies House", flag: "🇬🇧", enabled: true },
+  { id: "uk", name: "UK Companies House", icon: ukCompaniesHouseLogo, enabled: true },
   { id: "gleif", name: "LEI Number", icon: gleifLogo, enabled: true },
   { id: "hk", name: "Hong Kong ICRIS", icon: hkIcrisLogo, enabled: false, comingSoon: true },
   { id: "asic", name: "ASIC (Australia)", flag: "🇦🇺", enabled: false, comingSoon: true },
