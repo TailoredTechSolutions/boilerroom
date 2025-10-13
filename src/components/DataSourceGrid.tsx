@@ -1,14 +1,17 @@
+import leiLogo from "@/assets/lei-logo.svg";
+
 interface DataSource {
   id: string;
   name: string;
-  flag: string;
+  flag?: string;
+  icon?: string;
   enabled: boolean;
   comingSoon?: boolean;
 }
 
 const dataSources: DataSource[] = [
   { id: "uk", name: "UK Companies House", flag: "🇬🇧", enabled: true },
-  { id: "gleif", name: "LEI Number", flag: "🌍", enabled: true },
+  { id: "gleif", name: "LEI Number", icon: leiLogo, enabled: true },
   { id: "hk", name: "Hong Kong ICRIS", flag: "🇭🇰", enabled: false, comingSoon: true },
   { id: "asic", name: "ASIC (Australia)", flag: "🇦🇺", enabled: false, comingSoon: true },
 ];
@@ -37,7 +40,11 @@ export const DataSourceGrid = ({ selectedSource, onSelectSource }: DataSourceGri
             }`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-3xl">{source.flag}</span>
+              {source.icon ? (
+                <img src={source.icon} alt={source.name} className="w-8 h-8 object-contain" />
+              ) : (
+                <span className="text-3xl">{source.flag}</span>
+              )}
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground">{source.name}</p>
                 {source.comingSoon && (

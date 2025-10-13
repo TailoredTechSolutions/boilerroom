@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <g>
+    <!-- Curved lines icon -->
+    <path d="M15 10 Q20 15, 15 20 Q10 25, 15 30 Q20 35, 15 40 Q10 45, 15 50" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M25 10 Q30 15, 25 20 Q20 25, 25 30 Q30 35, 25 40 Q20 45, 25 50" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M35 10 Q40 15, 35 20 Q30 25, 35 30 Q40 35, 35 40 Q30 45, 35 50" 
+          stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    
+    <!-- LEIRegister text -->
+    <text x="50" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1a1a1a">
+      LEI<tspan font-weight="normal">Register</tspan>
+    </text>
+  </g>
+</svg>
