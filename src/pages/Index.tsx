@@ -60,16 +60,16 @@ const Index = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-bg">
+    <div className="flex min-h-screen bg-gradient-bg relative">
       <NavigationSidebar />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         <DashboardHeader />
 
         <main className="flex-1 p-8 space-y-8">
           {/* Page Title & Tabs */}
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-foreground">Entities Explorer</h1>
+            <h1 className="text-4xl font-bold text-foreground">Venture Capital</h1>
             
             <div className="flex gap-2 border-b border-border">
               {tabs.map((tab) => (

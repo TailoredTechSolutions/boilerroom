@@ -62,11 +62,11 @@ All colors MUST be HSL.
     --sidebar-border: 0 0% 88%;
     --sidebar-ring: 43 96% 56%;
     
-    /* Gradients */
+    /* Gradients with circuit pattern overlay */
     --gradient-primary: linear-gradient(135deg, hsl(43 96% 56%), hsl(45 100% 70%));
-    --gradient-bg: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-bg: linear-gradient(180deg, hsla(0, 0%, 100%, 0.97), hsla(0, 0%, 98%, 0.95));
     
-    /* Glass effects */
+    /* Glass effects with subtle circuit traces */
     --glass-bg: rgba(0, 0, 0, 0.02);
     --glass-border: rgba(0, 0, 0, 0.08);
   }
@@ -79,5 +79,28 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background-image: url('/src/assets/circuit-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    background-color: hsl(var(--background));
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      hsla(43, 96%, 56%, 0.03) 0%, 
+      hsla(0, 0%, 100%, 0.95) 20%,
+      hsla(0, 0%, 100%, 0.98) 80%,
+      hsla(43, 96%, 56%, 0.03) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
   }
 }
