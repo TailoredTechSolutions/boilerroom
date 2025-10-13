@@ -134,15 +134,76 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
           </div>
         </div>
 
-        {/* LEI Number Specific Fields */}
-        {isGLEIF && (
+        {/* LEI Number - Basic Fields for now */}
+        {isGLEIF && !isHongKong && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">LEI Number</span>
+                </div>
+                <p className="text-foreground font-mono">{company.registry_id}</p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Registration Date</span>
+                </div>
+                <p className="text-foreground">
+                  {company.incorporation_date 
+                    ? new Date(company.incorporation_date).toLocaleDateString() 
+                    : "N/A"}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Entity Status</span>
+                </div>
+                <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                  {company.status || "Unknown"}
+                </Badge>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Entity Type</span>
+                </div>
+                <p className="text-foreground">{company.company_type || "N/A"}</p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Jurisdiction</span>
+                </div>
+                <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm font-semibold">Legal Address</span>
+              </div>
+              <p className="text-foreground">{renderAddress()}</p>
+            </div>
+          </>
+        )}
+
+        {/* Hong Kong ICRIS Specific Fields */}
+        {isHongKong && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Company Name */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Building2 className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Company Name</span>
+                  <span className="text-sm font-semibold">Company Name (English / Chinese)</span>
                 </div>
                 <p className="text-foreground">{company.legal_name}</p>
               </div>
@@ -160,7 +221,7 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Building2 className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Company Type</span>
+                  <span className="text-sm font-semibold">Company Type (Private / Public / Non-HK)</span>
                 </div>
                 <p className="text-foreground">{company.company_type || "N/A"}</p>
               </div>
@@ -182,7 +243,7 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <TrendingUp className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Status</span>
+                  <span className="text-sm font-semibold">Status (Live / Dissolved / Dormant)</span>
                 </div>
                 <Badge variant={company.status === "Active" ? "default" : "secondary"}>
                   {company.status || "Unknown"}
@@ -434,8 +495,8 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
           </>
         )}
 
-        {/* Hong Kong ICRIS or ASIC - Use generic fields */}
-        {(isHongKong || isASIC) && !isGLEIF && (
+        {/* ASIC - Use generic fields */}
+        {isASIC && !isGLEIF && !isHongKong && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="space-y-2">
