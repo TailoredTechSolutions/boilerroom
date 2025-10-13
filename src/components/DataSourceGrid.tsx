@@ -42,9 +42,9 @@ export const DataSourceGrid = ({ selectedSource, onSelectSource }: DataSourceGri
           >
             <div className="flex items-center gap-3">
               {source.icon ? (
-                <img src={source.icon} alt={source.name} className="w-8 h-8 object-contain" />
+                <img src={source.icon} alt={source.name} className="w-14 h-14 object-contain" />
               ) : (
-                <span className="text-3xl">{source.flag}</span>
+                <span className="text-5xl">{source.flag}</span>
               )}
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground">{source.name}</p>
