@@ -14,6 +14,7 @@ export interface Entity {
   website?: string;
   created_at: string;
   updated_at: string;
+  raw_payload?: any;
 }
 
 interface FilterState {

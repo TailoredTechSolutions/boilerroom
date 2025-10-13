@@ -38,8 +38,33 @@ const Index = () => {
     { id: "all", label: "All", count: totalEntities },
     { id: "active", label: "Active Only", count: entities.filter(e => e.status === 'Active').length },
     { id: "high-score", label: "High Score", count: highScoreCount },
-    { id: "flagged", label: "Flagged", count: 0 },
+    { id: "flagged", label: "Flagged", count: entities.filter(e => e.raw_payload?.flagged === true).length },
   ];
+
+  // Filter entities based on active tab
+  const getTabFilteredEntities = () => {
+    let tabFiltered = [...filteredEntities];
+    
+    switch (activeTab) {
+      case "active":
+        tabFiltered = tabFiltered.filter(e => e.status === 'Active');
+        break;
+      case "high-score":
+        tabFiltered = tabFiltered.filter(e => e.score >= 80);
+        break;
+      case "flagged":
+        tabFiltered = tabFiltered.filter(e => e.raw_payload?.flagged === true);
+        break;
+      case "all":
+      default:
+        // Show all filtered entities
+        break;
+    }
+    
+    return tabFiltered;
+  };
+
+  const displayedEntities = getTabFilteredEntities();
 
   const handleRunScrape = async () => {
     const sourceMap: Record<string, string> = {
@@ -196,15 +221,15 @@ const Index = () => {
           </div>
 
           {/* Results Table */}
-          {filteredEntities.length > 0 && (
+          {displayedEntities.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-foreground">
-                  Results ({filteredEntities.length})
+                  Results ({displayedEntities.length})
                 </h2>
               </div>
               <EntitiesTable 
-                entities={filteredEntities.map(e => ({
+                entities={displayedEntities.map(e => ({
                   id: e.id,
                   companyName: e.legal_name,
                   registrySource: e.registry_source,
