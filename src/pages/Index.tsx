@@ -182,8 +182,8 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Company Detail View */}
-          {selectedEntity && selectedEntity.registry_source === 'UK Companies House' && (
+          {/* Company Detail View - Show for UK/Companies House entities */}
+          {selectedEntity && (
             <CompanyDetailView 
               company={selectedEntity as any}
               onClose={handleCloseDetails}
