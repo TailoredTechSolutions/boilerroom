@@ -2,7 +2,7 @@ import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, Chevr
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
-import logoImage from "@/assets/ipo-firm-logo.png";
+import logoImage from "@/assets/dcg-logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
