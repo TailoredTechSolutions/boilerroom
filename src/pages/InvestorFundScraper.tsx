@@ -42,9 +42,9 @@ const InvestorFundScraper = () => {
               </p>
             </div>
 
-            {/* Tabs for Funds vs Investors */}
+            {/* Tabs for Funds vs Investors vs Company Analysis */}
             <Tabs defaultValue="funds" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsList className="grid w-full grid-cols-3 max-w-2xl">
                 <TabsTrigger value="funds">
                   <Database className="w-4 h-4 mr-2" />
                   Funds Scraper
@@ -52,6 +52,10 @@ const InvestorFundScraper = () => {
                 <TabsTrigger value="investors">
                   <Users className="w-4 h-4 mr-2" />
                   Investors Scraper
+                </TabsTrigger>
+                <TabsTrigger value="company-analysis">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Company Analysis
                 </TabsTrigger>
               </TabsList>
 
@@ -442,6 +446,346 @@ const InvestorFundScraper = () => {
                       </CardContent>
                     </Card>
                   </div>
+                </div>
+              </TabsContent>
+
+              {/* COMPANY ANALYSIS AGENT TAB */}
+              <TabsContent value="company-analysis" className="space-y-12 mt-8">
+                {/* Company Analysis Hero */}
+                <div className="space-y-4">
+                  <h2 className="text-3xl font-bold text-foreground">Company Analysis Agent</h2>
+                  <p className="text-lg text-muted-foreground">
+                    Comprehensive company research and analysis by aggregating data from LinkedIn, PitchBook, and Crunchbase
+                  </p>
+                  <div className="flex gap-3">
+                    <Button size="lg">
+                      <BarChart3 className="w-5 h-5 mr-2" />
+                      Start Analysis
+                    </Button>
+                    <Button size="lg" variant="outline">
+                      View Sample Report
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Overview */}
+                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle>Overview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      The Company Analysis Agent performs comprehensive company research by aggregating data from multiple authoritative sources. 
+                      It collects detailed information about company profiles, financials, key personnel, market presence, investments, competitors, 
+                      and recent developments. The consolidated data provides valuable insights for business intelligence, market research, 
+                      competitive analysis, and investment decision-making.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Key Features */}
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold text-foreground">Key Features</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Card className="bg-card/70 border-border backdrop-blur-sm">
+                      <CardContent className="pt-6 space-y-2">
+                        <Building2 className="w-8 h-8 text-primary mb-2" />
+                        <h4 className="font-semibold text-foreground">Company Profiles</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Detailed information on operations, products, and services
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-card/70 border-border backdrop-blur-sm">
+                      <CardContent className="pt-6 space-y-2">
+                        <DollarSign className="w-8 h-8 text-primary mb-2" />
+                        <h4 className="font-semibold text-foreground">Financial Metrics</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Real-time stock data, revenue, and funding history
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-card/70 border-border backdrop-blur-sm">
+                      <CardContent className="pt-6 space-y-2">
+                        <Target className="w-8 h-8 text-primary mb-2" />
+                        <h4 className="font-semibold text-foreground">Competitive Intelligence</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Competitors, market positioning, and industry analysis
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-card/70 border-border backdrop-blur-sm">
+                      <CardContent className="pt-6 space-y-2">
+                        <Globe className="w-8 h-8 text-primary mb-2" />
+                        <h4 className="font-semibold text-foreground">Social Media Presence</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Engagement metrics across major platforms
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-card/70 border-border backdrop-blur-sm">
+                      <CardContent className="pt-6 space-y-2">
+                        <TrendingUp className="w-8 h-8 text-primary mb-2" />
+                        <h4 className="font-semibold text-foreground">Recent News</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Developments and news affecting the company
+                        </p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-card/70 border-border backdrop-blur-sm">
+                      <CardContent className="pt-6 space-y-2">
+                        <LineChart className="w-8 h-8 text-primary mb-2" />
+                        <h4 className="font-semibold text-foreground">Summary Reports</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Generated reports with key insights and analysis
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Usage Scenarios */}
+                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle>Usage Scenarios</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                        <span>Due diligence research for mergers, acquisitions, and investments</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                        <span>Competitive analysis and market intelligence gathering</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                        <span>Lead generation and business development prospecting</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                        <span>Investment research and analysis for financial institutions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                        <span>Industry and market trend analysis</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                        <span>Recruitment and talent acquisition research</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Output Fields */}
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold text-foreground">Output Fields</h3>
+                  <Card className="bg-card/70 border-border backdrop-blur-sm">
+                    <CardContent className="pt-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="space-y-2">
+                          <p><span className="font-semibold">domain:</span> Company domain name</p>
+                          <p><span className="font-semibold">recent_news:</span> Latest news articles</p>
+                          <p><span className="font-semibold">linkedin_data:</span> LinkedIn profile data</p>
+                          <p><span className="font-semibold">pitchbook_data:</span> Investment data</p>
+                          <p><span className="font-semibold">funding_analysis:</span> Funding trends</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p><span className="font-semibold">generated_report:</span> Markdown report</p>
+                          <p><span className="font-semibold">data_collection_date:</span> Timestamp</p>
+                          <p><span className="font-semibold">linkedin_url:</span> LinkedIn profile URL</p>
+                          <p><span className="font-semibold">pitchbook_url:</span> PitchBook profile URL</p>
+                          <p><span className="font-semibold">crunchbase_url:</span> Crunchbase URL</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* System Architecture */}
+                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle>System Architecture</CardTitle>
+                    <CardDescription>The system uses CrewAI to coordinate three specialized agents</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-muted/30 rounded-lg">
+                        <h4 className="font-semibold text-foreground mb-2">Research Specialist</h4>
+                        <p className="text-sm text-muted-foreground">Gathers company information using custom tools</p>
+                      </div>
+                      <div className="p-4 bg-muted/30 rounded-lg">
+                        <h4 className="font-semibold text-foreground mb-2">Data Analyst</h4>
+                        <p className="text-sm text-muted-foreground">Processes and analyzes the collected data</p>
+                      </div>
+                      <div className="p-4 bg-muted/30 rounded-lg">
+                        <h4 className="font-semibold text-foreground mb-2">Report Writer</h4>
+                        <p className="text-sm text-muted-foreground">Compiles findings into structured reports</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Prerequisites */}
+                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle>Prerequisites</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Python 3.8 or later</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Apify account and API token</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span>Google API key for Gemini model</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                {/* Sample Output */}
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold text-foreground">Sample Output</h3>
+                  <Card className="bg-card/70 border-border backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle>Apify Company Report - Sample</CardTitle>
+                      <CardDescription>Example of comprehensive company analysis</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">1. Overview and Core Business</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                          <li>• Description and mission statement</li>
+                          <li>• Founded date and headquarters location</li>
+                          <li>• Industry and core business operations</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">2. Products and Services</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                          <li>• Platform details and key offerings</li>
+                          <li>• Pre-built solutions and tools</li>
+                          <li>• Technology stack and infrastructure</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">3. Market Presence and Performance</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                          <li>• Target audience and market positioning</li>
+                          <li>• Website traffic and growth metrics</li>
+                          <li>• Competitor landscape analysis</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">4. Key Personnel and Organization</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                          <li>• Employee count and company type</li>
+                          <li>• Leadership team and key personnel</li>
+                          <li>• Organizational structure</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">5. Financial Metrics and Funding</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                          <li>• Total funding raised and funding rounds</li>
+                          <li>• Investor information</li>
+                          <li>• Patents and trademarks</li>
+                        </ul>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* How to Use */}
+                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle>How to Use</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">In Python:</h4>
+                        <div className="bg-muted/50 p-4 rounded-lg text-sm font-mono">
+                          <p>from apify_client import ApifyClient</p>
+                          <p>client = ApifyClient(&quot;YOUR_API_TOKEN&quot;)</p>
+                          <p>result = research_crew.crew().kickoff(</p>
+                          <p className="ml-4">inputs=&#123;&quot;domain&quot;: &quot;apple.com&quot;&#125;</p>
+                          <p>)</p>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-2">Via Web Interface:</h4>
+                        <ol className="space-y-2 text-sm text-muted-foreground ml-4">
+                          <li>1. Visit Apify</li>
+                          <li>2. Click "Try for Free"</li>
+                          <li>3. Enter a company domain</li>
+                          <li>4. Click "Start"</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Output Features */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="bg-card/70 border-border backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle>Comprehensive Report</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>Company overview</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>Products and services</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>Market presence</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>Financial metrics</span>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-card/70 border-border backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle>Structured Data</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>LinkedIn profile data</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>PitchBook investment data</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>Crunchbase company data</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+                          <span>Recent news articles</span>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
                 </div>
               </TabsContent>
             </Tabs>
