@@ -5,6 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email too long" }),
+  password: z.string()
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(72, { message: "Password too long" })
+    .regex(/[A-Z]/, { message: "Must contain uppercase letter" })
+    .regex(/[a-z]/, { message: "Must contain lowercase letter" })
+    .regex(/[0-9]/, { message: "Must contain number" })
+});
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +30,20 @@ export default function Auth() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate inputs
+    const validation = authSchema.safeParse({ email, password });
+    if (!validation.success) {
+      const errors = validation.error.flatten().fieldErrors;
+      const errorMessages = Object.values(errors).flat().join(', ');
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: errorMessages
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -92,7 +120,7 @@ export default function Auth() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>

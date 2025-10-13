@@ -155,7 +155,7 @@ export type Database = {
           id: string
           row_count: number | null
           status: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           columns?: string[] | null
@@ -168,7 +168,7 @@ export type Database = {
           id?: string
           row_count?: number | null
           status?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           columns?: string[] | null
@@ -181,7 +181,7 @@ export type Database = {
           id?: string
           row_count?: number | null
           status?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -194,7 +194,7 @@ export type Database = {
           is_public: boolean | null
           name: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           columns?: string[] | null
@@ -204,7 +204,7 @@ export type Database = {
           is_public?: boolean | null
           name: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           columns?: string[] | null
@@ -214,7 +214,7 @@ export type Database = {
           is_public?: boolean | null
           name?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
