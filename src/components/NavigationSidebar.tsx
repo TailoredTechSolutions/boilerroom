@@ -28,10 +28,10 @@ export const NavigationSidebar = () => {
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <img src={logoImage} alt="IPO Firm Logo" className="w-10 h-10 object-contain" />
+          <img src={logoImage} alt="Venture Capital Logo" className="w-10 h-10 object-contain" />
           <div>
-            <h1 className="text-lg font-bold text-foreground">IPO Firm</h1>
-            <p className="text-xs text-muted-foreground">Data Platform</p>
+            <h1 className="text-lg font-bold text-foreground">Venture Capital</h1>
+            <p className="text-xs text-muted-foreground">IPO Firm</p>
           </div>
         </div>
       </div>
