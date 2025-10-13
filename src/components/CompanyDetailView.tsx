@@ -90,6 +90,22 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
     return company.registry_source || "Unknown";
   };
 
+  const renderDirectors = () => {
+    const officers = company.psc || company.raw_payload?.officers || [];
+    if (!officers || officers.length === 0) return "N/A";
+    
+    return (
+      <div className="space-y-2">
+        {officers.map((officer: any, index: number) => (
+          <div key={index} className="p-3 bg-muted/30 rounded-lg">
+            <p className="font-medium text-foreground">{officer.name || officer.officer_name || "Unknown"}</p>
+            <p className="text-sm text-muted-foreground">{officer.officer_role || officer.kind || "Director"}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <Card className="p-6 backdrop-blur-sm bg-card border-border relative animate-fade-in">
       <Button
@@ -118,160 +134,382 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Company/Entity Number */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <FileText className="w-4 h-4" />
-              <span className="text-sm font-semibold">
-                {isGLEIF ? "LEI Number" : isHongKong ? "Registry Number" : "Company Number"}
-              </span>
-            </div>
-            <p className="text-foreground font-mono">{company.registry_id}</p>
-          </div>
+        {/* LEI Number Specific Fields */}
+        {isGLEIF && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Company Name */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Name</span>
+                </div>
+                <p className="text-foreground">{company.legal_name}</p>
+              </div>
 
-          {/* Incorporation/Registration Date */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Calendar className="w-4 h-4" />
-              <span className="text-sm font-semibold">
-                {isGLEIF ? "Registration Date" : "Incorporation Date"}
-              </span>
-            </div>
-            <p className="text-foreground">
-              {company.incorporation_date 
-                ? new Date(company.incorporation_date).toLocaleDateString() 
-                : "N/A"}
-            </p>
-          </div>
+              {/* Company Number (CR Number) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Number (CR Number)</span>
+                </div>
+                <p className="text-foreground font-mono">{company.registry_id}</p>
+              </div>
 
-          {/* Status */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-sm font-semibold">
-                {isGLEIF ? "Entity Status" : "Company Status"}
-              </span>
-            </div>
-            <Badge variant={company.status === "Active" ? "default" : "secondary"}>
-              {company.status}
-            </Badge>
-          </div>
+              {/* Company Type */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Type</span>
+                </div>
+                <p className="text-foreground">{company.company_type || "N/A"}</p>
+              </div>
 
-          {/* Company/Entity Type */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Building2 className="w-4 h-4" />
-              <span className="text-sm font-semibold">
-                {isGLEIF ? "Entity Type" : "Company Type"}
-              </span>
-            </div>
-            <p className="text-foreground">{company.company_type || "N/A"}</p>
-          </div>
+              {/* Incorporation Date */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Incorporation Date</span>
+                </div>
+                <p className="text-foreground">
+                  {company.incorporation_date 
+                    ? new Date(company.incorporation_date).toLocaleDateString() 
+                    : "N/A"}
+                </p>
+              </div>
 
-          {/* Region/Jurisdiction */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="w-4 h-4" />
-              <span className="text-sm font-semibold">
-                {isGLEIF ? "Jurisdiction" : isHongKong ? "Region" : "Region"}
-              </span>
-            </div>
-            <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
-          </div>
+              {/* Status */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Status</span>
+                </div>
+                <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                  {company.status || "Unknown"}
+                </Badge>
+              </div>
 
-          {/* Website / Domain Availability */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-semibold">Website / Domain</span>
+              {/* Place of Incorporation */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Place of Incorporation</span>
+                </div>
+                <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
+              </div>
             </div>
-            <p className="text-foreground">
-              {company.website || (company.domain_available === false ? "Domain Taken" : "N/A")}
-            </p>
-          </div>
-        </div>
 
-        {/* SIC Codes - Only for Companies House */}
-        {isCompaniesHouse && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <FileText className="w-4 h-4" />
-              <span className="text-sm font-semibold">SIC Codes</span>
+            {/* Registered Office Address */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm font-semibold">Registered Office Address</span>
+              </div>
+              <p className="text-foreground">{renderAddress()}</p>
             </div>
-            <p className="text-foreground">{renderSICCodes()}</p>
-          </div>
+
+            {/* Business Nature / Description */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Building2 className="w-4 h-4" />
+                <span className="text-sm font-semibold">Business Nature / Description</span>
+              </div>
+              <p className="text-foreground">{getNatureOfBusiness()}</p>
+            </div>
+
+            {/* Director(s) / Officer(s) Names */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Users className="w-4 h-4" />
+                <span className="text-sm font-semibold">Director(s) / Officer(s) Names</span>
+              </div>
+              {renderDirectors()}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Share Capital Information */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Share Capital Information</span>
+                </div>
+                <p className="text-foreground">{company.raw_payload?.share_capital || "N/A"}</p>
+              </div>
+
+              {/* Document Filing History */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Document Filing History</span>
+                </div>
+                <Badge variant="outline">
+                  {company.raw_payload?.has_filing_history ? "Available" : "Not Available"}
+                </Badge>
+              </div>
+
+              {/* Last Annual Return Date */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Last Annual Return Date</span>
+                </div>
+                <p className="text-foreground">
+                  {company.raw_payload?.last_annual_return_date 
+                    ? new Date(company.raw_payload.last_annual_return_date).toLocaleDateString() 
+                    : "N/A"}
+                </p>
+              </div>
+
+              {/* Business Registration Number (BRN) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Business Registration Number (BRN)</span>
+                </div>
+                <p className="text-foreground font-mono">{company.raw_payload?.brn || "N/A"}</p>
+              </div>
+
+              {/* Parent / Holding Company */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Parent / Holding Company</span>
+                </div>
+                <p className="text-foreground">{company.raw_payload?.parent_company || "N/A"}</p>
+              </div>
+            </div>
+
+            {/* Remarks / Special Notes */}
+            {company.raw_payload?.remarks && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Remarks / Special Notes</span>
+                </div>
+                <p className="text-foreground">{company.raw_payload.remarks}</p>
+              </div>
+            )}
+          </>
         )}
 
-        {/* Registered Office Address */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="w-4 h-4" />
-            <span className="text-sm font-semibold">
-              {isGLEIF ? "Legal Address" : "Registered Office Address"}
-            </span>
-          </div>
-          <p className="text-foreground">{renderAddress()}</p>
-        </div>
-
-        {/* Nature of Business */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Building2 className="w-4 h-4" />
-            <span className="text-sm font-semibold">Nature of Business</span>
-          </div>
-          <p className="text-foreground">{getNatureOfBusiness()}</p>
-        </div>
-
-        {/* People with Significant Control - Only for Companies House */}
+        {/* Companies House Specific Fields */}
         {isCompaniesHouse && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Users className="w-4 h-4" />
-              <span className="text-sm font-semibold">People with Significant Control (PSC)</span>
-            </div>
-            {renderPSC()}
-          </div>
-        )}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Company Number */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Number</span>
+                </div>
+                <p className="text-foreground font-mono">{company.registry_id}</p>
+              </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Filing History Available - Only for Companies House and ASIC */}
-          {(isCompaniesHouse || isASIC) && (
+              {/* Incorporation Date */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Incorporation Date</span>
+                </div>
+                <p className="text-foreground">
+                  {company.incorporation_date 
+                    ? new Date(company.incorporation_date).toLocaleDateString() 
+                    : "N/A"}
+                </p>
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Status</span>
+                </div>
+                <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                  {company.status}
+                </Badge>
+              </div>
+
+              {/* Company Type */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Type</span>
+                </div>
+                <p className="text-foreground">{company.company_type || "N/A"}</p>
+              </div>
+
+              {/* Region */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Region</span>
+                </div>
+                <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
+              </div>
+
+              {/* Website / Domain Availability */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Website / Domain</span>
+                </div>
+                <p className="text-foreground">
+                  {company.website || (company.domain_available === false ? "Domain Taken" : "N/A")}
+                </p>
+              </div>
+            </div>
+
+            {/* SIC Codes */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <FileText className="w-4 h-4" />
-                <span className="text-sm font-semibold">Filing History</span>
+                <span className="text-sm font-semibold">SIC Codes</span>
               </div>
-              <Badge variant="outline">
-                {company.raw_payload?.has_filing_history ? "Available" : "Not Available"}
-              </Badge>
+              <p className="text-foreground">{renderSICCodes()}</p>
             </div>
-          )}
 
-          {/* Online Presence Strength */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <TrendingUp className="w-4 h-4" />
-              <span className="text-sm font-semibold">Online Presence</span>
+            {/* Registered Office Address */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm font-semibold">Registered Office Address</span>
+              </div>
+              <p className="text-foreground">{renderAddress()}</p>
             </div>
-            <p className="text-foreground">
-              {company.web_presence_score !== null 
-                ? `${company.web_presence_score}/100` 
-                : "N/A"}
-            </p>
-          </div>
 
-          {/* Negative Press Check */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm font-semibold">Negative Press</span>
+            {/* Nature of Business */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Building2 className="w-4 h-4" />
+                <span className="text-sm font-semibold">Nature of Business</span>
+              </div>
+              <p className="text-foreground">{getNatureOfBusiness()}</p>
             </div>
-            <Badge variant={company.negative_press_flag ? "destructive" : "default"}>
-              {company.negative_press_flag ? "Flagged" : "Clear"}
-            </Badge>
-          </div>
-        </div>
+
+            {/* People with Significant Control */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Users className="w-4 h-4" />
+                <span className="text-sm font-semibold">People with Significant Control (PSC)</span>
+              </div>
+              {renderPSC()}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Filing History Available */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Filing History</span>
+                </div>
+                <Badge variant="outline">
+                  {company.raw_payload?.has_filing_history ? "Available" : "Not Available"}
+                </Badge>
+              </div>
+
+              {/* Online Presence Strength */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Online Presence</span>
+                </div>
+                <p className="text-foreground">
+                  {company.web_presence_score !== null 
+                    ? `${company.web_presence_score}/100` 
+                    : "N/A"}
+                </p>
+              </div>
+
+              {/* Negative Press Check */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Negative Press</span>
+                </div>
+                <Badge variant={company.negative_press_flag ? "destructive" : "default"}>
+                  {company.negative_press_flag ? "Flagged" : "Clear"}
+                </Badge>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Hong Kong ICRIS or ASIC - Use generic fields */}
+        {(isHongKong || isASIC) && !isGLEIF && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Registry Number</span>
+                </div>
+                <p className="text-foreground font-mono">{company.registry_id}</p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Incorporation Date</span>
+                </div>
+                <p className="text-foreground">
+                  {company.incorporation_date 
+                    ? new Date(company.incorporation_date).toLocaleDateString() 
+                    : "N/A"}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Status</span>
+                </div>
+                <Badge variant={company.status === "Active" ? "default" : "secondary"}>
+                  {company.status}
+                </Badge>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Type</span>
+                </div>
+                <p className="text-foreground">{company.company_type || "N/A"}</p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Region</span>
+                </div>
+                <p className="text-foreground">{company.jurisdiction || "N/A"}</p>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Website</span>
+                </div>
+                <p className="text-foreground">{company.website || "N/A"}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm font-semibold">Registered Address</span>
+              </div>
+              <p className="text-foreground">{renderAddress()}</p>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Building2 className="w-4 h-4" />
+                <span className="text-sm font-semibold">Business Description</span>
+              </div>
+              <p className="text-foreground">{getNatureOfBusiness()}</p>
+            </div>
+          </>
+        )}
       </div>
     </Card>
   );
