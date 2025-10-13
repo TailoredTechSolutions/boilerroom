@@ -25,7 +25,7 @@ export const DashboardHeader = () => {
           </Button>
 
           <Avatar className="w-9 h-9">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" />
+            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
             <AvatarFallback>AD</AvatarFallback>
           </Avatar>
         </div>

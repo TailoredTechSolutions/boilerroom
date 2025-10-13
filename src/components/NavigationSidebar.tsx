@@ -2,6 +2,7 @@ import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, Chevr
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
+import logoImage from "@/assets/ipo-firm-logo.png";
 
 interface NavItem {
   name: string;
@@ -11,7 +12,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
-  { name: "Entities Explorer", icon: Database, path: "/" },
+  { name: "Venture Capital", icon: Database, path: "/" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
@@ -27,9 +28,7 @@ export const NavigationSidebar = () => {
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <Database className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src={logoImage} alt="IPO Firm Logo" className="w-10 h-10 object-contain" />
           <div>
             <h1 className="text-lg font-bold text-foreground">IPO Firm</h1>
             <p className="text-xs text-muted-foreground">Data Platform</p>
@@ -41,7 +40,7 @@ export const NavigationSidebar = () => {
       <div className="p-4 border-b border-sidebar-border">
         <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-sidebar-accent transition-colors">
           <Avatar className="w-10 h-10">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" />
+            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
             <AvatarFallback>AD</AvatarFallback>
           </Avatar>
           <div className="flex-1 text-left">
