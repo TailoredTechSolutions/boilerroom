@@ -21,7 +21,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
-  { name: "Venture Capital", icon: Database, path: "/" },
+  { 
+    name: "Venture Capital", 
+    icon: Database, 
+    path: "/",
+    children: [
+      { name: "Investor and Fund Scraper", icon: Users, path: "/investor-fund-scraper" },
+    ]
+  },
   { name: "Marketing and Analytics", icon: Briefcase, path: "/marketing" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
