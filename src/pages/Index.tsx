@@ -207,12 +207,16 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Company Detail View - Show for UK/Companies House entities */}
+          {/* Company Detail View Modal */}
           {selectedEntity && (
-            <CompanyDetailView 
-              company={selectedEntity as any}
-              onClose={handleCloseDetails}
-            />
+            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+                <CompanyDetailView 
+                  company={selectedEntity as any}
+                  onClose={handleCloseDetails}
+                />
+              </div>
+            </div>
           )}
 
           {/* Filters */}
