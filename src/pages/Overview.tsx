@@ -1,8 +1,8 @@
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { KPICard } from "@/components/KPICard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database, Activity, TrendingUp, Clock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Database, Activity, TrendingUp, Clock, Target, DollarSign, LineChart } from "lucide-react";
 import { useEntities } from "@/hooks/useEntities";
 import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 
@@ -129,6 +129,73 @@ const Overview = () => {
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-bold text-foreground mb-4">Feedback & Optimization</h3>
+              <p className="text-muted-foreground mb-6">ROI tracking for marketing and CRM workflows</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Campaign Effectiveness
+                  </CardTitle>
+                  <CardDescription>
+                    Which campaigns turned into meetings?
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Campaign analytics coming soon...</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Registry Performance
+                  </CardTitle>
+                  <CardDescription>
+                    Which registries bring highest-value leads?
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Registry comparison coming soon...</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" />
+                    ROI Dashboard
+                  </CardTitle>
+                  <CardDescription>
+                    Track marketing and CRM workflow ROI
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">ROI tracking coming soon...</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <LineChart className="w-5 h-5" />
+                    Optimization Insights
+                  </CardTitle>
+                  <CardDescription>
+                    Data-driven recommendations for improvement
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">Insights engine coming soon...</p>
                 </CardContent>
               </Card>
             </div>

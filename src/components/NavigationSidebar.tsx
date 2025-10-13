@@ -35,7 +35,6 @@ const navItems: NavItem[] = [
     ]
   },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
-  { name: "Feedback & Optimization", icon: LineChart, path: "/feedback" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
   { name: "Exports", icon: Download, path: "/exports" },
