@@ -79,12 +79,11 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    background-image: url('/src/assets/circuit-bg.png');
+    background-image: url('/src/assets/tech-bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-blend-mode: overlay;
-    background-color: hsl(var(--background));
+    background-repeat: no-repeat;
   }
   
   body::before {
@@ -95,10 +94,9 @@ All colors MUST be HSL.
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, 
-      hsla(43, 96%, 56%, 0.03) 0%, 
-      hsla(0, 0%, 100%, 0.95) 20%,
-      hsla(0, 0%, 100%, 0.98) 80%,
-      hsla(43, 96%, 56%, 0.03) 100%
+      hsla(0, 0%, 100%, 0.85) 0%, 
+      hsla(0, 0%, 100%, 0.90) 50%,
+      hsla(0, 0%, 100%, 0.85) 100%
     );
     pointer-events: none;
     z-index: 0;
