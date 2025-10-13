@@ -33,9 +33,7 @@ const navItems: NavItem[] = [
     ]
   },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
-  { name: "Registry Management", icon: Cog, path: "/registry-management" },
   { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
-  { name: "Content Library", icon: Library, path: "/content-library" },
   { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
   { name: "Credential Vault", icon: Lock, path: "/credential-vault" },
   { name: "Compliance & Audit", icon: ShieldCheck, path: "/compliance" },
