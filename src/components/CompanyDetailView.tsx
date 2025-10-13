@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 interface CompanyDetail {
   id: string;
   legal_name: string;
+  trading_name?: string | null;
   registry_id: string;
   registry_source: string;
   incorporation_date?: string | null;
@@ -25,6 +26,8 @@ interface CompanyDetail {
   country?: string | null;
   last_seen?: string | null;
   data_quality_score?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 interface CompanyDetailViewProps {
@@ -123,13 +126,39 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
     );
   };
 
+  // All available data headers from the entity
+  const allDataHeaders = [
+    { key: 'id', label: 'Entity ID', value: company.id },
+    { key: 'legal_name', label: 'Legal Name', value: company.legal_name },
+    { key: 'trading_name', label: 'Trading Name', value: company.trading_name || 'N/A' },
+    { key: 'registry_id', label: 'Registry ID', value: company.registry_id },
+    { key: 'registry_source', label: 'Registry Source', value: company.registry_source },
+    { key: 'company_type', label: 'Company Type', value: companyData.company_type || 'N/A' },
+    { key: 'status', label: 'Status', value: company.status },
+    { key: 'country', label: 'Country', value: company.country || 'N/A' },
+    { key: 'jurisdiction', label: 'Jurisdiction', value: companyData.jurisdiction || 'N/A' },
+    { key: 'incorporation_date', label: 'Incorporation Date', value: companyData.incorporation_date ? new Date(companyData.incorporation_date).toLocaleDateString() : 'N/A' },
+    { key: 'address', label: 'Address', value: renderAddress() },
+    { key: 'sic_codes', label: 'SIC Codes', value: renderSICCodes() },
+    { key: 'website', label: 'Website', value: company.website || 'N/A' },
+    { key: 'domain_available', label: 'Domain Available', value: company.domain_available !== null ? (company.domain_available ? 'Yes' : 'No') : 'N/A' },
+    { key: 'email_contacts', label: 'Email Contacts', value: company.email_contacts && company.email_contacts.length > 0 ? company.email_contacts.join(', ') : 'N/A' },
+    { key: 'score', label: 'Overall Score', value: company.data_quality_score || 0 },
+    { key: 'web_presence_score', label: 'Web Presence Score', value: company.web_presence_score || 'N/A' },
+    { key: 'data_quality_score', label: 'Data Quality Score', value: company.data_quality_score || 'N/A' },
+    { key: 'negative_press_flag', label: 'Negative Press Flag', value: company.negative_press_flag ? 'Yes' : 'No' },
+    { key: 'last_seen', label: 'Last Seen', value: company.last_seen ? new Date(company.last_seen).toLocaleString() : 'N/A' },
+    { key: 'created_at', label: 'Created At', value: company.raw_payload?.created_at ? new Date(company.raw_payload.created_at).toLocaleString() : 'N/A' },
+    { key: 'updated_at', label: 'Updated At', value: company.raw_payload?.updated_at ? new Date(company.raw_payload.updated_at).toLocaleString() : 'N/A' },
+  ];
+
   return (
-    <Card className="p-6 backdrop-blur-sm bg-card border-border relative animate-fade-in">
+    <Card className="p-6 backdrop-blur-sm bg-card border-border relative animate-fade-in max-h-[85vh] overflow-y-auto">
       <Button
         variant="ghost"
         size="sm"
         onClick={onClose}
-        className="absolute top-4 right-4"
+        className="sticky top-0 right-0 float-right z-10"
       >
         <X className="w-4 h-4" />
       </Button>
@@ -141,13 +170,26 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-foreground mb-2">{companyData.legal_name}</h2>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Badge variant={companyData.status === "Active" ? "default" : "secondary"}>
                 {companyData.status}
               </Badge>
               <Badge variant="outline">{getRegistrySourceLabel()}</Badge>
               <Badge variant="outline">{companyData.registry_id}</Badge>
             </div>
+          </div>
+        </div>
+
+        {/* All Data Headers Section */}
+        <div className="space-y-4 border-t border-border pt-4">
+          <h3 className="text-lg font-semibold text-foreground">All Data Headers</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {allDataHeaders.map((header) => (
+              <div key={header.key} className="space-y-1 p-3 bg-muted/30 rounded-lg">
+                <p className="text-xs font-semibold text-muted-foreground uppercase">{header.label}</p>
+                <p className="text-sm text-foreground break-words">{header.value}</p>
+              </div>
+            ))}
           </div>
         </div>
 
