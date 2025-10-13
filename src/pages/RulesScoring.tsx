@@ -36,9 +36,40 @@ const RulesScoring = () => {
   };
 
   const updateWeight = (id: number, value: number[]) => {
-    setScoringRules(prev => prev.map(rule => 
-      rule.id === id ? { ...rule, weight: value[0] } : rule
-    ));
+    const newWeight = value[0];
+    const rule = scoringRules.find(r => r.id === id);
+    if (!rule) return;
+    
+    const oldWeight = rule.weight;
+    const diff = newWeight - oldWeight;
+    
+    // Get other enabled rules
+    const otherRules = scoringRules.filter(r => r.id !== id && r.enabled);
+    if (otherRules.length === 0) {
+      // If no other enabled rules, just update this one
+      setScoringRules(prev => prev.map(r => 
+        r.id === id ? { ...r, weight: newWeight } : r
+      ));
+      return;
+    }
+    
+    // Calculate total weight of other rules
+    const otherTotalWeight = otherRules.reduce((sum, r) => sum + r.weight, 0);
+    
+    // Distribute the difference proportionally across other enabled rules
+    setScoringRules(prev => prev.map(rule => {
+      if (rule.id === id) {
+        return { ...rule, weight: newWeight };
+      }
+      if (rule.enabled && otherTotalWeight > 0) {
+        // Adjust proportionally based on current weight
+        const proportion = rule.weight / otherTotalWeight;
+        const adjustment = diff * proportion;
+        const adjustedWeight = Math.max(0, Math.min(100, rule.weight - adjustment));
+        return { ...rule, weight: Math.round(adjustedWeight) };
+      }
+      return rule;
+    }));
   };
 
   const deleteRule = (id: number) => {
