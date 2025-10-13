@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
 import logoImage from "@/assets/dcg-logo.png";
+import adminAvatar from "@/assets/admin-avatar.png";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -151,7 +152,7 @@ export const NavigationSidebar = () => {
           <DropdownMenuTrigger asChild>
             <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-sidebar-accent transition-colors">
               <Avatar className="w-10 h-10">
-                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
+                <AvatarImage src={adminAvatar} />
                 <AvatarFallback>AD</AvatarFallback>
               </Avatar>
               <div className="flex-1 text-left">
