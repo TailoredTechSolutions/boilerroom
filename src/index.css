@@ -8,15 +8,15 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Light theme with white background and black/gold accents */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    /* Dark theme with tech background */
+    --background: 220 25% 10%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 10%;
+    --card: 220 25% 15% / 0.7;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 220 25% 12%;
+    --popover-foreground: 0 0% 98%;
 
     /* Gold primary color */
     --primary: 43 96% 56%;
@@ -24,12 +24,12 @@ All colors MUST be HSL.
     
     --primary-glow: 45 100% 70%;
 
-    /* Light gray secondary */
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 10%;
+    /* Dark gray secondary */
+    --secondary: 220 20% 20%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 220 20% 25%;
+    --muted-foreground: 0 0% 70%;
 
     --accent: 43 96% 56%;
     --accent-foreground: 0 0% 10%;
@@ -38,37 +38,37 @@ All colors MUST be HSL.
     --destructive-foreground: 0 0% 98%;
 
     /* Status colors */
-    --success: 142 76% 36%;
+    --success: 142 76% 46%;
     --success-foreground: 0 0% 98%;
     
     --warning: 43 96% 56%;
     --warning-foreground: 0 0% 10%;
     
-    --info: 199 89% 48%;
+    --info: 199 89% 58%;
     --info-foreground: 0 0% 98%;
 
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
+    --border: 220 20% 30%;
+    --input: 220 20% 30%;
     --ring: 43 96% 56%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 10%;
+    --sidebar-background: 220 25% 12%;
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 43 96% 56%;
     --sidebar-primary-foreground: 0 0% 10%;
-    --sidebar-accent: 0 0% 94%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 88%;
+    --sidebar-accent: 220 20% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 220 20% 25%;
     --sidebar-ring: 43 96% 56%;
     
-    /* Gradients with circuit pattern overlay */
+    /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(43 96% 56%), hsl(45 100% 70%));
-    --gradient-bg: linear-gradient(180deg, hsla(0, 0%, 100%, 0.97), hsla(0, 0%, 98%, 0.95));
+    --gradient-bg: linear-gradient(180deg, hsla(220, 25%, 10%, 0.5), hsla(220, 25%, 8%, 0.7));
     
-    /* Glass effects with subtle circuit traces */
-    --glass-bg: rgba(0, 0, 0, 0.02);
-    --glass-border: rgba(0, 0, 0, 0.08);
+    /* Glass effects */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -79,7 +79,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    background-image: url('/src/assets/tech-bg.png');
+    background-image: url('/src/assets/tech-bg-dark.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -94,9 +94,9 @@ All colors MUST be HSL.
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, 
-      hsla(0, 0%, 100%, 0.85) 0%, 
-      hsla(0, 0%, 100%, 0.90) 50%,
-      hsla(0, 0%, 100%, 0.85) 100%
+      hsla(220, 25%, 10%, 0.75) 0%, 
+      hsla(220, 25%, 8%, 0.85) 50%,
+      hsla(220, 25%, 10%, 0.75) 100%
     );
     pointer-events: none;
     z-index: 0;
