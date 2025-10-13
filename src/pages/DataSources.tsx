@@ -4,6 +4,8 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { DataSourceGrid } from "@/components/DataSourceGrid";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ukLogo from "@/assets/uk-companies-house-logo.png";
+import gleifLogo from "@/assets/gleif-logo.png";
 
 const DataSources = () => {
   const [selectedSource, setSelectedSource] = useState("uk");
@@ -33,7 +35,7 @@ const DataSources = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">🇬🇧</span>
+                      <img src={ukLogo} alt="UK Companies House" className="w-8 h-8 object-contain" />
                       <div>
                         <p className="font-medium text-foreground">UK Companies House</p>
                         <p className="text-sm text-muted-foreground">12,456 entities</p>
@@ -43,7 +45,7 @@ const DataSources = () => {
                   </div>
                   <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">🌍</span>
+                      <img src={gleifLogo} alt="GLEIF Global" className="w-8 h-8 object-contain" />
                       <div>
                         <p className="font-medium text-foreground">GLEIF Global</p>
                         <p className="text-sm text-muted-foreground">8,234 entities</p>
