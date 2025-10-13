@@ -80,20 +80,6 @@ export const NavigationSidebar = () => {
         </div>
       </div>
 
-      {/* User Profile Dropdown */}
-      <div className="p-4 border-b border-sidebar-border">
-        <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-sidebar-accent transition-colors">
-          <Avatar className="w-10 h-10">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
-            <AvatarFallback>AD</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-foreground">Administration</p>
-            <p className="text-xs text-muted-foreground">admin@vc.com</p>
-          </div>
-          <ChevronDown className="w-4 h-4 text-muted-foreground" />
-        </button>
-      </div>
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -161,19 +147,23 @@ export const NavigationSidebar = () => {
         })}
       </nav>
 
-      {/* Bottom Actions */}
-      <div className="p-3 border-t border-sidebar-border/20 flex justify-start">
+      {/* User Profile Dropdown at Bottom */}
+      <div className="p-4 border-t border-sidebar-border">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="h-8 w-8 text-sidebar-foreground hover:bg-sidebar-accent"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </Button>
+            <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-sidebar-accent transition-colors">
+              <Avatar className="w-10 h-10">
+                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" />
+                <AvatarFallback>AD</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-medium text-foreground">Administration</p>
+                <p className="text-xs text-muted-foreground">admin@vc.com</p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
+          <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Account Settings</span>
