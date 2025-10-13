@@ -22,7 +22,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Venture Capital", icon: Database, path: "/" },
-  { name: "Investor and Fund Scraper", icon: Users, path: "/investor-fund-scraper" },
+  { name: "ANDREW'S EXTRAS", icon: Users, path: "/investor-fund-scraper" },
   { name: "Marketing and Analytics", icon: Briefcase, path: "/marketing" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
@@ -75,6 +75,8 @@ export const NavigationSidebar = () => {
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                       isActive || isChildActive
                         ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-md"
+                        : item.name === "ANDREW'S EXTRAS"
+                        ? "text-red-500 hover:bg-sidebar-accent/50"
                         : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                     }`}
                   >
@@ -111,6 +113,8 @@ export const NavigationSidebar = () => {
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                     isActive
                       ? "bg-sidebar-accent text-sidebar-primary font-medium shadow-md"
+                      : item.name === "ANDREW'S EXTRAS"
+                      ? "text-red-500 hover:bg-sidebar-accent/50"
                       : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                   }`}
                 >
