@@ -1,4 +1,4 @@
-import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase, ShieldCheck, FolderLock, Target, Activity, BookOpen, GitBranch, LineChart, MoreVertical } from "lucide-react";
+import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase, ShieldCheck, FolderLock, Target, Activity, BookOpen, GitBranch, LineChart, MoreVertical, Cog, Layers, Brain, Library, GitMerge, BarChart2, MessagesSquare, CalendarDays, Lock, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
@@ -24,6 +24,16 @@ const navItems: NavItem[] = [
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Marketing", icon: Megaphone, path: "/marketing" },
   { name: "Analytics", icon: BarChart3, path: "/analytics" },
+  { name: "Registry Management", icon: Cog, path: "/registry-management" },
+  { name: "Data Normalization", icon: Layers, path: "/data-normalization" },
+  { name: "AI Model Training", icon: Brain, path: "/ai-training" },
+  { name: "Content Library", icon: Library, path: "/content-library" },
+  { name: "Workflow Builder", icon: GitMerge, path: "/workflow-builder" },
+  { name: "Pipeline Performance", icon: BarChart2, path: "/pipeline-performance" },
+  { name: "Communication Logs", icon: MessagesSquare, path: "/communication-logs" },
+  { name: "Task Scheduler", icon: CalendarDays, path: "/task-scheduler" },
+  { name: "Credential Vault", icon: Lock, path: "/credential-vault" },
+  { name: "System Health", icon: Gauge, path: "/system-health" },
   { name: "Compliance & Audit", icon: ShieldCheck, path: "/compliance" },
   { name: "Document Vault", icon: FolderLock, path: "/documents" },
   { name: "Investor Intelligence", icon: Target, path: "/investor-intelligence" },

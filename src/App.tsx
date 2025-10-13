@@ -11,6 +11,16 @@ import CRM from "./pages/CRM";
 import AIAgent from "./pages/AIAgent";
 import Marketing from "./pages/Marketing";
 import Analytics from "./pages/Analytics";
+import RegistryManagement from "./pages/RegistryManagement";
+import DataNormalization from "./pages/DataNormalization";
+import AITraining from "./pages/AITraining";
+import ContentLibrary from "./pages/ContentLibrary";
+import WorkflowBuilder from "./pages/WorkflowBuilder";
+import PipelinePerformance from "./pages/PipelinePerformance";
+import CommunicationLogs from "./pages/CommunicationLogs";
+import TaskScheduler from "./pages/TaskScheduler";
+import CredentialVault from "./pages/CredentialVault";
+import SystemHealth from "./pages/SystemHealth";
 import Compliance from "./pages/Compliance";
 import Documents from "./pages/Documents";
 import InvestorIntelligence from "./pages/InvestorIntelligence";
@@ -40,6 +50,16 @@ const App = () => (
           <Route path="/ai-agent" element={<AIAgent />} />
           <Route path="/marketing" element={<Marketing />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/registry-management" element={<RegistryManagement />} />
+          <Route path="/data-normalization" element={<DataNormalization />} />
+          <Route path="/ai-training" element={<AITraining />} />
+          <Route path="/content-library" element={<ContentLibrary />} />
+          <Route path="/workflow-builder" element={<WorkflowBuilder />} />
+          <Route path="/pipeline-performance" element={<PipelinePerformance />} />
+          <Route path="/communication-logs" element={<CommunicationLogs />} />
+          <Route path="/task-scheduler" element={<TaskScheduler />} />
+          <Route path="/credential-vault" element={<CredentialVault />} />
+          <Route path="/system-health" element={<SystemHealth />} />
           <Route path="/compliance" element={<Compliance />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/investor-intelligence" element={<InvestorIntelligence />} />
