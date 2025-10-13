@@ -11,6 +11,13 @@ import CRM from "./pages/CRM";
 import AIAgent from "./pages/AIAgent";
 import Marketing from "./pages/Marketing";
 import Analytics from "./pages/Analytics";
+import Compliance from "./pages/Compliance";
+import Documents from "./pages/Documents";
+import InvestorIntelligence from "./pages/InvestorIntelligence";
+import Performance from "./pages/Performance";
+import Knowledge from "./pages/Knowledge";
+import IntegrationLogs from "./pages/IntegrationLogs";
+import Feedback from "./pages/Feedback";
 import RulesScoring from "./pages/RulesScoring";
 import Exports from "./pages/Exports";
 import Settings from "./pages/Settings";
@@ -33,6 +40,13 @@ const App = () => (
           <Route path="/ai-agent" element={<AIAgent />} />
           <Route path="/marketing" element={<Marketing />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/compliance" element={<Compliance />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/investor-intelligence" element={<InvestorIntelligence />} />
+          <Route path="/performance" element={<Performance />} />
+          <Route path="/knowledge" element={<Knowledge />} />
+          <Route path="/integration-logs" element={<IntegrationLogs />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="/rules-scoring" element={<RulesScoring />} />
           <Route path="/exports" element={<Exports />} />
           <Route path="/settings" element={<Settings />} />

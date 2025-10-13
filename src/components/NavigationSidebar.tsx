@@ -1,4 +1,4 @@
-import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase } from "lucide-react";
+import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, ChevronDown, Users, Bot, Megaphone, BarChart3, Briefcase, ShieldCheck, FolderLock, Target, Activity, BookOpen, GitBranch, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
@@ -18,6 +18,13 @@ const navItems: NavItem[] = [
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Marketing", icon: Megaphone, path: "/marketing" },
   { name: "Analytics", icon: BarChart3, path: "/analytics" },
+  { name: "Compliance & Audit", icon: ShieldCheck, path: "/compliance" },
+  { name: "Document Vault", icon: FolderLock, path: "/documents" },
+  { name: "Investor Intelligence", icon: Target, path: "/investor-intelligence" },
+  { name: "Performance & Maintenance", icon: Activity, path: "/performance" },
+  { name: "Knowledge Hub", icon: BookOpen, path: "/knowledge" },
+  { name: "Integration Logs", icon: GitBranch, path: "/integration-logs" },
+  { name: "Feedback & Optimization", icon: LineChart, path: "/feedback" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
   { name: "Exports", icon: Download, path: "/exports" },
