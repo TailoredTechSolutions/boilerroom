@@ -138,13 +138,6 @@ const Index = () => {
               onSelectSource={setSelectedSource}
             />
 
-            <Alert className="bg-info/10 border-info/50 text-info-foreground">
-              <AlertCircle className="h-4 w-4 text-info" />
-              <AlertDescription className="text-info-foreground">
-                APIs first. Respect rate limits. Client-funded API keys required.
-              </AlertDescription>
-            </Alert>
-
             <div className="flex gap-4">
               <Button
                 onClick={handleRunScrape}

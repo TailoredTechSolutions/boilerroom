@@ -165,7 +165,7 @@ export const EntitiesTable = ({ entities }: EntitiesTableProps) => {
                 <td className="p-4">
                   <p className="text-sm text-muted-foreground">{entity.lastUpdated}</p>
                 </td>
-                <td className="p-4">
+                <td className="p-4" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
@@ -190,9 +190,9 @@ export const EntitiesTable = ({ entities }: EntitiesTableProps) => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-popover border-border z-50">
-                        <DropdownMenuItem>Flag Entity</DropdownMenuItem>
-                        <DropdownMenuItem>Export Data</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Suppress</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Flag Entity</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Export Data</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()} className="text-destructive">Suppress</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
