@@ -1,6 +1,7 @@
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { KPICard } from "@/components/KPICard";
+import { TopEntitiesList } from "@/components/TopEntitiesList";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Database, Activity, TrendingUp, Clock, Target, DollarSign, LineChart } from "lucide-react";
 import { useEntities } from "@/hooks/useEntities";
@@ -10,14 +11,28 @@ const Overview = () => {
   const { entities, isLoading } = useEntities();
   const { jobs, activeJobs } = useScrapingJobs();
 
+  // Calculate KPI metrics
   const totalEntities = entities.length;
-  const newEntities = entities.filter(e => {
+  const newEntitiesData = entities.filter(e => {
     const created = new Date(e.created_at);
     const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     return created > dayAgo;
-  }).length;
-  const highScoreTargets = entities.filter(e => e.score && e.score >= 80).length;
+  });
+  const highScoreTargetsData = entities.filter(e => e.score && e.score >= 80);
   const recentJobs = jobs.slice(0, 5);
+
+  // Get top 5 entities for each category
+  const topScoringEntities = [...entities]
+    .sort((a, b) => (b.score || 0) - (a.score || 0))
+    .slice(0, 5);
+
+  const topNewEntities = [...newEntitiesData]
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5);
+
+  const topHighScoreEntities = [...highScoreTargetsData]
+    .sort((a, b) => (b.score || 0) - (a.score || 0))
+    .slice(0, 5);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -42,14 +57,14 @@ const Overview = () => {
               />
               <KPICard
                 title="New (24h)"
-                value={newEntities}
+                value={newEntitiesData.length}
                 subtitle="added today"
                 icon={TrendingUp}
                 variant="success"
               />
               <KPICard
                 title="High Score (80+)"
-                value={highScoreTargets}
+                value={highScoreTargetsData.length}
                 subtitle="quality targets"
                 icon={Activity}
                 variant="purple"
@@ -61,6 +76,66 @@ const Overview = () => {
                 icon={Clock}
                 variant="warning"
               />
+            </div>
+
+            {/* Top Entities Detail Sections */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Top Scoring Entities
+                  </CardTitle>
+                  <CardDescription>
+                    Highest quality targets based on all criteria
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <TopEntitiesList 
+                    entities={topScoringEntities}
+                    title="Top Scoring"
+                    emptyMessage="No entities found"
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="w-5 h-5" />
+                    Newest Entities (24h)
+                  </CardTitle>
+                  <CardDescription>
+                    Recently added companies from scrapers
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <TopEntitiesList 
+                    entities={topNewEntities}
+                    title="New Entities"
+                    emptyMessage="No new entities in the last 24 hours"
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    Premium Targets (80+)
+                  </CardTitle>
+                  <CardDescription>
+                    High-score entities ready for outreach
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <TopEntitiesList 
+                    entities={topHighScoreEntities}
+                    title="High Score"
+                    emptyMessage="No high-score entities yet"
+                  />
+                </CardContent>
+              </Card>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
