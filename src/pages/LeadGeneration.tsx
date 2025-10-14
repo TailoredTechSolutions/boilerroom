@@ -80,6 +80,16 @@ const LeadGeneration = () => {
     lead.contactName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Calculate real-time KPI metrics
+  const totalLeads = leads.length;
+  const hotLeads = leads.filter(l => l.status === "Hot").length;
+  const warmLeads = leads.filter(l => l.status === "Warm").length;
+  const leadsWithEmail = leads.filter(l => l.emailContactsCount && l.emailContactsCount > 0).length;
+  const leadsWithWebsite = leads.filter(l => l.website && l.website !== 'N/A').length;
+  const avgScore = totalLeads > 0 ? Math.round(leads.reduce((acc, l) => acc + l.score, 0) / totalLeads) : 0;
+  const qualityLeadsPercentage = totalLeads > 0 ? Math.round((leadsWithEmail / totalLeads) * 100) : 0;
+  const webPresenceRate = totalLeads > 0 ? Math.round((leadsWithWebsite / totalLeads) * 100) : 0;
+
   const getStatusColor = (status: string) => {
     if (status === "Hot") return "bg-destructive/20 text-destructive border-destructive/50";
     if (status === "Warm") return "bg-warning/20 text-warning border-warning/50";
@@ -114,30 +124,30 @@ const LeadGeneration = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <KPICard
               title="Total Leads"
-              value={leads.length}
-              subtitle="Active prospects"
+              value={isLoading ? "..." : totalLeads}
+              subtitle={`${hotLeads} hot • ${warmLeads} warm`}
               icon={Users}
               variant="default"
             />
             <KPICard
               title="Hot Leads"
-              value={leads.filter(l => l.status === "Hot").length}
-              subtitle="High priority"
+              value={isLoading ? "..." : hotLeads}
+              subtitle={`${Math.round((hotLeads / totalLeads) * 100) || 0}% of total`}
               icon={Target}
               variant="success"
             />
             <KPICard
-              title="Conversion Rate"
-              value="24%"
-              subtitle="+5% this month"
-              icon={TrendingUp}
+              title="Contact Data"
+              value={isLoading ? "..." : `${qualityLeadsPercentage}%`}
+              subtitle={`${leadsWithEmail} leads with emails`}
+              icon={Mail}
               variant="purple"
             />
             <KPICard
-              title="Avg. Score"
-              value={Math.round(leads.reduce((acc, l) => acc + l.score, 0) / leads.length)}
-              subtitle="Lead quality"
-              icon={Target}
+              title="Avg. Quality"
+              value={isLoading ? "..." : avgScore}
+              subtitle={`${webPresenceRate}% have websites`}
+              icon={TrendingUp}
               variant="warning"
             />
           </div>
