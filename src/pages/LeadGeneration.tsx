@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Users, Target, TrendingUp, Mail, Phone, Building2, Search, Filter } from "lucide-react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -9,46 +9,71 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 
 const LeadGeneration = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [entities, setEntities] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Sample lead data
-  const leads = [
-    {
-      id: "1",
-      companyName: "TechStart Inc.",
-      status: "Hot",
-      contactName: "John Smith",
-      email: "john@techstart.com",
-      phone: "+1 555-0123",
-      score: 85,
-      lastContact: "2025-10-10"
-    },
-    {
-      id: "2",
-      companyName: "Global Ventures Ltd.",
-      status: "Warm",
-      contactName: "Sarah Johnson",
-      email: "sarah@globalventures.com",
-      phone: "+1 555-0456",
-      score: 72,
-      lastContact: "2025-10-08"
-    },
-    {
-      id: "3",
-      companyName: "Innovation Partners",
-      status: "Cold",
-      contactName: "Mike Davis",
-      email: "mike@innovation.com",
-      phone: "+1 555-0789",
-      score: 45,
-      lastContact: "2025-10-05"
+  useEffect(() => {
+    fetchEntities();
+  }, []);
+
+  const fetchEntities = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('entities')
+      .select('*')
+      .order('score', { ascending: false });
+
+    if (data) {
+      setEntities(data);
     }
-  ];
+    setIsLoading(false);
+  };
+
+  // Transform entities into leads format
+  const leads = entities.map(entity => {
+    const emailContacts = Array.isArray(entity.email_contacts) ? entity.email_contacts : [];
+    const officers = Array.isArray(entity.officers) ? entity.officers : [];
+    
+    // Get first email contact
+    const firstEmail = emailContacts.length > 0 ? emailContacts[0] : null;
+    const email = typeof firstEmail === 'string' ? firstEmail : firstEmail?.email || 'N/A';
+    
+    // Get first officer as contact
+    const firstOfficer = officers.length > 0 ? officers[0] : null;
+    const contactName = firstOfficer?.name || firstOfficer?.officer_name || 'N/A';
+    
+    // Calculate status based on score
+    const score = Number(entity.score) || 0;
+    let status = 'Cold';
+    if (score >= 80) status = 'Hot';
+    else if (score >= 60) status = 'Warm';
+
+    return {
+      id: entity.id,
+      companyName: entity.legal_name || entity.trading_name || 'N/A',
+      status,
+      contactName,
+      email,
+      phone: 'N/A',
+      score: Math.round(score),
+      lastContact: entity.last_seen ? new Date(entity.last_seen).toISOString().split('T')[0] : 'N/A',
+      website: entity.website || 'N/A',
+      jurisdiction: entity.jurisdiction || 'N/A',
+      registrySource: entity.registry_source || 'N/A',
+      companyType: entity.company_type || 'N/A',
+      dataQualityScore: entity.data_quality_score || 0,
+      webPresenceScore: entity.web_presence_score || 0,
+      emailContactsCount: emailContacts.length,
+      officersCount: officers.length
+    };
+  });
 
   const filteredLeads = leads.filter(lead =>
     lead.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -139,98 +164,104 @@ const LeadGeneration = () => {
 
           {/* Leads Table */}
           <div className="rounded-xl border border-border bg-card overflow-hidden backdrop-blur-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50 backdrop-blur-sm">
-                  <tr>
-                    <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Company
-                    </th>
-                    <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Contact
-                    </th>
-                    <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Score
-                    </th>
-                    <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Last Contact
-                    </th>
-                    <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {filteredLeads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-muted/30 transition-all">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Building2 className="w-5 h-5 text-primary" />
-                          </div>
-                          <p className="font-medium text-foreground">{lead.companyName}</p>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-foreground">{lead.contactName}</p>
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Mail className="w-3 h-3" />
-                              {lead.email}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Phone className="w-3 h-3" />
-                              {lead.phone}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <Badge className={getStatusColor(lead.status)}>
-                          {lead.status}
-                        </Badge>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-foreground">{lead.score}</span>
-                          <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-primary"
-                              style={{ width: `${lead.score}%` }}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <p className="text-sm text-muted-foreground">{lead.lastContact}</p>
-                      </td>
-                      <td className="p-4">
-                        <div className="flex gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => handleViewLead(lead)}
-                          >
-                            View
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            className="bg-gradient-primary"
-                            onClick={() => handleContactLead(lead)}
-                          >
-                            Contact
-                          </Button>
-                        </div>
-                      </td>
+            {isLoading ? (
+              <div className="p-8 text-center text-muted-foreground">
+                <p>Loading leads from database...</p>
+              </div>
+            ) : filteredLeads.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground">
+                <p>No leads found matching your search criteria.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50 backdrop-blur-sm">
+                    <tr>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Company
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Score
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Last Seen
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {filteredLeads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-muted/30 transition-all">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Building2 className="w-5 h-5 text-primary" />
+                            </div>
+                            <p className="font-medium text-foreground">{lead.companyName}</p>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-foreground">{lead.contactName}</p>
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Mail className="w-3 h-3" />
+                                {lead.email}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Badge className={getStatusColor(lead.status)}>
+                            {lead.status}
+                          </Badge>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-foreground">{lead.score}</span>
+                            <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-primary"
+                                style={{ width: `${lead.score}%` }}
+                              />
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <p className="text-sm text-muted-foreground">{lead.lastContact}</p>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleViewLead(lead)}
+                            >
+                              View
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              className="bg-gradient-primary"
+                              onClick={() => handleContactLead(lead)}
+                            >
+                              Contact
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </main>
       </div>

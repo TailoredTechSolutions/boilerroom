@@ -1,4 +1,4 @@
-import { X, Building2, Mail, Phone, Calendar, MapPin, TrendingUp } from "lucide-react";
+import { X, Building2, Mail, Phone, Calendar, MapPin, TrendingUp, Globe, Database, FileText, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,6 +17,14 @@ interface Lead {
   phone: string;
   score: number;
   lastContact: string;
+  website?: string;
+  jurisdiction?: string;
+  registrySource?: string;
+  companyType?: string;
+  dataQualityScore?: number;
+  webPresenceScore?: number;
+  emailContactsCount?: number;
+  officersCount?: number;
 }
 
 interface LeadDetailModalProps {
@@ -58,8 +66,8 @@ export const LeadDetailModal = ({ lead, isOpen, onClose }: LeadDetailModalProps)
             {/* Contact Name */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm font-semibold">Contact Name</span>
+                <Users className="w-4 h-4" />
+                <span className="text-sm font-semibold">Primary Contact</span>
               </div>
               <p className="text-foreground font-medium">{lead.contactName}</p>
             </div>
@@ -68,28 +76,76 @@ export const LeadDetailModal = ({ lead, isOpen, onClose }: LeadDetailModalProps)
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                <span className="text-sm font-semibold">Email</span>
+                <span className="text-sm font-semibold">Email ({lead.emailContactsCount || 0} contacts)</span>
               </div>
               <p className="text-foreground">{lead.email}</p>
             </div>
 
-            {/* Phone */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="w-4 h-4" />
-                <span className="text-sm font-semibold">Phone</span>
+            {/* Website */}
+            {lead.website && lead.website !== 'N/A' && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Website</span>
+                </div>
+                <a href={lead.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                  {lead.website}
+                </a>
               </div>
-              <p className="text-foreground">{lead.phone}</p>
-            </div>
+            )}
 
-            {/* Last Contact */}
+            {/* Last Seen */}
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="w-4 h-4" />
-                <span className="text-sm font-semibold">Last Contact</span>
+                <span className="text-sm font-semibold">Last Seen</span>
               </div>
               <p className="text-foreground">{lead.lastContact}</p>
             </div>
+
+            {/* Registry Source */}
+            {lead.registrySource && lead.registrySource !== 'N/A' && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Database className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Registry Source</span>
+                </div>
+                <p className="text-foreground">{lead.registrySource}</p>
+              </div>
+            )}
+
+            {/* Jurisdiction */}
+            {lead.jurisdiction && lead.jurisdiction !== 'N/A' && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Jurisdiction</span>
+                </div>
+                <p className="text-foreground">{lead.jurisdiction}</p>
+              </div>
+            )}
+
+            {/* Company Type */}
+            {lead.companyType && lead.companyType !== 'N/A' && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Company Type</span>
+                </div>
+                <p className="text-foreground">{lead.companyType}</p>
+              </div>
+            )}
+
+            {/* Officers Count */}
+            {lead.officersCount !== undefined && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Users className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Officers</span>
+                </div>
+                <p className="text-foreground">{lead.officersCount} registered</p>
+              </div>
+            )}
 
             {/* Lead Score */}
             <div className="space-y-2">
@@ -107,6 +163,44 @@ export const LeadDetailModal = ({ lead, isOpen, onClose }: LeadDetailModalProps)
                 </div>
               </div>
             </div>
+
+            {/* Data Quality Score */}
+            {lead.dataQualityScore !== undefined && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Data Quality</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground font-semibold">{Math.round(lead.dataQualityScore)}</span>
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-primary"
+                      style={{ width: `${lead.dataQualityScore}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Web Presence Score */}
+            {lead.webPresenceScore !== undefined && lead.webPresenceScore !== null && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Globe className="w-4 h-4" />
+                  <span className="text-sm font-semibold">Web Presence</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-foreground font-semibold">{Math.round(lead.webPresenceScore)}</span>
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-primary"
+                      style={{ width: `${lead.webPresenceScore}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
