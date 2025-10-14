@@ -42,6 +42,40 @@ serve(async (req) => {
     
     console.log('Scrape callback received:', { jobId, status, totalCount });
     
+    // Normalize and filter entities to satisfy DB constraints
+    const allowedSources = ['COMPANIES_HOUSE', 'GLEIF', 'SEC_EDGAR', 'ASIC'];
+    const normalizeSource = (src?: string) => {
+      if (!src) return undefined;
+      if (src === 'CH') return 'COMPANIES_HOUSE';
+      if (src === 'SEC') return 'SEC_EDGAR';
+      if (src === 'GLEIF') return 'GLEIF';
+      if (src === 'ASIC') return 'ASIC';
+      return src;
+    };
+    const normalizeStatus = (s?: string) => {
+      if (!s) return undefined;
+      const m = s.toLowerCase();
+      if (m === 'active') return 'Active';
+      if (m === 'inactive') return 'Inactive';
+      if (m === 'dissolved') return 'Dissolved';
+      if (m === 'unknown') return 'Unknown';
+      // Fallback to a safe allowed value
+      return 'Unknown';
+    };
+
+    const normalizedEntities = (entities || [])
+      .map((entity) => {
+        const src = normalizeSource((entity as any).registry_source);
+        const stat = normalizeStatus((entity as any).status);
+        return {
+          ...(entity as any),
+          registry_source: src,
+          status: stat,
+        };
+      })
+      // Keep only supported registry sources
+      .filter((e) => e.registry_source && allowedSources.includes(e.registry_source as string));
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -53,7 +87,7 @@ serve(async (req) => {
       .update({
         status,
         records_fetched: totalCount || 0,
-        records_processed: entities?.length || 0,
+        records_processed: normalizedEntities?.length || 0,
         error_message: errorMessage,
         completed_at: status === 'completed' || status === 'failed' 
           ? new Date().toISOString() 
@@ -67,17 +101,8 @@ serve(async (req) => {
     }
 
     // Insert entities if provided
-    if (entities && entities.length > 0) {
-      console.log(`Upserting ${entities.length} entities...`)
-      
-      // Normalize registry_source to match database constraints
-      const normalizedEntities = entities.map(entity => ({
-        ...entity,
-        registry_source: entity.registry_source === 'CH' ? 'COMPANIES_HOUSE' :
-                        entity.registry_source === 'GLEIF' ? 'GLEIF' :
-                        entity.registry_source === 'HK_ICRIS' ? 'HK_ICRIS' :
-                        entity.registry_source
-      }));
+    if (normalizedEntities && normalizedEntities.length > 0) {
+      console.log(`Upserting ${normalizedEntities.length} entities...`)
       
       const { error: entitiesError } = await supabase
         .from('entities')

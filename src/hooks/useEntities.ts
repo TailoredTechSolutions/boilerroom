@@ -119,7 +119,9 @@ export const useEntities = () => {
         } : undefined,
       });
 
-      if (error) throw error;
+      if (error || !data?.success || !data?.jobId) {
+        throw error || new Error('Scraper did not start');
+      }
 
       toast.dismiss(toastId);
       toast.success(`Scraping job started: ${data.jobId}`);
