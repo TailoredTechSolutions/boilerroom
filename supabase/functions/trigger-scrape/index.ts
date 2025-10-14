@@ -7,46 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Dummy data generator for testing
-function generateDummyEntities(source: string, count: number) {
-  const companies = [
-    'Acme Ventures Ltd', 'TechGrowth Capital', 'Innovation Partners LLC', 'Digital Horizons Group',
-    'NextGen Investments', 'Pioneer Capital Partners', 'Velocity Ventures', 'Catalyst Growth Fund',
-    'Horizon Technology Partners', 'Apex Innovation Capital', 'Momentum Ventures', 'Eclipse Capital Group',
-    'Zenith Investment Partners', 'Quantum Leap Ventures', 'Frontier Growth Capital'
-  ]
-  
-  const countries = source === 'COMPANIES_HOUSE' ? ['GB'] : source === 'GLEIF' ? ['US', 'GB', 'DE', 'FR'] : ['US']
-  const statuses = ['Active', 'Active', 'Active', 'Inactive']
-  
-  return Array.from({ length: count }, (_, i) => {
-    const company = companies[Math.floor(Math.random() * companies.length)]
-    const country = countries[Math.floor(Math.random() * countries.length)]
-    const status = statuses[Math.floor(Math.random() * statuses.length)]
-    const score = Math.floor(Math.random() * 40) + 60 // 60-100
-    
-    return {
-      legal_name: company,
-      registry_id: `${source}-${Date.now()}-${i}`,
-      registry_source: source,
-      country,
-      status,
-      score,
-      website: `https://www.${company.toLowerCase().replace(/\s+/g, '')}.com`,
-      data_quality_score: (Math.random() * 0.3 + 0.7).toFixed(2),
-      web_presence_score: (Math.random() * 0.4 + 0.6).toFixed(2),
-      incorporation_date: new Date(Date.now() - Math.random() * 365 * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      company_type: 'Private Limited Company',
-      sic_codes: ['62012', '62020'],
-      address: {
-        line1: `${Math.floor(Math.random() * 200)} Main Street`,
-        city: country === 'GB' ? 'London' : country === 'US' ? 'New York' : 'Berlin',
-        postcode: country === 'GB' ? 'SW1A 1AA' : '10001'
-      }
-    }
-  })
-}
-
 const TriggerScrapeSchema = z.object({
   source: z.enum(['COMPANIES_HOUSE', 'CH', 'GLEIF', 'SEC_EDGAR', 'ASIC']),
   searchTerm: z.string().max(500).optional(),
@@ -114,64 +74,38 @@ serve(async (req) => {
 
     console.log('Job created:', job.id);
 
-    // Check if N8N webhook is configured
+    // Call N8N webhook
     const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper';
     
-    if (n8nWebhookUrl) {
-      console.log('Calling n8n webhook...');
-      const response = await fetch(n8nWebhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jobId: job.id,
-          source: originalSource, // short code for n8n compatibility (e.g., 'CH')
-          registrySource: normalizedSource, // normalized for clarity (e.g., 'COMPANIES_HOUSE')
-          searchTerm,
-          filters,
-          callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
-        })
-      });
+    console.log('Calling n8n webhook...');
+    const response = await fetch(n8nWebhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jobId: job.id,
+        source: originalSource, // short code for n8n compatibility (e.g., 'CH')
+        registrySource: normalizedSource, // normalized for clarity (e.g., 'COMPANIES_HOUSE')
+        searchTerm,
+        filters,
+        callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
+      })
+    });
 
-      if (!response.ok) {
-        console.error('N8N webhook failed:', await response.text());
-        await supabaseAdmin
-          .from('scraping_jobs')
-          .update({ 
-            status: 'failed', 
-            error_message: 'N8N webhook failed',
-            completed_at: new Date().toISOString()
-          })
-          .eq('id', job.id);
-      } else {
-        console.log('N8N webhook called successfully');
-        await supabaseAdmin
-          .from('scraping_jobs')
-          .update({ status: 'running' })
-          .eq('id', job.id);
-      }
-    } else {
-      console.log('N8N_WEBHOOK_URL not configured, inserting dummy data for testing');
-      
-      const dummyEntities = generateDummyEntities(normalizedSource, 8);
-      
-      const { error: entitiesError } = await supabaseAdmin
-        .from('entities')
-        .upsert(dummyEntities, { onConflict: 'registry_id' });
-      
-      if (entitiesError) {
-        console.error('Error inserting dummy entities:', entitiesError);
-      } else {
-        console.log(`Inserted ${dummyEntities.length} dummy entities`);
-      }
-      
+    if (!response.ok) {
+      console.error('N8N webhook failed:', await response.text());
       await supabaseAdmin
         .from('scraping_jobs')
         .update({ 
-          status: 'completed',
-          records_fetched: dummyEntities.length,
-          records_processed: dummyEntities.length,
+          status: 'failed', 
+          error_message: 'N8N webhook failed',
           completed_at: new Date().toISOString()
         })
+        .eq('id', job.id);
+    } else {
+      console.log('N8N webhook called successfully');
+      await supabaseAdmin
+        .from('scraping_jobs')
+        .update({ status: 'running' })
         .eq('id', job.id);
     }
 
