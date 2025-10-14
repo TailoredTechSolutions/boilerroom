@@ -70,9 +70,18 @@ serve(async (req) => {
     if (entities && entities.length > 0) {
       console.log(`Upserting ${entities.length} entities...`)
       
+      // Normalize registry_source to match database constraints
+      const normalizedEntities = entities.map(entity => ({
+        ...entity,
+        registry_source: entity.registry_source === 'CH' ? 'COMPANIES_HOUSE' :
+                        entity.registry_source === 'GLEIF' ? 'GLEIF' :
+                        entity.registry_source === 'HK_ICRIS' ? 'HK_ICRIS' :
+                        entity.registry_source
+      }));
+      
       const { error: entitiesError } = await supabase
         .from('entities')
-        .upsert(entities, { onConflict: 'registry_id' })
+        .upsert(normalizedEntities, { onConflict: 'registry_id' })
 
       if (entitiesError) {
         console.error('Error upserting entities:', entitiesError)
