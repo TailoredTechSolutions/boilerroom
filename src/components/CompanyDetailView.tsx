@@ -2,6 +2,8 @@ import { X, Building2, Calendar, FileText, MapPin, Globe, Users, TrendingUp, Ale
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { DomainCheckModal } from "./DomainCheckModal";
+import { useState } from "react";
 
 interface CompanyDetail {
   id: string;
@@ -36,6 +38,8 @@ interface CompanyDetailViewProps {
 }
 
 export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) => {
+  const [domainModalOpen, setDomainModalOpen] = useState(false);
+  
   // Extract data from raw_payload if not directly available
   const rawData = company.raw_payload || {};
   const companyData = {
@@ -197,10 +201,7 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
         <div className="flex gap-4 justify-end pt-4 border-t border-border">
           <Button
             variant="outline"
-            onClick={() => {
-              const domainName = company.legal_name.replace(/\s+/g, '').toLowerCase() + ".com";
-              alert(`Checking domain: ${domainName}\n\nThis feature will check domain availability.`);
-            }}
+            onClick={() => setDomainModalOpen(true)}
           >
             <Globe className="w-4 h-4 mr-2" />
             Domain
@@ -214,6 +215,12 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
             Create Website
           </Button>
         </div>
+
+        <DomainCheckModal
+          open={domainModalOpen}
+          onOpenChange={setDomainModalOpen}
+          companyName={company.legal_name}
+        />
 
         {/* LEI Number - Basic Fields for now */}
         {isGLEIF && !isHongKong && (

@@ -2,3 +2,6 @@ project_id = "utzxdzkebdgwxgqhieee"
 
 [functions.scrape-callback]
 verify_jwt = false
+
+[functions.check-domain]
+verify_jwt = false
