@@ -33,9 +33,9 @@ export const TopEntitiesList = ({ entities, title, emptyMessage = "No entities t
   return (
     <div className="space-y-3">
       {entities.map((entity) => (
-        <div 
+      <div 
           key={entity.id} 
-          className="p-4 border border-border rounded-lg bg-card hover:bg-accent/5 transition-colors"
+          className="p-4 border border-border rounded-lg bg-background hover:border-primary/50 transition-colors"
         >
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1 min-w-0">
