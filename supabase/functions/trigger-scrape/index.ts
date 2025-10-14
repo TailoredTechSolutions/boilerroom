@@ -78,12 +78,15 @@ serve(async (req) => {
     const rawBody = await req.json();
     let { source, searchTerm, filters } = TriggerScrapeSchema.parse(rawBody);
     
-    // Normalize CH to COMPANIES_HOUSE for internal consistency
-    if (source === 'CH') {
-      source = 'COMPANIES_HOUSE';
+    // Keep original source for external workflows, normalize for internal storage
+    const originalSource = source;
+    const normalizedSource = source === 'CH' ? 'COMPANIES_HOUSE' : source;
+    if (!searchTerm && originalSource === 'CH') {
+      // Sensible default aligning with Companies House example query
+      searchTerm = 'venture capital';
     }
     
-    console.log('Creating scraping job', userId ? `for user: ${userId}` : '(no auth)', { source, searchTerm });
+    console.log('Creating scraping job', userId ? `for user: ${userId}` : '(no auth)', { originalSource, normalizedSource, searchTerm });
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -94,7 +97,7 @@ serve(async (req) => {
     const { data: job, error: jobError } = await supabaseAdmin
       .from('scraping_jobs')
       .insert({
-        source,
+        source: normalizedSource,
         search_term: searchTerm,
         filters,
         status: 'pending',
@@ -121,7 +124,8 @@ serve(async (req) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jobId: job.id,
-          source,
+          source: originalSource, // short code for n8n compatibility (e.g., 'CH')
+          registrySource: normalizedSource, // normalized for clarity (e.g., 'COMPANIES_HOUSE')
           searchTerm,
           filters,
           callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
@@ -148,7 +152,7 @@ serve(async (req) => {
     } else {
       console.log('N8N_WEBHOOK_URL not configured, inserting dummy data for testing');
       
-      const dummyEntities = generateDummyEntities(source, 8);
+      const dummyEntities = generateDummyEntities(normalizedSource, 8);
       
       const { error: entitiesError } = await supabaseAdmin
         .from('entities')

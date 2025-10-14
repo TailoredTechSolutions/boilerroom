@@ -14,7 +14,7 @@ import { useEntities } from "@/hooks/useEntities";
 import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 
 const Index = () => {
-  const [selectedSource, setSelectedSource] = useState("uk");
+  const [selectedSource, setSelectedSource] = useState("CH");
   const [activeTab, setActiveTab] = useState("high-score");
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const { entities, filteredEntities, isLoading, applyFilters, triggerScrape, exportEntities } = useEntities();
@@ -73,8 +73,9 @@ const Index = () => {
       hk: 'HK',
       asic: 'ASIC'
     };
-    
-    await triggerScrape(sourceMap[selectedSource]);
+
+    const searchTerm = selectedSource === 'CH' ? 'venture capital' : undefined;
+    await triggerScrape(sourceMap[selectedSource], searchTerm);
   };
 
   const handleFilterChange = (filters: FilterState) => {
