@@ -16,6 +16,7 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
   const [results, setResults] = useState<any>(null);
 
   const checkDomain = async () => {
+    console.log('checkDomain called for:', companyName);
     setLoading(true);
     setResults(null);
 
@@ -26,13 +27,21 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
         .replace(/[^a-z0-9]/g, '')
         .substring(0, 63) + '.com';
 
+      console.log('Checking domain:', domain);
+
       const { data, error } = await supabase.functions.invoke('check-domain', {
         body: { domain },
       });
 
-      if (error) throw error;
+      console.log('Domain check response:', { data, error });
+
+      if (error) {
+        console.error('Domain check error:', error);
+        throw error;
+      }
 
       setResults(data);
+      console.log('Results set:', data);
     } catch (error) {
       console.error('Domain check error:', error);
       toast.error('Failed to check domain availability');
