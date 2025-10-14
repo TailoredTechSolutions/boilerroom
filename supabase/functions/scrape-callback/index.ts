@@ -26,7 +26,7 @@ const CallbackSchema = z.object({
   status: z.enum(['pending', 'running', 'completed', 'failed']),
   entities: z.array(EntitySchema).max(1000).optional(),
   totalCount: z.number().int().min(0).optional(),
-  errorMessage: z.string().max(2000).optional()
+  errorMessage: z.string().max(2000).optional().nullable()
 });
 
 serve(async (req) => {
