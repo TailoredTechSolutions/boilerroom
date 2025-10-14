@@ -11,7 +11,7 @@ const EntitySchema = z.object({
   legal_name: z.string().max(500),
   registry_id: z.string().max(200),
   registry_source: z.string().max(50),
-  country: z.string().max(2),
+  country: z.string().max(100), // Accept full country names from n8n
   score: z.number().min(0).max(100).optional(),
   status: z.string().optional(),
   trading_name: z.string().max(500).optional(),

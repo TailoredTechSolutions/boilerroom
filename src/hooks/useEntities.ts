@@ -108,7 +108,7 @@ export const useEntities = () => {
   // Trigger scraping job
   const triggerScrape = async (source: string, searchTerm?: string) => {
     setIsLoading(true);
-    toast.loading('Initiating scrape...');
+    const toastId = toast.loading('Initiating scrape...');
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -121,12 +121,14 @@ export const useEntities = () => {
 
       if (error) throw error;
 
+      toast.dismiss(toastId);
       toast.success(`Scraping job started: ${data.jobId}`);
       
       // Refresh entities after a delay
       setTimeout(fetchEntities, 3000);
     } catch (error) {
       console.error('Error triggering scrape:', error);
+      toast.dismiss(toastId);
       toast.error('Failed to start scrape job');
     } finally {
       setIsLoading(false);
@@ -135,9 +137,9 @@ export const useEntities = () => {
 
   // Export entities
   const exportEntities = async (filters: FilterState, format: 'CSV' | 'JSON' = 'CSV') => {
+    const toastId = toast.loading('Generating export...');
+    
     try {
-      toast.loading('Generating export...');
-
       const { data: { session } } = await supabase.auth.getSession();
       const { data, error } = await supabase.functions.invoke('export-entities', {
         body: {
@@ -167,6 +169,7 @@ export const useEntities = () => {
 
       if (error) throw error;
 
+      toast.dismiss(toastId);
       toast.success('Export completed!');
       
       // Download the file
@@ -178,6 +181,7 @@ export const useEntities = () => {
       a.click();
     } catch (error) {
       console.error('Error exporting entities:', error);
+      toast.dismiss(toastId);
       toast.error('Failed to export entities');
     }
   };
