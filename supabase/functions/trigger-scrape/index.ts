@@ -48,7 +48,7 @@ function generateDummyEntities(source: string, count: number) {
 }
 
 const TriggerScrapeSchema = z.object({
-  source: z.enum(['COMPANIES_HOUSE', 'GLEIF', 'SEC_EDGAR', 'ASIC']),
+  source: z.enum(['COMPANIES_HOUSE', 'CH', 'GLEIF', 'SEC_EDGAR', 'ASIC']),
   searchTerm: z.string().max(500).optional(),
   filters: z.record(z.unknown()).optional()
 });
@@ -76,7 +76,12 @@ serve(async (req) => {
 
     // Validate input
     const rawBody = await req.json();
-    const { source, searchTerm, filters } = TriggerScrapeSchema.parse(rawBody);
+    let { source, searchTerm, filters } = TriggerScrapeSchema.parse(rawBody);
+    
+    // Normalize CH to COMPANIES_HOUSE for internal consistency
+    if (source === 'CH') {
+      source = 'COMPANIES_HOUSE';
+    }
     
     console.log('Creating scraping job', userId ? `for user: ${userId}` : '(no auth)', { source, searchTerm });
 
