@@ -12,7 +12,7 @@ interface DataSource {
 }
 
 const dataSources: DataSource[] = [
-  { id: "uk", name: "UK Companies House", icon: ukCompaniesHouseLogo, enabled: true },
+  { id: "CH", name: "UK Companies House", icon: ukCompaniesHouseLogo, enabled: true },
   { id: "gleif", name: "LEI Number", icon: gleifLogo, enabled: true },
   { id: "hk", name: "Hong Kong ICRIS", icon: hkIcrisLogo, enabled: false, comingSoon: true },
   { id: "asic", name: "ASIC (Australia)", flag: "🇦🇺", enabled: false, comingSoon: true },
