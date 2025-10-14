@@ -75,7 +75,7 @@ serve(async (req) => {
     console.log('Job created:', job.id);
 
     // Call N8N webhook
-    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper';
+    const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook/vc-registry-scraper';
     
     console.log('Calling n8n webhook...');
     const response = await fetch(n8nWebhookUrl, {
