@@ -7,6 +7,51 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Calculate entity score based on available data
+function calculateEntityScore(entity: any): number {
+  let score = 0;
+  
+  // Data Completeness (40 points)
+  const fields = [
+    entity.legal_name,
+    entity.registry_id,
+    entity.country,
+    entity.status,
+    entity.incorporation_date,
+    entity.company_type,
+    entity.jurisdiction,
+    entity.address,
+    entity.website,
+    entity.officers,
+    entity.psc,
+  ];
+  const filledFields = fields.filter(f => f && (Array.isArray(f) ? f.length > 0 : true)).length;
+  score += (filledFields / fields.length) * 40;
+  
+  // Company Status (25 points)
+  const status = (entity.status || '').toLowerCase();
+  if (status === 'active') score += 25;
+  else if (status === 'inactive') score += 10;
+  else if (status === 'dissolved') score += 0;
+  else score += 5; // Unknown status
+  
+  // Web Presence (20 points)
+  if (entity.website) score += 20;
+  else if (entity.raw_payload?.api_response?.links) score += 10;
+  
+  // Company Age (15 points) - newer companies score higher
+  if (entity.incorporation_date) {
+    const incDate = new Date(entity.incorporation_date);
+    const yearsOld = (Date.now() - incDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+    if (yearsOld < 2) score += 15;
+    else if (yearsOld < 5) score += 10;
+    else if (yearsOld < 10) score += 5;
+  }
+  
+  // Ensure score is between 0 and 100
+  return Math.min(Math.max(Math.round(score), 0), 100);
+}
+
 const EntitySchema = z.object({
   legal_name: z.string().max(500),
   registry_id: z.string().max(200),
@@ -67,10 +112,12 @@ serve(async (req) => {
       .map((entity) => {
         const src = normalizeSource((entity as any).registry_source);
         const stat = normalizeStatus((entity as any).status);
+        const calculatedScore = calculateEntityScore(entity);
         return {
           ...(entity as any),
           registry_source: src,
           status: stat,
+          score: calculatedScore, // Override with calculated score
         };
       })
       // Keep only supported registry sources
