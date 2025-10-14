@@ -68,7 +68,7 @@ const Index = () => {
 
   const handleRunScrape = async () => {
     const sourceMap: Record<string, string> = {
-      uk: 'COMPANIES_HOUSE',
+      CH: 'CH',
       gleif: 'GLEIF',
       hk: 'HK',
       asic: 'ASIC'
