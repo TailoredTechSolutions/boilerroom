@@ -2,7 +2,7 @@ import { Database, Globe, Sliders, Download, Settings, LogOut, User, Grid, Chevr
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
-import logoImage from "@/assets/dcg-logo.png";
+import logoImage from "@/assets/vc-logo.png";
 import adminAvatar from "@/assets/admin-avatar.png";
 import { useState } from "react";
 import {
@@ -48,7 +48,7 @@ export const NavigationSidebar = () => {
       {/* Logo */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <img src={logoImage} alt="Venture Capital Logo" className="w-10 h-10 object-contain" />
+          <img src={logoImage} alt="Venture Capital Logo" className="w-12 h-12 object-contain" />
           <div>
             <h1 className="text-lg font-bold text-foreground">Venture Capital</h1>
             <p className="text-xs text-muted-foreground">IPO Firm</p>
