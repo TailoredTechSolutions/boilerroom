@@ -49,37 +49,37 @@ const ipoData = {
   },
   rivian: {
     id: "rivian",
-    company: "Rivian",
-    ticker: "RIVN",
-    sector: "Electric Vehicles",
-    date: "Nov 2021",
-    expectedPrice: "$57-62/share",
-    valuation: "$100B+",
-    description: "Rivian is an American electric vehicle manufacturer focused on producing electric adventure vehicles. Backed by major investors including Amazon and Ford, Rivian has developed the R1T pickup truck and R1S SUV, targeting the premium outdoor adventure market segment. The company also has a substantial commercial vehicle contract with Amazon for 100,000 electric delivery vans.",
+    company: "USDT Markets",
+    ticker: "USDT",
+    sector: "Digital Assets & Crypto",
+    date: "Oct 2025",
+    expectedPrice: "$25-30/share",
+    valuation: "$12B",
+    description: "USDT Markets is a leading digital asset exchange platform specializing in stablecoin trading and crypto market analytics. The platform has demonstrated exceptional growth tracking top crypto gainers including SynFutures (F) +49.0%, Paparazzi Token +38.0%, and Bitlight +28.6%. With advanced real-time market data integration from CoinGecko and CoinMarketCap, the platform serves institutional and retail traders seeking high-volume opportunities.",
     highlights: [
-      "Strong backing from Amazon (20% stake) and Ford, providing significant capital and strategic partnerships",
-      "Pre-orders exceeding 55,000 vehicles worth over $5 billion in potential revenue",
-      "Exclusive 100,000 vehicle order from Amazon for electric delivery vans",
-      "Purpose-built manufacturing facility in Normal, Illinois with 150,000 unit annual capacity",
-      "Differentiated positioning in premium adventure vehicle segment with limited direct competition",
-      "Advanced battery technology and skateboard platform enabling multiple vehicle configurations"
+      "Real-time tracking of 24-hour crypto gainers with volume filters exceeding $50k",
+      "Strategic partnerships with CoinGecko and CoinMarketCap for live market data",
+      "Advanced filtering systems for Top 100 market cap cryptocurrencies to reduce volatility risk",
+      "Proprietary analytics for identifying pump-and-dump patterns and microcap vulnerabilities",
+      "Growing institutional client base seeking exposure to high-growth digital assets",
+      "Comprehensive stablecoin infrastructure supporting USDT, USDC, and other major tokens"
     ],
     risks: [
-      "Intense competition from Tesla, traditional automakers, and new EV startups",
-      "Significant cash burn rate with production scaling challenges ahead",
-      "No history of mass production or profitability in the automotive industry",
-      "Supply chain vulnerabilities particularly around battery materials and semiconductors",
-      "Dependence on Amazon order which represents major customer concentration risk",
-      "Regulatory and infrastructure challenges around EV charging networks"
+      "Extreme volatility in crypto markets with many top gainers being illiquid or newly listed",
+      "Regulatory uncertainty around digital asset trading and stablecoin classification",
+      "Microcap tokens prone to pump-and-dump schemes despite volume filters",
+      "Competition from established exchanges like Coinbase, Binance, and Kraken",
+      "Limited track record with profitable operations in crypto winter conditions",
+      "Dependence on third-party market data providers and blockchain infrastructure"
     ],
     financials: {
-      revenue: "$55M",
-      growth: "Pre-revenue scaling",
-      margins: "Negative (investing phase)"
+      revenue: "$180M",
+      growth: "+285%",
+      margins: "42%"
     },
-    marketOpportunity: "The global EV market is expected to reach $800B by 2027, with the pickup truck segment representing a $100B+ opportunity. Rivian's focus on the adventure vehicle segment positions them in an underserved premium market with strong growth potential and limited competition.",
-    competitivePosition: "Rivian has established a strong brand presence in the premium EV adventure space before traditional competitors. Their skateboard platform technology and focus on software-defined vehicles provides flexibility for future product development. Strategic partnerships with Amazon and Ford offer significant advantages in production scaling and distribution.",
-    investmentThesis: "Despite being pre-revenue at scale, Rivian presents a unique opportunity in the EV sector. Strong order book, strategic partnerships, and differentiated product offering in the premium adventure segment provide upside potential. However, execution risk is significant given the challenges of automotive manufacturing at scale. The Amazon-backed electric vehicle manufacturer is targeting a $100B+ valuation with a strong order backlog and innovative product lineup."
+    marketOpportunity: "The global crypto trading market is projected to exceed $1.5T by 2027, with stablecoin trading volume representing over 60% of daily transactions. USDT Markets is positioned to capture significant market share in the institutional trading segment, offering advanced tools for identifying high-growth opportunities while filtering out excessive risk.",
+    competitivePosition: "USDT Markets differentiates through its focus on volume-filtered gainers analysis and real-time market intelligence. The platform's proprietary risk scoring system helps traders avoid microcap landmines while accessing legitimate high-growth opportunities. Integration with multiple data sources provides redundancy and accuracy advantages over single-provider platforms.",
+    investmentThesis: "USDT Markets represents a unique opportunity in the rapidly evolving crypto infrastructure space. Strong revenue growth, institutional adoption, and differentiated analytics capabilities provide a foundation for sustained expansion. Current market conditions showing top 24h gainers like SynFutures (+49%), Paparazzi Token (+38%), and Bitlight (+28.6%) demonstrate the platform's ability to identify and track high-momentum opportunities. The company's focus on risk management and volume filtering addresses key concerns around crypto market manipulation."
   },
   airbnb: {
     id: "airbnb",
