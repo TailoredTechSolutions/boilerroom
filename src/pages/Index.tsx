@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Play, Shield, Clock, Users, BarChart3, AlertTriangle, TrendingUp, Info, Search, Filter, FileText, Video, BookOpen, Star, Lock, Award, LayoutDashboard } from "lucide-react";
+import { Bell, Play, Shield, Clock, Users, BarChart3, AlertTriangle, TrendingUp, Info, Search, Filter, FileText, Video, BookOpen, Star, Lock, Award, LayoutDashboard, ChevronRight } from "lucide-react";
 import { InvestorSignupWizard } from "@/components/landing/InvestorSignupWizard";
 import { IPODetailModal } from "@/components/landing/IPODetailModal";
 import { Button } from "@/components/ui/button";
@@ -378,44 +378,62 @@ const Index = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div 
+              <button 
                 onClick={() => setShowValuationDialog(true)}
-                className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-card p-8 rounded-xl border-2 border-border hover:border-primary shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                  <FileText className="w-7 h-7 text-primary" />
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <FileText className="w-7 h-7 text-primary" />
+                  </div>
+                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">Valuation Analysis</h3>
+                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Valuation Analysis</h3>
                 <p className="text-muted-foreground">
                   Deep-dive into company financials, revenue models, and market positioning to assess fair value and growth potential.
                 </p>
-              </div>
-
-              <div 
-                onClick={() => setShowRiskDialog(true)}
-                className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-              >
-                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
-                  <AlertTriangle className="w-7 h-7 text-blue-600" />
+                <div className="mt-4 text-sm font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to learn more →
                 </div>
-                <h3 className="text-xl font-bold mb-3">Risk Assessment</h3>
+              </button>
+
+              <button 
+                onClick={() => setShowRiskDialog(true)}
+                className="bg-card p-8 rounded-xl border-2 border-border hover:border-blue-600 shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <AlertTriangle className="w-7 h-7 text-blue-600" />
+                  </div>
+                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 transition-colors">Risk Assessment</h3>
                 <p className="text-muted-foreground">
                   Comprehensive risk analysis covering market conditions, competitive landscape, and regulatory challenges.
                 </p>
-              </div>
-
-              <div 
-                onClick={() => setShowGrowthDialog(true)}
-                className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow md:col-span-2 cursor-pointer"
-              >
-                <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
-                  <TrendingUp className="w-7 h-7 text-blue-500" />
+                <div className="mt-4 text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to learn more →
                 </div>
-                <h3 className="text-xl font-bold mb-3">Growth Potential</h3>
+              </button>
+
+              <button 
+                onClick={() => setShowGrowthDialog(true)}
+                className="bg-card p-8 rounded-xl border-2 border-border hover:border-blue-500 shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group md:col-span-2 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <TrendingUp className="w-7 h-7 text-blue-500" />
+                  </div>
+                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 group-hover:text-blue-500 transition-colors">Growth Potential</h3>
                 <p className="text-muted-foreground">
                   Market opportunity analysis and growth trajectory projections based on industry trends and company fundamentals.
                 </p>
-              </div>
+                <div className="mt-4 text-sm font-semibold text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to learn more →
+                </div>
+              </button>
             </div>
           </div>
         </section>
