@@ -31,6 +31,10 @@ const Settings = () => {
     webhookSecret: ""
   });
 
+  const [stripeConfig, setStripeConfig] = useState({
+    secretKey: ""
+  });
+
   const saveChanges = () => {
     toast({
       title: "Settings saved",
@@ -49,6 +53,13 @@ const Settings = () => {
     toast({
       title: "N8N configuration saved",
       description: "Your webhook secret has been updated",
+    });
+  };
+
+  const saveStripeConfig = () => {
+    toast({
+      title: "Stripe configuration saved",
+      description: "Your payment integration has been updated",
     });
   };
 
@@ -223,6 +234,27 @@ const Settings = () => {
                       <p className="text-xs text-muted-foreground">Secret key used to validate webhook callbacks from N8N</p>
                     </div>
                     <Button onClick={saveN8nConfig}>Save N8N Configuration</Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Stripe Payment Configuration</CardTitle>
+                    <CardDescription>Configure Stripe for premium subscription payments</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="stripeSecretKey">Secret Key</Label>
+                      <Input 
+                        id="stripeSecretKey" 
+                        type="password"
+                        placeholder="sk_live_••••••••••••••••••••••••••••"
+                        value={stripeConfig.secretKey}
+                        onChange={(e) => setStripeConfig(prev => ({ ...prev, secretKey: e.target.value }))}
+                      />
+                      <p className="text-xs text-muted-foreground">Your Stripe Secret Key from the Stripe Dashboard</p>
+                    </div>
+                    <Button onClick={saveStripeConfig}>Save Stripe Configuration</Button>
                   </CardContent>
                 </Card>
               </TabsContent>
