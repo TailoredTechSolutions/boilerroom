@@ -53,6 +53,45 @@ export type Database = {
         }
         Relationships: []
       }
+      email_subscribers: {
+        Row: {
+          alert_preferences: Json | null
+          created_at: string
+          email: string
+          id: string
+          last_alert_sent: string | null
+          metadata: Json | null
+          name: string | null
+          subscribed_at: string
+          subscription_status: string | null
+          updated_at: string
+        }
+        Insert: {
+          alert_preferences?: Json | null
+          created_at?: string
+          email: string
+          id?: string
+          last_alert_sent?: string | null
+          metadata?: Json | null
+          name?: string | null
+          subscribed_at?: string
+          subscription_status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alert_preferences?: Json | null
+          created_at?: string
+          email?: string
+          id?: string
+          last_alert_sent?: string | null
+          metadata?: Json | null
+          name?: string | null
+          subscribed_at?: string
+          subscription_status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       entities: {
         Row: {
           address: Json | null
@@ -182,6 +221,48 @@ export type Database = {
           row_count?: number | null
           status?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      market_alerts: {
+        Row: {
+          alert_data: Json | null
+          alert_type: string
+          company_name: string | null
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          published_at: string
+          sent_to_subscribers: boolean | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alert_data?: Json | null
+          alert_type: string
+          company_name?: string | null
+          content: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string
+          sent_to_subscribers?: boolean | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alert_data?: Json | null
+          alert_type?: string
+          company_name?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published_at?: string
+          sent_to_subscribers?: boolean | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
