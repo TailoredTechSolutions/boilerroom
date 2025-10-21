@@ -37,6 +37,9 @@ import Settings from "./pages/Settings";
 import InvestorFundScraper from "./pages/InvestorFundScraper";
 import Premium from "./pages/Premium";
 import Dashboard from "./pages/Dashboard";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,10 +53,13 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<Index />} />
             <Route path="/ipo-landing" element={<Index />} />
             <Route path="/premium" element={<Premium />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/overview" element={<ProtectedRoute><Overview /></ProtectedRoute>} />
             <Route path="/data-sources" element={<ProtectedRoute><DataSources /></ProtectedRoute>} />
             <Route path="/investor-fund-scraper" element={<ProtectedRoute><InvestorFundScraper /></ProtectedRoute>} />

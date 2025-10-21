@@ -75,8 +75,11 @@ export const LandingNav = ({ onGetAlertsClick }: LandingNavProps) => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>My Account</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate("/overview")}>
+                      <DropdownMenuItem onClick={() => navigate("/dashboard")}>
                         Dashboard
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/profile")}>
+                        Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/settings")}>
                         Settings
