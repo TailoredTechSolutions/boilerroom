@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Users, Target, TrendingUp, Mail, Phone, Building2, Search, Filter, X } from "lucide-react";
+import { Users, Target, TrendingUp, Mail, Phone, Building2, Search, Filter, X, DollarSign } from "lucide-react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { KPICard } from "@/components/KPICard";
@@ -13,97 +12,81 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 
 const LeadGeneration = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const sourceFilter = searchParams.get('source');
-  
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [entities, setEntities] = useState<any[]>([]);
+  const [subscribers, setSubscribers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchEntities();
-  }, [sourceFilter]);
+    fetchSubscribers();
+  }, []);
 
-  const fetchEntities = async () => {
+  const fetchSubscribers = async () => {
     setIsLoading(true);
     let query = supabase
-      .from('entities')
+      .from('email_subscribers')
       .select('*')
-      .order('score', { ascending: false });
-
-    // Apply source filter if present
-    if (sourceFilter) {
-      query = query.eq('registry_source', sourceFilter);
-    }
+      .order('subscribed_at', { ascending: false });
 
     const { data, error } = await query;
 
     if (data) {
-      setEntities(data);
+      setSubscribers(data);
     }
     setIsLoading(false);
   };
 
-  const clearSourceFilter = () => {
-    setSearchParams({});
-  };
-
-  // Transform entities into leads format
-  const leads = entities.map(entity => {
-    const emailContacts = Array.isArray(entity.email_contacts) ? entity.email_contacts : [];
-    const officers = Array.isArray(entity.officers) ? entity.officers : [];
+  // Transform subscribers into leads format
+  const leads = subscribers.map(subscriber => {
+    // Calculate lead quality score based on survey completion and data completeness
+    let score = 50; // Base score
+    if (subscriber.survey_completed) score += 30;
+    if (subscriber.phone && subscriber.phone_verified) score += 10;
+    if (subscriber.portfolio_size) score += 5;
+    if (subscriber.annual_income) score += 5;
     
-    // Get first email contact
-    const firstEmail = emailContacts.length > 0 ? emailContacts[0] : null;
-    const email = typeof firstEmail === 'string' ? firstEmail : firstEmail?.email || 'N/A';
-    
-    // Get first officer as contact
-    const firstOfficer = officers.length > 0 ? officers[0] : null;
-    const contactName = firstOfficer?.name || firstOfficer?.officer_name || 'N/A';
-    
-    // Calculate status based on score
-    const score = Number(entity.score) || 0;
+    // Calculate status based on score and survey completion
     let status = 'Cold';
-    if (score >= 80) status = 'Hot';
+    if (score >= 80 || subscriber.survey_completed) status = 'Hot';
     else if (score >= 60) status = 'Warm';
 
     return {
-      id: entity.id,
-      companyName: entity.legal_name || entity.trading_name || 'N/A',
+      id: subscriber.id,
+      companyName: subscriber.name || 'Anonymous Investor',
       status,
-      contactName,
-      email,
-      phone: 'N/A',
+      contactName: subscriber.name || 'N/A',
+      email: subscriber.email,
+      phone: subscriber.phone || 'N/A',
       score: Math.round(score),
-      lastContact: entity.last_seen ? new Date(entity.last_seen).toISOString().split('T')[0] : 'N/A',
-      website: entity.website || 'N/A',
-      jurisdiction: entity.jurisdiction || 'N/A',
-      registrySource: entity.registry_source || 'N/A',
-      companyType: entity.company_type || 'N/A',
-      dataQualityScore: entity.data_quality_score || 0,
-      webPresenceScore: entity.web_presence_score || 0,
-      emailContactsCount: emailContacts.length,
-      officersCount: officers.length
+      lastContact: subscriber.subscribed_at ? new Date(subscriber.subscribed_at).toISOString().split('T')[0] : 'N/A',
+      portfolioSize: subscriber.portfolio_size || 'N/A',
+      experience: subscriber.experience || 'N/A',
+      interestedSectors: subscriber.interested_sectors || [],
+      annualIncome: subscriber.annual_income || 'N/A',
+      capitalAvailable: subscriber.capital_available || 'N/A',
+      surveyCompleted: subscriber.survey_completed || false,
+      phoneVerified: subscriber.phone_verified || false,
+      subscriptionStatus: subscriber.subscription_status || 'active',
+      bestTimeToReach: subscriber.best_time_to_reach || 'N/A'
     };
   });
 
   const filteredLeads = leads.filter(lead =>
     lead.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.contactName.toLowerCase().includes(searchTerm.toLowerCase())
+    lead.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Calculate real-time KPI metrics
   const totalLeads = leads.length;
   const hotLeads = leads.filter(l => l.status === "Hot").length;
   const warmLeads = leads.filter(l => l.status === "Warm").length;
-  const leadsWithEmail = leads.filter(l => l.emailContactsCount && l.emailContactsCount > 0).length;
-  const leadsWithWebsite = leads.filter(l => l.website && l.website !== 'N/A').length;
+  const surveyCompleted = leads.filter(l => l.surveyCompleted).length;
+  const phoneVerified = leads.filter(l => l.phoneVerified && l.phone !== 'N/A').length;
   const avgScore = totalLeads > 0 ? Math.round(leads.reduce((acc, l) => acc + l.score, 0) / totalLeads) : 0;
-  const qualityLeadsPercentage = totalLeads > 0 ? Math.round((leadsWithEmail / totalLeads) * 100) : 0;
-  const webPresenceRate = totalLeads > 0 ? Math.round((leadsWithWebsite / totalLeads) * 100) : 0;
+  const qualityLeadsPercentage = totalLeads > 0 ? Math.round((surveyCompleted / totalLeads) * 100) : 0;
+  const contactableRate = totalLeads > 0 ? Math.round((phoneVerified / totalLeads) * 100) : 0;
 
   const getStatusColor = (status: string) => {
     if (status === "Hot") return "bg-destructive/20 text-destructive border-destructive/50";
@@ -134,26 +117,15 @@ const LeadGeneration = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-4xl font-bold text-foreground">Lead Generation</h1>
-                <p className="text-muted-foreground">Manage and track your IPO leads and prospects</p>
+                <p className="text-muted-foreground">Manage and track your IPO investor leads from landing page signups</p>
               </div>
-              {sourceFilter && (
-                <Button
-                  variant="outline"
-                  onClick={clearSourceFilter}
-                  className="flex items-center gap-2"
-                >
-                  <Filter className="w-4 h-4" />
-                  Filtered: {sourceFilter}
-                  <X className="w-4 h-4" />
-                </Button>
-              )}
             </div>
           </div>
 
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <KPICard
-              title="Total Leads"
+              title="Total IPO Leads"
               value={isLoading ? "..." : totalLeads}
               subtitle={`${hotLeads} hot • ${warmLeads} warm`}
               icon={Users}
@@ -162,21 +134,21 @@ const LeadGeneration = () => {
             <KPICard
               title="Hot Leads"
               value={isLoading ? "..." : hotLeads}
-              subtitle={`${Math.round((hotLeads / totalLeads) * 100) || 0}% of total`}
+              subtitle={`${Math.round((hotLeads / totalLeads) * 100) || 0}% qualified`}
               icon={Target}
               variant="success"
             />
             <KPICard
-              title="Contact Data"
+              title="Survey Completed"
               value={isLoading ? "..." : `${qualityLeadsPercentage}%`}
-              subtitle={`${leadsWithEmail} leads with emails`}
+              subtitle={`${surveyCompleted} full profiles`}
               icon={Mail}
               variant="purple"
             />
             <KPICard
               title="Avg. Quality"
               value={isLoading ? "..." : avgScore}
-              subtitle={`${webPresenceRate}% have websites`}
+              subtitle={`${contactableRate}% phone verified`}
               icon={TrendingUp}
               variant="warning"
             />
@@ -187,9 +159,9 @@ const LeadGeneration = () => {
             <div className="flex gap-4 items-center">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
+                  <Input
                   type="search"
-                  placeholder="Search leads by company or contact name..."
+                  placeholder="Search leads by name or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -218,10 +190,13 @@ const LeadGeneration = () => {
                   <thead className="bg-muted/50 backdrop-blur-sm">
                     <tr>
                       <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Company
+                        Investor Name
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Contact
+                        Contact Info
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Portfolio Size
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Status
@@ -230,7 +205,7 @@ const LeadGeneration = () => {
                         Score
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Last Seen
+                        Subscribed
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Actions
@@ -243,20 +218,37 @@ const LeadGeneration = () => {
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                              <Building2 className="w-5 h-5 text-primary" />
+                              <Users className="w-5 h-5 text-primary" />
                             </div>
-                            <p className="font-medium text-foreground">{lead.companyName}</p>
+                            <div>
+                              <p className="font-medium text-foreground">{lead.companyName}</p>
+                              {lead.surveyCompleted && (
+                                <Badge variant="outline" className="mt-1 text-xs">Survey Complete</Badge>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="p-4">
                           <div className="space-y-1">
-                            <p className="text-sm font-medium text-foreground">{lead.contactName}</p>
-                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                              <span className="flex items-center gap-1">
-                                <Mail className="w-3 h-3" />
-                                {lead.email}
-                              </span>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <Mail className="w-3 h-3" />
+                              <span className="text-sm">{lead.email}</span>
                             </div>
+                            {lead.phone !== 'N/A' && (
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Phone className="w-3 h-3" />
+                                <span>{lead.phone}</span>
+                                {lead.phoneVerified && (
+                                  <Badge variant="outline" className="text-xs">Verified</Badge>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm text-foreground">{lead.portfolioSize}</span>
                           </div>
                         </td>
                         <td className="p-4">
