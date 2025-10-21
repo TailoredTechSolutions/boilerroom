@@ -1,6 +1,9 @@
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { 
   Mail, 
   Workflow, 
@@ -24,8 +27,79 @@ import {
   GitBranch,
   Clock,
   Database,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Play,
+  Pause,
+  Eye
 } from "lucide-react";
+
+// Dummy campaign data
+const campaigns = [
+  {
+    id: 1,
+    name: "IPO Alert Series Q1 2025",
+    type: "Email",
+    status: "Active",
+    sent: 15234,
+    opened: 8542,
+    clicked: 3421,
+    converted: 287,
+    budget: "$5,200",
+    roi: "385%"
+  },
+  {
+    id: 2,
+    name: "LinkedIn Tech Investors",
+    type: "Social",
+    status: "Active",
+    impressions: 45678,
+    engagement: 4567,
+    clicks: 1234,
+    leads: 89,
+    budget: "$3,800",
+    roi: "245%"
+  },
+  {
+    id: 3,
+    name: "Google Ads - Crypto IPOs",
+    type: "PPC",
+    status: "Paused",
+    impressions: 125000,
+    clicks: 2450,
+    conversions: 45,
+    cost: "$4,500",
+    budget: "$6,000",
+    roi: "158%"
+  }
+];
+
+// Dummy automation workflows
+const workflows = [
+  {
+    name: "New Subscriber Onboarding",
+    trigger: "Email signup",
+    steps: 5,
+    active: 234,
+    completed: 1876,
+    status: "Active"
+  },
+  {
+    name: "Hot Lead Nurture Sequence",
+    trigger: "Survey completion",
+    steps: 7,
+    active: 89,
+    completed: 456,
+    status: "Active"
+  },
+  {
+    name: "Re-engagement Campaign",
+    trigger: "30 days inactive",
+    steps: 4,
+    active: 145,
+    completed: 678,
+    status: "Active"
+  }
+];
 
 const Marketing = () => {
   return (
@@ -53,8 +127,53 @@ const Marketing = () => {
                       Email, social media, and PPC campaigns
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Campaign builder coming soon...</p>
+                  <CardContent className="space-y-4">
+                    {campaigns.map((campaign) => (
+                      <div key={campaign.id} className="p-4 bg-muted/30 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-foreground">{campaign.name}</h4>
+                            <div className="flex gap-2 mt-1">
+                              <Badge variant="outline" className="text-xs">{campaign.type}</Badge>
+                              <Badge variant={campaign.status === "Active" ? "default" : "secondary"} className="text-xs">
+                                {campaign.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          <Button size="icon" variant="ghost">
+                            {campaign.status === "Active" ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          {campaign.type === "Email" && (
+                            <>
+                              <div><span className="text-muted-foreground">Sent:</span> {campaign.sent?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Opened:</span> {campaign.opened?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Clicked:</span> {campaign.clicked?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Converted:</span> {campaign.converted}</div>
+                            </>
+                          )}
+                          {campaign.type === "Social" && (
+                            <>
+                              <div><span className="text-muted-foreground">Impressions:</span> {campaign.impressions?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Engagement:</span> {campaign.engagement?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Clicks:</span> {campaign.clicks?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Leads:</span> {campaign.leads}</div>
+                            </>
+                          )}
+                          {campaign.type === "PPC" && (
+                            <>
+                              <div><span className="text-muted-foreground">Impressions:</span> {campaign.impressions?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Clicks:</span> {campaign.clicks?.toLocaleString()}</div>
+                              <div><span className="text-muted-foreground">Conversions:</span> {campaign.conversions}</div>
+                              <div><span className="text-muted-foreground">Cost:</span> {campaign.cost}</div>
+                            </>
+                          )}
+                          <div><span className="text-muted-foreground">Budget:</span> {campaign.budget}</div>
+                          <div className="text-green-600 font-semibold"><span className="text-muted-foreground">ROI:</span> {campaign.roi}</div>
+                        </div>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -65,11 +184,27 @@ const Marketing = () => {
                       Automation Workflows
                     </CardTitle>
                     <CardDescription>
-                      Trigger-based automation: "New lead from ASIC → nurture sequence"
+                      Trigger-based automation sequences
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Workflow builder coming soon...</p>
+                  <CardContent className="space-y-4">
+                    {workflows.map((workflow, idx) => (
+                      <div key={idx} className="p-4 bg-muted/30 rounded-lg space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-foreground">{workflow.name}</h4>
+                            <p className="text-xs text-muted-foreground mt-1">Trigger: {workflow.trigger}</p>
+                          </div>
+                          <Badge variant="outline" className="bg-green-100 text-green-800">{workflow.status}</Badge>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div><span className="text-muted-foreground">Steps:</span> {workflow.steps}</div>
+                          <div><span className="text-muted-foreground">Active:</span> {workflow.active}</div>
+                          <div><span className="text-muted-foreground">Completed:</span> {workflow.completed}</div>
+                        </div>
+                        <Progress value={(workflow.completed / (workflow.completed + workflow.active)) * 100} className="h-2" />
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -80,11 +215,41 @@ const Marketing = () => {
                       Campaign Analytics
                     </CardTitle>
                     <CardDescription>
-                      CTR, conversions, and lead sources
+                      Performance metrics across all channels
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Campaign analytics coming soon...</p>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Email Open Rate</span>
+                        <span className="text-sm font-semibold">56.1%</span>
+                      </div>
+                      <Progress value={56.1} className="h-2" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Click-Through Rate</span>
+                        <span className="text-sm font-semibold">22.5%</span>
+                      </div>
+                      <Progress value={22.5} className="h-2" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Conversion Rate</span>
+                        <span className="text-sm font-semibold">8.4%</span>
+                      </div>
+                      <Progress value={8.4} className="h-2" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Total Spend</p>
+                        <p className="text-lg font-bold text-foreground">$15,500</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Avg ROI</p>
+                        <p className="text-lg font-bold text-green-600">262%</p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
