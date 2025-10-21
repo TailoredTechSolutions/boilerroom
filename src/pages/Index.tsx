@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Bell, Play, Shield, Clock, Users, BarChart3, AlertTriangle, TrendingUp, Info, Search, Filter, FileText, Video, BookOpen, Star, Lock, Award, Menu } from "lucide-react";
 import { InvestorSignupWizard } from "@/components/landing/InvestorSignupWizard";
+import { IPODetailModal } from "@/components/landing/IPODetailModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,8 +11,160 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+// IPO Data
+const ipoData = {
+  techcorp: {
+    id: "techcorp",
+    company: "TechCorp Inc.",
+    ticker: "TECH",
+    sector: "AI-Powered SaaS",
+    date: "2 min ago",
+    expectedPrice: "$18-22/share",
+    valuation: "$2B",
+    description: "TechCorp is a leading AI-powered SaaS platform serving enterprise customers across multiple industries. The company has demonstrated strong product-market fit with over 500 enterprise clients and a net revenue retention rate of 135%. Their proprietary AI technology provides significant competitive advantages in automation and predictive analytics.",
+    highlights: [
+      "Strong enterprise customer base with Fortune 500 clients including major tech companies and financial institutions",
+      "Net revenue retention rate of 135% indicating strong upsell momentum and customer satisfaction",
+      "Proprietary AI algorithms with significant technological moats and patent portfolio",
+      "Experienced management team with previous exits and deep industry expertise",
+      "Multiple revenue streams including licensing, subscription, and professional services"
+    ],
+    risks: [
+      "Intense competition from established players like Salesforce, Microsoft, and Oracle",
+      "High customer concentration with top 10 customers representing 45% of revenue",
+      "Current lack of profitability with path to positive cash flow expected in 18-24 months",
+      "Regulatory uncertainty around AI technologies and data privacy compliance",
+      "Dependence on cloud infrastructure providers for service delivery"
+    ],
+    financials: {
+      revenue: "$450M",
+      growth: "+125%",
+      margins: "72%"
+    },
+    marketOpportunity: "The enterprise AI and automation market is projected to reach $500B by 2027, growing at a CAGR of 35%. TechCorp is well-positioned to capture significant market share in this rapidly expanding sector, with their unique approach to vertical-specific AI solutions providing a differentiated offering.",
+    competitivePosition: "TechCorp differentiates through its vertical-specific AI models that outperform general-purpose solutions by 40% in accuracy. The company has built strong partnerships with major cloud providers and system integrators, creating a network effect that strengthens their market position.",
+    investmentThesis: "TechCorp represents a compelling opportunity in the high-growth AI/SaaS sector. Strong unit economics, impressive customer retention metrics, and significant total addressable market provide a foundation for sustained growth. The roadshow begins next week with strong early institutional interest."
+  },
+  rivian: {
+    id: "rivian",
+    company: "Rivian",
+    ticker: "RIVN",
+    sector: "Electric Vehicles",
+    date: "Nov 2021",
+    expectedPrice: "$57-62/share",
+    valuation: "$100B+",
+    description: "Rivian is an American electric vehicle manufacturer focused on producing electric adventure vehicles. Backed by major investors including Amazon and Ford, Rivian has developed the R1T pickup truck and R1S SUV, targeting the premium outdoor adventure market segment. The company also has a substantial commercial vehicle contract with Amazon for 100,000 electric delivery vans.",
+    highlights: [
+      "Strong backing from Amazon (20% stake) and Ford, providing significant capital and strategic partnerships",
+      "Pre-orders exceeding 55,000 vehicles worth over $5 billion in potential revenue",
+      "Exclusive 100,000 vehicle order from Amazon for electric delivery vans",
+      "Purpose-built manufacturing facility in Normal, Illinois with 150,000 unit annual capacity",
+      "Differentiated positioning in premium adventure vehicle segment with limited direct competition",
+      "Advanced battery technology and skateboard platform enabling multiple vehicle configurations"
+    ],
+    risks: [
+      "Intense competition from Tesla, traditional automakers, and new EV startups",
+      "Significant cash burn rate with production scaling challenges ahead",
+      "No history of mass production or profitability in the automotive industry",
+      "Supply chain vulnerabilities particularly around battery materials and semiconductors",
+      "Dependence on Amazon order which represents major customer concentration risk",
+      "Regulatory and infrastructure challenges around EV charging networks"
+    ],
+    financials: {
+      revenue: "$55M",
+      growth: "Pre-revenue scaling",
+      margins: "Negative (investing phase)"
+    },
+    marketOpportunity: "The global EV market is expected to reach $800B by 2027, with the pickup truck segment representing a $100B+ opportunity. Rivian's focus on the adventure vehicle segment positions them in an underserved premium market with strong growth potential and limited competition.",
+    competitivePosition: "Rivian has established a strong brand presence in the premium EV adventure space before traditional competitors. Their skateboard platform technology and focus on software-defined vehicles provides flexibility for future product development. Strategic partnerships with Amazon and Ford offer significant advantages in production scaling and distribution.",
+    investmentThesis: "Despite being pre-revenue at scale, Rivian presents a unique opportunity in the EV sector. Strong order book, strategic partnerships, and differentiated product offering in the premium adventure segment provide upside potential. However, execution risk is significant given the challenges of automotive manufacturing at scale. The Amazon-backed electric vehicle manufacturer is targeting a $100B+ valuation with a strong order backlog and innovative product lineup."
+  },
+  airbnb: {
+    id: "airbnb",
+    company: "Airbnb",
+    ticker: "ABNB",
+    sector: "Travel Tech",
+    date: "Dec 2020",
+    expectedPrice: "$56-60/share",
+    valuation: "$47B",
+    description: "Airbnb is the world's leading online marketplace for short-term vacation rentals and experiences, connecting hosts with guests across 220+ countries. Despite pandemic challenges, the company has demonstrated remarkable resilience with strong booking recovery and a shift toward long-term stays and local travel patterns.",
+    highlights: [
+      "Global network of 4+ million hosts offering 7+ million accommodations worldwide",
+      "Strong brand recognition with over 90% aided awareness in major markets",
+      "Asset-light business model with high incremental margins and strong unit economics",
+      "Rapid recovery in bookings showing resilience despite pandemic headwinds",
+      "Growing long-term stay segment (28+ days) representing 24% of gross booking value",
+      "Experienced leadership team that successfully navigated the company through crisis"
+    ],
+    risks: [
+      "Regulatory challenges in major cities including short-term rental restrictions",
+      "Intense competition from Booking.com, Vrbo, and emerging regional players",
+      "Dependence on discretionary consumer spending and travel demand recovery",
+      "Host and guest safety concerns requiring ongoing investment in trust and safety",
+      "Foreign exchange exposure given global operations",
+      "Potential for increased regulation around gig economy classification"
+    ],
+    financials: {
+      revenue: "$3.4B (2019)",
+      growth: "-30% (2020, pandemic impact)",
+      margins: "15-20% (normalized)"
+    },
+    marketOpportunity: "The global short-term rental market is estimated at $170B+ with significant room for growth as alternative accommodations gain mainstream acceptance. Post-pandemic travel trends favor private, socially-distanced accommodations, positioning Airbnb well for sustained growth.",
+    competitivePosition: "Airbnb's two-sided marketplace benefits from strong network effects, with the largest selection of unique accommodations globally. The platform's focus on experiences and community differentiation from traditional hotel booking sites. Strong brand and user trust provide defensible competitive advantages.",
+    investmentThesis: "Airbnb's blockbuster debut comes during uncertain times, but the company has proven its resilience and adaptability. The platform showed remarkable recovery despite pandemic challenges, with strong recovery indicators pointing to normalized demand returning faster than expected. The shift to remote work and flexible travel arrangements plays to Airbnb's strengths in longer-term stays."
+  },
+  snowflake: {
+    id: "snowflake",
+    company: "Snowflake",
+    ticker: "SNOW",
+    sector: "Cloud Data",
+    date: "Sep 2020",
+    expectedPrice: "$75-85/share",
+    valuation: "$23.5B",
+    description: "Snowflake is a cloud-based data warehousing company that enables organizations to mobilize their data with a unique platform-as-a-service model. The company's architecture separates storage and compute, allowing customers to scale independently and pay only for what they use. Snowflake has attracted high-profile investors including Salesforce and Berkshire Hathaway.",
+    highlights: [
+      "Triple-digit revenue growth with strong customer retention metrics (158% net revenue retention)",
+      "Strategic investments from Salesforce Ventures and Berkshire Hathaway adding credibility",
+      "Unique cloud-native architecture with significant competitive advantages",
+      "Over 3,100 customers including 241 of the Fortune 500 companies",
+      "Cloud-agnostic platform running on AWS, Azure, and Google Cloud",
+      "Strong land-and-expand model with growing customer spend over time"
+    ],
+    risks: [
+      "Intense competition from AWS Redshift, Google BigQuery, and Microsoft Azure",
+      "Current lack of profitability with significant sales and marketing spend required",
+      "High customer acquisition costs requiring scale for sustainable unit economics",
+      "Dependence on underlying cloud providers (AWS, Azure, GCP) for infrastructure",
+      "Rapid market evolution requiring continuous innovation and R&D investment",
+      "Potential for increased competition as hyperscalers invest in data warehouse offerings"
+    ],
+    financials: {
+      revenue: "$592M (TTM)",
+      growth: "+133%",
+      margins: "56% (gross)"
+    },
+    marketOpportunity: "The cloud data warehouse market is expected to grow to $22B by 2025 as organizations accelerate digital transformation and migrate legacy data infrastructure to the cloud. Snowflake is well-positioned as a platform-agnostic solution in this rapidly expanding market.",
+    competitivePosition: "Snowflake's unique architecture and cloud-agnostic approach differentiates it from cloud provider native solutions. The company's consumption-based pricing model aligns well with customer needs and creates a capital-efficient business model. Strong partnerships with system integrators accelerate customer adoption.",
+    investmentThesis: "Snowflake's explosive growth during its roadshow phase attracted backing from tech giants Salesforce and Warren Buffett's Berkshire Hathaway. The cloud data platform demonstrates exceptional product-market fit with net revenue retention of 158%, indicating strong customer satisfaction and expanding use cases. Despite current losses, the company's unit economics and market position suggest significant long-term potential."
+  }
+};
+
 const Index = () => {
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [selectedIPO, setSelectedIPO] = useState<typeof ipoData[keyof typeof ipoData] | null>(null);
+  const [showIPODetail, setShowIPODetail] = useState(false);
+
+  const handleViewAnalysis = (ipoId: keyof typeof ipoData) => {
+    setSelectedIPO(ipoData[ipoId]);
+    setShowIPODetail(true);
+  };
+
+  const scrollToSampleAlerts = () => {
+    const sampleAlertsSection = document.getElementById('sample-alerts');
+    if (sampleAlertsSection) {
+      sampleAlertsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,6 +231,7 @@ const Index = () => {
                 <Button
                   size="lg"
                   variant="outline"
+                  onClick={scrollToSampleAlerts}
                   className="border-white/30 text-white hover:bg-white/10 text-base font-semibold h-14 px-8"
                 >
                   <Play className="w-5 h-5 mr-2" />
@@ -118,7 +272,11 @@ const Index = () => {
 
               <div className="flex items-center justify-between">
                 <Badge variant="secondary" className="bg-blue-50 text-blue-700">High Growth</Badge>
-                <Button variant="link" className="text-primary font-semibold">
+                <Button 
+                  variant="link" 
+                  onClick={() => handleViewAnalysis('techcorp')}
+                  className="text-primary font-semibold"
+                >
                   Read Full Analysis →
                 </Button>
               </div>
@@ -209,7 +367,7 @@ const Index = () => {
         </section>
 
         {/* Sample Alerts Section */}
-        <section className="py-20 px-4 bg-blue-50/30">
+        <section className="py-20 px-4 bg-blue-50/30" id="sample-alerts">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
               <Badge variant="secondary" className="mb-4">
@@ -250,7 +408,11 @@ const Index = () => {
                         <BarChart3 className="w-4 h-4" />
                         Expected: $57-62/share
                       </span>
-                      <Button variant="link" className="text-primary font-semibold">
+                      <Button 
+                        variant="link" 
+                        onClick={() => handleViewAnalysis('rivian')}
+                        className="text-primary font-semibold"
+                      >
                         View Analysis →
                       </Button>
                     </div>
@@ -283,7 +445,11 @@ const Index = () => {
                         <BarChart3 className="w-4 h-4" />
                         Expected: $56-60/share
                       </span>
-                      <Button variant="link" className="text-primary font-semibold">
+                      <Button 
+                        variant="link" 
+                        onClick={() => handleViewAnalysis('airbnb')}
+                        className="text-primary font-semibold"
+                      >
                         View Analysis →
                       </Button>
                     </div>
@@ -316,7 +482,11 @@ const Index = () => {
                         <BarChart3 className="w-4 h-4" />
                         Expected: $75-85/share
                       </span>
-                      <Button variant="link" className="text-primary font-semibold">
+                      <Button 
+                        variant="link" 
+                        onClick={() => handleViewAnalysis('snowflake')}
+                        className="text-primary font-semibold"
+                      >
                         View Analysis →
                       </Button>
                     </div>
@@ -733,6 +903,11 @@ const Index = () => {
       </main>
 
       <InvestorSignupWizard open={showSignupModal} onOpenChange={setShowSignupModal} />
+      <IPODetailModal 
+        open={showIPODetail} 
+        onOpenChange={setShowIPODetail} 
+        ipoData={selectedIPO}
+      />
     </div>
   );
 };
