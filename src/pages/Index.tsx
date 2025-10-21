@@ -81,6 +81,40 @@ const ipoData = {
     competitivePosition: "USDT Markets differentiates through its focus on volume-filtered gainers analysis and real-time market intelligence. The platform's proprietary risk scoring system helps traders avoid microcap landmines while accessing legitimate high-growth opportunities. Integration with multiple data sources provides redundancy and accuracy advantages over single-provider platforms.",
     investmentThesis: "USDT Markets represents a unique opportunity in the rapidly evolving crypto infrastructure space. Strong revenue growth, institutional adoption, and differentiated analytics capabilities provide a foundation for sustained expansion. Current market conditions showing top 24h gainers like SynFutures (+49%), Paparazzi Token (+38%), and Bitlight (+28.6%) demonstrate the platform's ability to identify and track high-momentum opportunities. The company's focus on risk management and volume filtering addresses key concerns around crypto market manipulation."
   },
+  apple: {
+    id: "apple",
+    company: "Apple Inc.",
+    ticker: "AAPL",
+    sector: "Technology",
+    date: "Dec 1980",
+    expectedPrice: "$22/share",
+    valuation: "$1.8B",
+    description: "Apple Computer Company goes public on December 12, 1980, offering shares at $22 per share. The stock opened at $22 and closed around $29 on its first day, creating instant returns for IPO buyers. Founded by Steve Jobs, Steve Wozniak, and Ronald Wayne in 1976, Apple has revolutionized personal computing with products like the Apple II and is poised for further innovation.",
+    highlights: [
+      "First-day pop: Opening at $22, closing near $29 - a roughly 32% gain for IPO participants",
+      "Founded by visionary entrepreneurs with proven track record in personal computing",
+      "Apple II computer showing strong market adoption in education and business sectors",
+      "Current price around $262 per share represents approximately 12× return from IPO price",
+      "Multiple stock splits over the years have multiplied shareholder value significantly",
+      "Strong brand recognition and loyal customer base in emerging personal computer market"
+    ],
+    risks: [
+      "Intense competition from IBM and other established technology companies",
+      "Heavy dependence on Apple II product line for majority of revenue",
+      "Management team lacks experience running a public company",
+      "Rapid technological change could make current products obsolete quickly",
+      "Economic recession could dampen consumer spending on discretionary tech products",
+      "Questions about long-term sustainability of personal computer market growth"
+    ],
+    financials: {
+      revenue: "$117M (1980)",
+      growth: "+143%",
+      margins: "23%"
+    },
+    marketOpportunity: "The personal computer market is in its infancy with massive growth potential as computers become more accessible to consumers and businesses. Apple is well-positioned to capture significant market share in education, creative professionals, and home computing segments.",
+    competitivePosition: "Apple has established strong differentiation through user-friendly design and integrated hardware-software approach. The company's focus on the complete user experience sets it apart from competitors who primarily focus on technical specifications. Brand loyalty and ecosystem advantages provide defensible competitive moats.",
+    investmentThesis: "Apple's IPO on December 12, 1980 at $22 per share marked the beginning of one of the most successful tech investments in history. The first-day close around $29 signaled strong market demand. Current trading price of approximately $262 per share (accounting for splits, the actual return is much higher) demonstrates the company's long-term value creation. While past performance doesn't guarantee future results, Apple's innovative culture, strong management, and leadership position in personal computing suggest significant upside potential for patient investors."
+  },
   airbnb: {
     id: "airbnb",
     company: "Airbnb",
@@ -392,14 +426,14 @@ const Index = () => {
             </div>
 
             <div className="space-y-6 mb-12">
-              {/* Rivian Alert */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border">
+              {/* USDT Markets Alert */}
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="font-semibold">IPO Alert</span>
+                    <span className="font-semibold text-slate-900">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">Nov 2021</span>
+                  <span className="text-sm text-slate-600">Oct 2025</span>
                 </div>
 
                 <div className="flex gap-4">
@@ -407,20 +441,20 @@ const Index = () => {
                     <BarChart3 className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1">Rivian (RIVN)</h3>
-                    <Badge variant="secondary" className="mb-3">Electric Vehicles</Badge>
-                    <p className="text-muted-foreground mb-4">
-                      Early insight into the EV giant's pre-IPO valuation. Amazon-backed electric vehicle manufacturer targeting $100B+ valuation with strong order backlog.
+                    <h3 className="text-xl font-bold mb-1 text-black">USDT Markets (USDT)</h3>
+                    <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-900">Digital Assets & Crypto</Badge>
+                    <p className="text-slate-700 mb-4">
+                      Leading digital asset exchange specializing in stablecoin trading. Platform tracks top 24h crypto gainers including SynFutures (F) +49.0%, Paparazzi Token +38.0%, and Bitlight +28.6% with advanced risk filtering.
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <span className="text-sm text-slate-600 flex items-center gap-1">
                         <BarChart3 className="w-4 h-4" />
-                        Expected: $57-62/share
+                        Expected: $25-30/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('rivian')}
-                        className="text-primary font-semibold"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
                       >
                         View Analysis →
                       </Button>
@@ -429,14 +463,14 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Airbnb Alert */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border">
+              {/* Apple Alert */}
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span className="font-semibold">IPO Alert</span>
+                    <span className="font-semibold text-slate-900">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">Dec 2020</span>
+                  <span className="text-sm text-slate-600">Dec 1980</span>
                 </div>
 
                 <div className="flex gap-4">
@@ -444,20 +478,20 @@ const Index = () => {
                     <TrendingUp className="w-6 h-6 text-blue-500" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1">Airbnb (ABNB)</h3>
-                    <Badge variant="secondary" className="mb-3">Travel Tech</Badge>
-                    <p className="text-muted-foreground mb-4">
-                      Alerts ahead of its blockbuster debut. Home-sharing platform showing resilience despite pandemic challenges with strong recovery indicators.
+                    <h3 className="text-xl font-bold mb-1 text-black">Apple Inc. (AAPL)</h3>
+                    <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-900">Technology</Badge>
+                    <p className="text-slate-700 mb-4">
+                      Historic IPO at $22/share on Dec 12, 1980. Opened at $22, closed around $29 on first day. Current price ~$262 represents 12× return (much higher accounting for splits). Revolutionary personal computing company.
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <span className="text-sm text-slate-600 flex items-center gap-1">
                         <BarChart3 className="w-4 h-4" />
-                        Expected: $56-60/share
+                        IPO Price: $22/share
                       </span>
                       <Button 
                         variant="link" 
-                        onClick={() => handleViewAnalysis('airbnb')}
-                        className="text-primary font-semibold"
+                        onClick={() => handleViewAnalysis('apple')}
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
                       >
                         View Analysis →
                       </Button>
