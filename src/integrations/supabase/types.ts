@@ -56,38 +56,89 @@ export type Database = {
       email_subscribers: {
         Row: {
           alert_preferences: Json | null
+          alternative_investments: string | null
+          annual_income: string | null
+          best_time_to_reach: string | null
+          capital_available: string | null
           created_at: string
+          curated_deals: boolean | null
+          decision_maker: boolean | null
           email: string
+          experience: string | null
+          has_advisor: boolean | null
           id: string
+          interested_sectors: string[] | null
+          kyc_ready: string | null
           last_alert_sent: string | null
+          liquidity_comfort: string | null
           metadata: Json | null
           name: string | null
+          phone: string | null
+          phone_verified: boolean | null
+          portfolio_size: string | null
           subscribed_at: string
           subscription_status: string | null
+          survey_completed: boolean | null
+          survey_completed_at: string | null
+          timeframe: string | null
           updated_at: string
         }
         Insert: {
           alert_preferences?: Json | null
+          alternative_investments?: string | null
+          annual_income?: string | null
+          best_time_to_reach?: string | null
+          capital_available?: string | null
           created_at?: string
+          curated_deals?: boolean | null
+          decision_maker?: boolean | null
           email: string
+          experience?: string | null
+          has_advisor?: boolean | null
           id?: string
+          interested_sectors?: string[] | null
+          kyc_ready?: string | null
           last_alert_sent?: string | null
+          liquidity_comfort?: string | null
           metadata?: Json | null
           name?: string | null
+          phone?: string | null
+          phone_verified?: boolean | null
+          portfolio_size?: string | null
           subscribed_at?: string
           subscription_status?: string | null
+          survey_completed?: boolean | null
+          survey_completed_at?: string | null
+          timeframe?: string | null
           updated_at?: string
         }
         Update: {
           alert_preferences?: Json | null
+          alternative_investments?: string | null
+          annual_income?: string | null
+          best_time_to_reach?: string | null
+          capital_available?: string | null
           created_at?: string
+          curated_deals?: boolean | null
+          decision_maker?: boolean | null
           email?: string
+          experience?: string | null
+          has_advisor?: boolean | null
           id?: string
+          interested_sectors?: string[] | null
+          kyc_ready?: string | null
           last_alert_sent?: string | null
+          liquidity_comfort?: string | null
           metadata?: Json | null
           name?: string | null
+          phone?: string | null
+          phone_verified?: boolean | null
+          portfolio_size?: string | null
           subscribed_at?: string
           subscription_status?: string | null
+          survey_completed?: boolean | null
+          survey_completed_at?: string | null
+          timeframe?: string | null
           updated_at?: string
         }
         Relationships: []
