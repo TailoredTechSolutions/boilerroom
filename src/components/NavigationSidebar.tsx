@@ -20,12 +20,13 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: "Overview", icon: Grid, path: "/overview" },
-  { name: "Venture Capital", icon: Database, path: "/" },
-  { name: "ANDREW'S EXTRAS", icon: Users, path: "/investor-fund-scraper" },
-  { name: "Marketing and Analytics", icon: Briefcase, path: "/marketing" },
+  { name: "Overview", icon: Grid, path: "/" },
+  { name: "IPO Landing Page", icon: Target, path: "/ipo-landing" },
   { name: "Lead Generation", icon: Users, path: "/lead-generation" },
   { name: "Data Sources", icon: Globe, path: "/data-sources" },
+  { name: "CRM", icon: Briefcase, path: "/crm" },
+  { name: "Marketing & Analytics", icon: BarChart3, path: "/marketing" },
+  { name: "Investor Intelligence", icon: Brain, path: "/investor-intelligence" },
   { name: "Rules & Scoring", icon: Sliders, path: "/rules-scoring" },
   { name: "Exports", icon: Download, path: "/exports" },
   { name: "Settings", icon: Settings, path: "/settings" },
