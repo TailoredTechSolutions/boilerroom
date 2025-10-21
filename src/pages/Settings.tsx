@@ -27,6 +27,10 @@ const Settings = () => {
     verifySid: ""
   });
 
+  const [n8nConfig, setN8nConfig] = useState({
+    webhookSecret: ""
+  });
+
   const saveChanges = () => {
     toast({
       title: "Settings saved",
@@ -38,6 +42,13 @@ const Settings = () => {
     toast({
       title: "Twilio configuration saved",
       description: "Your SMS integration has been updated",
+    });
+  };
+
+  const saveN8nConfig = () => {
+    toast({
+      title: "N8N configuration saved",
+      description: "Your webhook secret has been updated",
     });
   };
 
@@ -191,6 +202,27 @@ const Settings = () => {
                       <p className="text-xs text-muted-foreground">Create a Verify Service in Twilio Console</p>
                     </div>
                     <Button onClick={saveTwilioConfig}>Save Twilio Configuration</Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>N8N Webhook Configuration</CardTitle>
+                    <CardDescription>Configure webhook secret for scraping callback security</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="n8nWebhookSecret">Webhook Secret</Label>
+                      <Input 
+                        id="n8nWebhookSecret" 
+                        type="password"
+                        placeholder="••••••••••••••••••••••••••••••••"
+                        value={n8nConfig.webhookSecret}
+                        onChange={(e) => setN8nConfig(prev => ({ ...prev, webhookSecret: e.target.value }))}
+                      />
+                      <p className="text-xs text-muted-foreground">Secret key used to validate webhook callbacks from N8N</p>
+                    </div>
+                    <Button onClick={saveN8nConfig}>Save N8N Configuration</Button>
                   </CardContent>
                 </Card>
               </TabsContent>
