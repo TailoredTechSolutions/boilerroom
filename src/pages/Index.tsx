@@ -361,6 +361,86 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Most Actively Traded Asset Section */}
+        <section className="py-16 bg-gradient-to-b from-background to-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  UK's Most Actively Traded Asset
+                </h2>
+                <p className="text-xl text-muted-foreground">
+                  Current Market Overview (April 2025)
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-card p-6 rounded-xl border shadow-sm">
+                  <div className="text-4xl font-bold text-primary mb-2">EUR/USD</div>
+                  <div className="text-sm text-muted-foreground mb-4">Forex Currency Pair</div>
+                  <div className="text-2xl font-semibold mb-1">$4.7T</div>
+                  <div className="text-sm text-muted-foreground">Daily UK FX Trading Volume</div>
+                </div>
+
+                <div className="bg-card p-6 rounded-xl border shadow-sm">
+                  <div className="text-4xl font-bold text-primary mb-2">38%</div>
+                  <div className="text-sm text-muted-foreground mb-4">Global Market Share</div>
+                  <div className="text-2xl font-semibold mb-1">London</div>
+                  <div className="text-sm text-muted-foreground">World's Leading FX Hub</div>
+                </div>
+
+                <div className="bg-card p-6 rounded-xl border shadow-sm">
+                  <div className="text-4xl font-bold text-primary mb-2">22-24%</div>
+                  <div className="text-sm text-muted-foreground mb-4">of Global FX Volume</div>
+                  <div className="text-2xl font-semibold mb-1">$1.7T+</div>
+                  <div className="text-sm text-muted-foreground">EUR/USD Daily Trading</div>
+                </div>
+              </div>
+
+              <div className="bg-card p-8 rounded-xl border shadow-sm">
+                <h3 className="text-2xl font-bold mb-4">Why EUR/USD Dominates</h3>
+                <div className="space-y-4 text-muted-foreground">
+                  <p>
+                    The Euro/US Dollar currency pair is the single most actively traded asset by volume in the UK, 
+                    with trading volumes that dwarf all other asset classes combined. As of April 2025, average daily 
+                    turnover in the UK's FX market reached <span className="font-semibold text-foreground">$4.745 trillion per day</span>.
+                  </p>
+                  
+                  <div className="grid md:grid-cols-2 gap-6 my-6">
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <h4 className="font-semibold text-foreground mb-2">Volume Comparison</h4>
+                      <ul className="space-y-2 text-sm">
+                        <li>• <span className="font-medium">EUR/USD Forex:</span> $1.7T+ daily</li>
+                        <li>• <span className="font-medium">UK Gilts (Bonds):</span> ~$50B daily</li>
+                        <li>• <span className="font-medium">Top LSE Stock:</span> ~$100M daily</li>
+                        <li>• <span className="font-medium">Gold Trading:</span> ~$24B daily</li>
+                        <li>• <span className="font-medium">All Crypto Markets:</span> ~$150B daily</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <h4 className="font-semibold text-foreground mb-2">Recent Surge Factors</h4>
+                      <ul className="space-y-2 text-sm">
+                        <li>• US trade policy announcements & tariff threats</li>
+                        <li>• Central bank interest rate decisions</li>
+                        <li>• Geopolitical tensions & macro surprises</li>
+                        <li>• 28% volume increase above 2022 levels</li>
+                        <li>• Heightened volatility driving trading activity</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <p>
+                    London's status as the world's leading FX trading center cements EUR/USD's top spot. 
+                    The massive liquidity and constant demand for exchanging the world's two biggest currencies 
+                    creates unmatched trading volume that no stock, commodity, bond, or crypto asset can approach.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Market Intelligence Section */}
         <section className="py-20 px-4 bg-background">
           <div className="container mx-auto max-w-6xl">
