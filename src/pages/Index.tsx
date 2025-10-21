@@ -181,8 +181,8 @@ const Index = () => {
               className="w-12 h-12 object-contain"
             />
             <div>
-              <h1 className="text-xl font-bold text-foreground">Investor Stream</h1>
-              <p className="text-xs text-muted-foreground">Intelligent Investments</p>
+              <h1 className="text-xl font-bold text-slate-900">Investor Stream</h1>
+              <p className="text-xs text-slate-600">Intelligent Investments</p>
             </div>
           </div>
           <Button 
@@ -379,14 +379,14 @@ const Index = () => {
         <section className="py-20 px-4 bg-blue-50/30" id="sample-alerts">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">
+              <Badge variant="secondary" className="mb-4 bg-blue-100 text-blue-900 hover:bg-blue-200">
                 <Bell className="w-4 h-4 mr-2" />
                 Sample Alerts
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
-                See the <span className="text-primary">Alerts in Action</span>
+              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-slate-900">
+                See the <span className="text-[#0066CC]">Alerts in Action</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-lg text-slate-600 max-w-3xl mx-auto">
                 Curious what our alerts look like? Here are a few examples from major IPOs that showcase the clarity and timeliness you can expect when you join Investor Stream.
               </p>
             </div>
