@@ -101,6 +101,91 @@ const workflows = [
   }
 ];
 
+// Dummy data normalization data
+const fieldMappingData = [
+  { field: "Email Address", mapped: 8234, unmapped: 156, quality: 98.1 },
+  { field: "Phone Number", mapped: 6543, unmapped: 432, quality: 93.8 },
+  { field: "Portfolio Size", mapped: 5678, unmapped: 234, quality: 96.0 },
+  { field: "Annual Income", mapped: 4987, unmapped: 567, quality: 89.8 }
+];
+
+const duplicateRecords = [
+  { name: "Sarah Chen", email: "s.chen@...", phone: "+44 20...", confidence: 95, status: "Pending Review" },
+  { name: "Michael Torres", email: "m.torres@...", phone: "+1 415...", confidence: 88, status: "Auto-Merged" },
+  { name: "James Park", email: "jpark@...", phone: "+852 9...", confidence: 72, status: "Flagged" }
+];
+
+const dataErrors = [
+  { type: "Invalid Email Format", count: 23, severity: "Medium", lastSeen: "2 hours ago" },
+  { type: "Missing Phone Verification", count: 156, severity: "Low", lastSeen: "5 hours ago" },
+  { type: "Incomplete Survey Data", count: 89, severity: "Medium", lastSeen: "1 day ago" },
+  { type: "Duplicate Portfolio Entry", count: 12, severity: "High", lastSeen: "3 hours ago" }
+];
+
+// Dummy communication logs data
+const recentCommunications = [
+  { 
+    investor: "Sarah Chen", 
+    type: "Email", 
+    subject: "Re: Q1 2025 IPO Opportunities", 
+    sentiment: "Positive", 
+    date: "2 hours ago",
+    preview: "Thanks for the detailed analysis on the tech IPOs. Very interested in..."
+  },
+  { 
+    investor: "Michael Torres", 
+    type: "AI Chat", 
+    subject: "Portfolio diversification inquiry", 
+    sentiment: "Neutral", 
+    date: "5 hours ago",
+    preview: "Can you explain more about the commodity futures platform..."
+  },
+  { 
+    investor: "Lisa Wang", 
+    type: "Phone Call", 
+    subject: "Follow-up on USDT Markets", 
+    sentiment: "Positive", 
+    date: "1 day ago",
+    preview: "Duration: 15 min. Discussed crypto exposure and risk tolerance..."
+  },
+  { 
+    investor: "David Miller", 
+    type: "Meeting", 
+    subject: "Apple IPO Historical Analysis", 
+    sentiment: "Positive", 
+    date: "2 days ago",
+    preview: "In-person meeting. Strong interest in tech sector opportunities..."
+  }
+];
+
+const sentimentBreakdown = {
+  positive: 1876,
+  neutral: 987,
+  negative: 234
+};
+
+// Dummy investor intelligence data
+const engagementMetrics = [
+  { investor: "Sarah Chen", opens: 24, clicks: 18, replies: 12, score: 94, status: "Hot" },
+  { investor: "Michael Torres", opens: 18, clicks: 14, replies: 8, score: 82, status: "Warm" },
+  { investor: "Lisa Wang", opens: 22, clicks: 16, replies: 10, score: 88, status: "Hot" },
+  { investor: "David Miller", opens: 12, clicks: 8, replies: 5, score: 68, status: "Warm" }
+];
+
+const aiPredictions = [
+  { investor: "Sarah Chen", likelihood: 92, reasoning: "High engagement, completed survey, strong portfolio", action: "Schedule call" },
+  { investor: "James Park", likelihood: 85, reasoning: "Active in crypto IPOs, qualified portfolio size", action: "Send detailed prospectus" },
+  { investor: "Emma Wilson", likelihood: 78, reasoning: "Consistent email opens, interested in tech sector", action: "Nurture sequence" }
+];
+
+const behavioralInsights = {
+  avgOpenRate: 62.4,
+  avgReplyTime: "4.2 hours",
+  bestContactTime: "Tuesday 10-11 AM",
+  preferredChannel: "Email (68%)",
+  meetingFrequency: "2.3 per month"
+};
+
 const Marketing = () => {
   return (
     <div className="flex min-h-screen bg-gradient-bg relative">
@@ -271,8 +356,26 @@ const Marketing = () => {
                       Automated standardization of data fields
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Field mapping tools coming soon...</p>
+                  <CardContent className="space-y-4">
+                    {fieldMappingData.map((field, idx) => (
+                      <div key={idx} className="p-3 bg-muted/30 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-sm text-foreground">{field.field}</h4>
+                          <Badge variant="outline" className="bg-green-100 text-green-800 text-xs">
+                            {field.quality}% Quality
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">Mapped:</span> {field.mapped.toLocaleString()}
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Unmapped:</span> {field.unmapped}
+                          </div>
+                        </div>
+                        <Progress value={field.quality} className="h-1.5" />
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -286,8 +389,26 @@ const Marketing = () => {
                       Record merging with approval flow
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Duplicate management coming soon...</p>
+                  <CardContent className="space-y-4">
+                    {duplicateRecords.map((record, idx) => (
+                      <div key={idx} className="p-3 bg-muted/30 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-sm text-foreground">{record.name}</h4>
+                            <p className="text-xs text-muted-foreground">{record.email}</p>
+                          </div>
+                          <Badge variant={record.status === "Pending Review" ? "outline" : "secondary"} className="text-xs">
+                            {record.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">Confidence: {record.confidence}%</span>
+                          {record.status === "Pending Review" && (
+                            <Button size="sm" variant="outline" className="h-6 text-xs">Review</Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -301,8 +422,27 @@ const Marketing = () => {
                       Anomaly detection with exportable logs
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Error tracking coming soon...</p>
+                  <CardContent className="space-y-3">
+                    {dataErrors.map((error, idx) => (
+                      <div key={idx} className="p-3 bg-muted/30 rounded-lg">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-sm text-foreground">{error.type}</h4>
+                            <p className="text-xs text-muted-foreground mt-1">{error.lastSeen}</p>
+                          </div>
+                          <Badge variant={error.severity === "High" ? "destructive" : error.severity === "Medium" ? "default" : "secondary"} className="text-xs">
+                            {error.severity}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">{error.count} occurrences</span>
+                          <Button size="sm" variant="ghost" className="h-6 text-xs">
+                            <Eye className="w-3 h-3 mr-1" />
+                            View
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -316,8 +456,25 @@ const Marketing = () => {
                       Admin panel for fixing mis-parsed data
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Correction interface coming soon...</p>
+                  <CardContent className="space-y-3">
+                    <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-foreground">Total Records</span>
+                        <span className="text-sm font-bold text-foreground">8,234</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Corrected This Month</span>
+                        <span className="text-sm font-semibold text-green-600">156</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Pending Review</span>
+                        <span className="text-sm font-semibold text-warning">43</span>
+                      </div>
+                    </div>
+                    <Button variant="outline" className="w-full">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Open Correction Interface
+                    </Button>
                   </CardContent>
                 </Card>
               </div>
@@ -329,18 +486,35 @@ const Marketing = () => {
               <p className="text-muted-foreground mb-6">Chronological record of every interaction with investors</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                <Card className="bg-card/70 border-border backdrop-blur-sm col-span-2">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <MessagesSquare className="w-5 h-5" />
-                      Unified Feed
+                      Recent Communications
                     </CardTitle>
                     <CardDescription>
-                      AI chats, emails, calls, and meeting notes
+                      Latest interactions across all channels
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Communication feed coming soon...</p>
+                  <CardContent className="space-y-3">
+                    {recentCommunications.map((comm, idx) => (
+                      <div key={idx} className="p-4 bg-muted/30 rounded-lg space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-semibold text-sm text-foreground">{comm.investor}</h4>
+                              <Badge variant="outline" className="text-xs">{comm.type}</Badge>
+                              <Badge variant={comm.sentiment === "Positive" ? "default" : comm.sentiment === "Neutral" ? "secondary" : "destructive"} className="text-xs">
+                                {comm.sentiment}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">{comm.subject}</p>
+                            <p className="text-xs text-muted-foreground mt-2 italic">{comm.preview}</p>
+                          </div>
+                          <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{comm.date}</span>
+                        </div>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -348,29 +522,43 @@ const Marketing = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Smile className="w-5 h-5" />
-                      Sentiment Analysis
+                      Sentiment Breakdown
                     </CardTitle>
                     <CardDescription>
-                      Positive / neutral / negative tagging
+                      Overall communication sentiment
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Sentiment tagging coming soon...</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card/70 border-border backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Search className="w-5 h-5" />
-                      Keyword Search
-                    </CardTitle>
-                    <CardDescription>
-                      Search by topic, investor, date, or channel
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Search interface coming soon...</p>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-green-500 rounded-full" />
+                          <span className="text-sm">Positive</span>
+                        </div>
+                        <span className="text-sm font-semibold">{sentimentBreakdown.positive.toLocaleString()}</span>
+                      </div>
+                      <Progress value={(sentimentBreakdown.positive / (sentimentBreakdown.positive + sentimentBreakdown.neutral + sentimentBreakdown.negative)) * 100} className="h-2 bg-green-200" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-gray-400 rounded-full" />
+                          <span className="text-sm">Neutral</span>
+                        </div>
+                        <span className="text-sm font-semibold">{sentimentBreakdown.neutral.toLocaleString()}</span>
+                      </div>
+                      <Progress value={(sentimentBreakdown.neutral / (sentimentBreakdown.positive + sentimentBreakdown.neutral + sentimentBreakdown.negative)) * 100} className="h-2" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-red-500 rounded-full" />
+                          <span className="text-sm">Negative</span>
+                        </div>
+                        <span className="text-sm font-semibold">{sentimentBreakdown.negative.toLocaleString()}</span>
+                      </div>
+                      <Progress value={(sentimentBreakdown.negative / (sentimentBreakdown.positive + sentimentBreakdown.neutral + sentimentBreakdown.negative)) * 100} className="h-2 bg-red-200" />
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -378,14 +566,41 @@ const Marketing = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <LinkIcon className="w-5 h-5" />
-                      CRM Integration
+                      Communication Stats
                     </CardTitle>
                     <CardDescription>
-                      Direct linkage to records and analytics
+                      Channel distribution and volume
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">CRM linking coming soon...</p>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 bg-muted/30 rounded-lg">
+                        <p className="text-2xl font-bold text-foreground">3,097</p>
+                        <p className="text-xs text-muted-foreground mt-1">Total Interactions</p>
+                      </div>
+                      <div className="text-center p-3 bg-muted/30 rounded-lg">
+                        <p className="text-2xl font-bold text-foreground">89%</p>
+                        <p className="text-xs text-muted-foreground mt-1">Response Rate</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Email</span>
+                        <span className="font-semibold">1,876 (61%)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">AI Chat</span>
+                        <span className="font-semibold">987 (32%)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Phone</span>
+                        <span className="font-semibold">156 (5%)</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Meetings</span>
+                        <span className="font-semibold">78 (2%)</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -397,18 +612,54 @@ const Marketing = () => {
               <p className="text-muted-foreground mb-6">Advanced analytics on investor behavior and engagement</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-card/70 border-border backdrop-blur-sm">
+                <Card className="bg-card/70 border-border backdrop-blur-sm col-span-2">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Target className="w-5 h-5" />
-                      Engagement Tracking
+                      Top Engaged Investors
                     </CardTitle>
                     <CardDescription>
-                      Track which leads engage with outreach and portal
+                      High-engagement prospects ranked by activity
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Engagement metrics coming soon...</p>
+                  <CardContent className="space-y-3">
+                    {engagementMetrics.map((investor, idx) => (
+                      <div key={idx} className="p-4 bg-muted/30 rounded-lg space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold">
+                              {investor.investor.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-foreground">{investor.investor}</h4>
+                              <p className="text-xs text-muted-foreground">Score: {investor.score}/100</p>
+                            </div>
+                          </div>
+                          <Badge variant={investor.status === "Hot" ? "destructive" : "default"} className="text-xs">
+                            {investor.status}
+                          </Badge>
+                        </div>
+                        <div className="grid grid-cols-4 gap-2 text-xs">
+                          <div>
+                            <p className="text-muted-foreground">Opens</p>
+                            <p className="font-semibold text-foreground">{investor.opens}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Clicks</p>
+                            <p className="font-semibold text-foreground">{investor.clicks}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Replies</p>
+                            <p className="font-semibold text-foreground">{investor.replies}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Score</p>
+                            <p className="font-semibold text-green-600">{investor.score}</p>
+                          </div>
+                        </div>
+                        <Progress value={investor.score} className="h-2" />
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -416,29 +667,27 @@ const Marketing = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="w-5 h-5" />
-                      AI Interest Prediction
+                      AI Predictions
                     </CardTitle>
                     <CardDescription>
-                      Predict investor interest based on sentiment and behavior
+                      Investment likelihood forecasts
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">AI predictions coming soon...</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-card/70 border-border backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Flame className="w-5 h-5" />
-                      Warm Lead Lists
-                    </CardTitle>
-                    <CardDescription>
-                      Auto-generated lists of high-engagement prospects
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Lead lists coming soon...</p>
+                  <CardContent className="space-y-4">
+                    {aiPredictions.map((prediction, idx) => (
+                      <div key={idx} className="p-3 bg-muted/30 rounded-lg space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-sm text-foreground">{prediction.investor}</h4>
+                          <Badge variant="outline" className="bg-green-100 text-green-800 text-xs">
+                            {prediction.likelihood}% likely
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{prediction.reasoning}</p>
+                        <Button size="sm" variant="outline" className="w-full h-8 text-xs">
+                          {prediction.action}
+                        </Button>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
@@ -446,14 +695,37 @@ const Marketing = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <TrendingUp className="w-5 h-5" />
-                      Behavioral Analytics
+                      Behavioral Insights
                     </CardTitle>
                     <CardDescription>
-                      Open rates, reply sentiment, meeting frequency
+                      Engagement patterns and preferences
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Behavioral insights coming soon...</p>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-3 bg-muted/30 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-foreground">{behavioralInsights.avgOpenRate}%</p>
+                        <p className="text-xs text-muted-foreground mt-1">Avg Open Rate</p>
+                      </div>
+                      <div className="p-3 bg-muted/30 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-foreground">{behavioralInsights.avgReplyTime}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Avg Reply Time</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Best Contact Time</span>
+                        <span className="font-semibold">{behavioralInsights.bestContactTime}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Preferred Channel</span>
+                        <span className="font-semibold">{behavioralInsights.preferredChannel}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Meeting Frequency</span>
+                        <span className="font-semibold">{behavioralInsights.meetingFrequency}</span>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
