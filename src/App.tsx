@@ -35,6 +35,7 @@ import RulesScoring from "./pages/RulesScoring";
 import Exports from "./pages/Exports";
 import Settings from "./pages/Settings";
 import InvestorFundScraper from "./pages/InvestorFundScraper";
+import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,8 +49,9 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><Overview /></ProtectedRoute>} />
-            <Route path="/ipo-landing" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+            <Route path="/" element={<Index />} />
+            <Route path="/ipo-landing" element={<Index />} />
+            <Route path="/premium" element={<Premium />} />
             <Route path="/overview" element={<ProtectedRoute><Overview /></ProtectedRoute>} />
             <Route path="/data-sources" element={<ProtectedRoute><DataSources /></ProtectedRoute>} />
             <Route path="/investor-fund-scraper" element={<ProtectedRoute><InvestorFundScraper /></ProtectedRoute>} />

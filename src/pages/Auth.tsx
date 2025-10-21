@@ -1,145 +1,271 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuthUser } from "@/hooks/useAuthUser";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2, TrendingUp } from "lucide-react";
 import { z } from "zod";
 
-const authSchema = z.object({
-  email: z.string()
-    .trim()
-    .email({ message: "Invalid email address" })
-    .max(255, { message: "Email too long" }),
-  password: z.string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .max(72, { message: "Password too long" })
-    .regex(/[A-Z]/, { message: "Must contain uppercase letter" })
-    .regex(/[a-z]/, { message: "Must contain lowercase letter" })
-    .regex(/[0-9]/, { message: "Must contain number" })
-});
+const emailSchema = z.string().email("Invalid email address");
+const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
 
-export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, signIn, signUp } = useAuthUser();
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupFullName, setSignupFullName] = useState("");
 
-  const handleAuth = async (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate inputs
-    const validation = authSchema.safeParse({ email, password });
-    if (!validation.success) {
-      const errors = validation.error.flatten().fieldErrors;
-      const errorMessages = Object.values(errors).flat().join(', ');
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: errorMessages
-      });
-      return;
-    }
-    
-    setLoading(true);
-
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+      emailSchema.parse(loginEmail);
+      passwordSchema.parse(loginPassword);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
         });
-        if (error) throw error;
-        toast({ title: "Success", description: "Logged in successfully" });
-        navigate("/");
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-          },
-        });
-        if (error) throw error;
-        toast({ 
-          title: "Success", 
-          description: "Account created! You can now log in." 
-        });
-        setIsLogin(true);
+        return;
       }
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred",
-      });
-    } finally {
-      setLoading(false);
     }
+
+    setIsLoading(true);
+
+    const { error } = await signIn(loginEmail, loginPassword);
+
+    if (error) {
+      toast({
+        title: "Login Failed",
+        description: error.message === "Invalid login credentials"
+          ? "Invalid email or password. Please try again."
+          : error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Welcome back!",
+        description: "You've successfully logged in.",
+      });
+      navigate("/");
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate inputs
+    try {
+      emailSchema.parse(signupEmail);
+      passwordSchema.parse(signupPassword);
+      if (!signupFullName.trim()) {
+        throw new Error("Full name is required");
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+      if (error instanceof Error) {
+        toast({
+          title: "Validation Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    setIsLoading(true);
+
+    const { error } = await signUp(signupEmail, signupPassword, signupFullName);
+
+    if (error) {
+      if (error.message.includes("already registered")) {
+        toast({
+          title: "Account Exists",
+          description: "This email is already registered. Please login instead.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Signup Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Account Created!",
+        description: "Welcome to IPO Intelligence. Redirecting...",
+      });
+      // User will be automatically redirected by the useEffect
+    }
+
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-secondary/10 to-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">
-            {isLogin ? "Login" : "Sign Up"}
-          </CardTitle>
-          <CardDescription>
-            {isLogin
-              ? "Enter your credentials to access your account"
-              : "Create a new account to get started"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
-            </Button>
-          </form>
-          <div className="mt-4 text-center text-sm">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline"
-            >
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Login"}
-            </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-bg p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <TrendingUp className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold">IPO Intelligence</h1>
           </div>
-        </CardContent>
-      </Card>
+          <p className="text-muted-foreground">
+            Access exclusive IPO market insights and alerts
+          </p>
+        </div>
+
+        <Tabs defaultValue="login" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="login">
+            <div className="bg-card rounded-xl border p-6">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input
+                    id="login-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Password</Label>
+                  <Input
+                    id="login-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+              </form>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="signup">
+            <div className="bg-card rounded-xl border p-6">
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name">Full Name</Label>
+                  <Input
+                    id="signup-name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={signupFullName}
+                    onChange={(e) => setSignupFullName(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={signupEmail}
+                    onChange={(e) => setSignupEmail(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Password</Label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    At least 6 characters
+                  </p>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+              </form>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          By signing up, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
     </div>
   );
-}
+};
+
+export default Auth;

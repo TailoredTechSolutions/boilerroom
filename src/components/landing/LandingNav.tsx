@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import logoImage from "@/assets/vc-logo-custom.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthUser } from "@/hooks/useAuthUser";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface LandingNavProps {
   onGetAlertsClick: () => void;
@@ -10,6 +19,13 @@ interface LandingNavProps {
 
 export const LandingNav = ({ onGetAlertsClick }: LandingNavProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signOut, loading } = useAuthUser();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -38,12 +54,60 @@ export const LandingNav = ({ onGetAlertsClick }: LandingNavProps) => {
               {link.name}
             </Link>
           ))}
-          <Button
-            onClick={onGetAlertsClick}
-            className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-full"
-          >
-            Get Free Alerts
-          </Button>
+          
+          {!loading && (
+            <>
+              {user ? (
+                <>
+                  <Button
+                    onClick={() => navigate("/premium")}
+                    variant="outline"
+                    className="rounded-full"
+                  >
+                    Upgrade
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <User className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate("/overview")}>
+                        Dashboard
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/settings")}>
+                        Settings
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleSignOut}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => navigate("/auth")}
+                    variant="outline"
+                    className="rounded-full"
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    onClick={onGetAlertsClick}
+                    className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-full"
+                  >
+                    Get Free Alerts
+                  </Button>
+                </>
+              )}
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -70,15 +134,67 @@ export const LandingNav = ({ onGetAlertsClick }: LandingNavProps) => {
                 {link.name}
               </Link>
             ))}
-            <Button
-              onClick={() => {
-                onGetAlertsClick();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-full"
-            >
-              Get Free Alerts
-            </Button>
+            
+            {!loading && (
+              <>
+                {user ? (
+                  <>
+                    <Button
+                      onClick={() => {
+                        navigate("/premium");
+                        setMobileMenuOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full rounded-full"
+                    >
+                      Upgrade
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigate("/overview");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full rounded-full"
+                    >
+                      Dashboard
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        handleSignOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full rounded-full"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => {
+                        navigate("/auth");
+                        setMobileMenuOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full rounded-full"
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        onGetAlertsClick();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-full"
+                    >
+                      Get Free Alerts
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
       )}

@@ -317,6 +317,51 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          alert_preferences: Json | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscribed_at: string | null
+          subscription_status: string | null
+          subscription_tier: string
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          alert_preferences?: Json | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscribed_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alert_preferences?: Json | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscribed_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       saved_views: {
         Row: {
           columns: string[] | null
@@ -424,6 +469,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_premium_access: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
