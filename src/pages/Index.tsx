@@ -115,6 +115,40 @@ const ipoData = {
     competitivePosition: "Apple has established strong differentiation through user-friendly design and integrated hardware-software approach. The company's focus on the complete user experience sets it apart from competitors who primarily focus on technical specifications. Brand loyalty and ecosystem advantages provide defensible competitive moats.",
     investmentThesis: "Apple's IPO on December 12, 1980 at $22 per share marked the beginning of one of the most successful tech investments in history. The first-day close around $29 signaled strong market demand. Current trading price of approximately $262 per share (accounting for splits, the actual return is much higher) demonstrates the company's long-term value creation. While past performance doesn't guarantee future results, Apple's innovative culture, strong management, and leadership position in personal computing suggest significant upside potential for patient investors."
   },
+  commodities: {
+    id: "commodities",
+    company: "Global Commodity Futures Platform",
+    ticker: "GCFP",
+    sector: "Commodities & Agriculture",
+    date: "Mar 2022",
+    expectedPrice: "$35-42/share",
+    valuation: "$8.5B",
+    description: "Leading commodity futures platform specializing in geopolitically-sensitive agricultural markets. The platform integrates geostrategic and macro-economic signals into its investment framework, anchoring decisions in real-world events rather than historical averages. Following the Russian invasion of Ukraine in February 2022, the system tracked wheat export disruptions (Ukraine and Russia account for ~29% of world wheat exports) and responded to the resulting 40% price surge. Similarly, cocoa supply deficits tied to adverse weather in West Africa drove prices to more than double since August 2023.",
+    highlights: [
+      "Wheat futures surged 40% by May 2022 following Ukraine war disruption of major export routes",
+      "Cocoa prices more than doubled since August 2023 due to West African supply deficits",
+      "Real-time integration of export-volume shifts, futures-market responses, and crop-yield forecasts",
+      "Proprietary geopolitical risk indicators adjusting exposure dynamically based on global events",
+      "Platform tracked 50% wheat futures price increase in Paris markets, even higher in Chicago",
+      "Advanced risk-scenario modeling treating commodities as linked to global events, not static assets"
+    ],
+    risks: [
+      "Commodity price spikes often reverse when alternative supply routes normalize",
+      "High volatility in agricultural markets driven by weather, politics, and speculation",
+      "Limited control over geopolitical events that drive price movements",
+      "Cocoa price increases tied more to weather than war - indirect war correlation",
+      "Past disruptions don't guarantee future price movements in same commodities",
+      "Regulatory changes in futures markets could impact trading strategies"
+    ],
+    financials: {
+      revenue: "$145M",
+      growth: "+215%",
+      margins: "38%"
+    },
+    marketOpportunity: "The global commodity futures market exceeds $20T in notional value, with agricultural commodities representing a significant and growing segment. Geopolitical instability, climate change impacts on yields, and supply chain vulnerabilities create persistent opportunities for platforms that can integrate real-world event data into trading signals. The war in Ukraine demonstrated the scale of disruption possible in grain markets, while cocoa market dynamics show ongoing structural supply challenges.",
+    competitivePosition: "The platform differentiates through its focus on geopolitical risk integration and real-time event monitoring. Unlike traditional commodity platforms that rely primarily on historical price patterns, this system ingests export data, political risk assessments, weather forecasts, and logistics disruptions to adjust exposure dynamically. The Ukraine wheat disruption response (identifying the 40% price spike opportunity) and cocoa supply deficit tracking demonstrate the platform's ability to capitalize on macro-driven commodity moves.",
+    investmentThesis: "Global Commodity Futures Platform represents a unique opportunity in the intersection of agriculture, geopolitics, and financial technology. The Ukrainian invasion's impact on wheat prices (40% surge in early 2022) and ongoing cocoa supply challenges (prices more than doubling since August 2023) validate the platform's event-driven approach. By anchoring investment decisions in real-world disruptions rather than static models, the platform can identify and capitalize on commodity price dislocations that traditional approaches miss. Strong revenue growth and proven track record in recent geopolitical events position the company well for continued expansion."
+  },
   airbnb: {
     id: "airbnb",
     company: "Airbnb",
@@ -491,6 +525,43 @@ const Index = () => {
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('apple')}
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                      >
+                        View Analysis →
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Commodities Alert */}
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                    <span className="font-semibold text-slate-900">Commodity Alert</span>
+                  </div>
+                  <span className="text-sm text-slate-600">Mar 2022</span>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-1 text-black">Global Commodity Futures (GCFP)</h3>
+                    <Badge variant="secondary" className="mb-3 bg-amber-100 text-amber-900">Commodities & Agriculture</Badge>
+                    <p className="text-slate-700 mb-4">
+                      Ukraine war disrupted wheat exports causing 40% price surge by May 2022. Cocoa prices doubled since Aug 2023 due to West African supply deficits. Platform integrates geopolitical risk signals into real-time commodity trading.
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-slate-600 flex items-center gap-1">
+                        <BarChart3 className="w-4 h-4" />
+                        Expected: $35-42/share
+                      </span>
+                      <Button 
+                        variant="link" 
+                        onClick={() => handleViewAnalysis('commodities')}
                         className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
                       >
                         View Analysis →
