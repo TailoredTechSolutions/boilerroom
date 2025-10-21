@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DataSourceGrid } from "@/components/DataSourceGrid";
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Play } from "lucide-react";
+import { Loader2, Play, ChevronRight } from "lucide-react";
 import ukLogo from "@/assets/uk-companies-house-logo.png";
 import gleifLogo from "@/assets/gleif-logo.png";
 
@@ -18,6 +19,7 @@ const DataSources = () => {
   const [searchTerm, setSearchTerm] = useState("venture capital");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleRunScrape = async () => {
     if (!searchTerm.trim()) {
@@ -123,7 +125,10 @@ const DataSources = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                  <button
+                    onClick={() => navigate('/lead-generation?source=COMPANIES_HOUSE')}
+                    className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
+                  >
                     <div className="flex items-center gap-3">
                       <img src={ukLogo} alt="UK Companies House" className="w-8 h-8 object-contain" />
                       <div>
@@ -131,9 +136,15 @@ const DataSources = () => {
                         <p className="text-sm text-muted-foreground">12,456 entities</p>
                       </div>
                     </div>
-                    <Badge>Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Badge>Active</Badge>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => navigate('/lead-generation?source=GLEIF')}
+                    className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
+                  >
                     <div className="flex items-center gap-3">
                       <img src={gleifLogo} alt="GLEIF Global" className="w-8 h-8 object-contain" />
                       <div>
@@ -141,8 +152,11 @@ const DataSources = () => {
                         <p className="text-sm text-muted-foreground">8,234 entities</p>
                       </div>
                     </div>
-                    <Badge>Active</Badge>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <Badge>Active</Badge>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </button>
                 </div>
               </CardContent>
             </Card>

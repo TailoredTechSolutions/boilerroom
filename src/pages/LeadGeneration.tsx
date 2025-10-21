@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Users, Target, TrendingUp, Mail, Phone, Building2, Search, Filter } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { Users, Target, TrendingUp, Mail, Phone, Building2, Search, Filter, X } from "lucide-react";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { KPICard } from "@/components/KPICard";
@@ -12,6 +13,9 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 
 const LeadGeneration = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sourceFilter = searchParams.get('source');
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -21,19 +25,30 @@ const LeadGeneration = () => {
 
   useEffect(() => {
     fetchEntities();
-  }, []);
+  }, [sourceFilter]);
 
   const fetchEntities = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from('entities')
       .select('*')
       .order('score', { ascending: false });
+
+    // Apply source filter if present
+    if (sourceFilter) {
+      query = query.eq('registry_source', sourceFilter);
+    }
+
+    const { data, error } = await query;
 
     if (data) {
       setEntities(data);
     }
     setIsLoading(false);
+  };
+
+  const clearSourceFilter = () => {
+    setSearchParams({});
   };
 
   // Transform entities into leads format
@@ -116,8 +131,23 @@ const LeadGeneration = () => {
         <main className="flex-1 p-8 space-y-8">
           {/* Page Title */}
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-foreground">Lead Generation</h1>
-            <p className="text-muted-foreground">Manage and track your IPO leads and prospects</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-foreground">Lead Generation</h1>
+                <p className="text-muted-foreground">Manage and track your IPO leads and prospects</p>
+              </div>
+              {sourceFilter && (
+                <Button
+                  variant="outline"
+                  onClick={clearSourceFilter}
+                  className="flex items-center gap-2"
+                >
+                  <Filter className="w-4 h-4" />
+                  Filtered: {sourceFilter}
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* KPI Cards */}
