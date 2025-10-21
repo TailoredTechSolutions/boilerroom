@@ -443,6 +443,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_alerts: {
+        Row: {
+          alert_data: Json | null
+          alert_message: string
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          user_id: string
+          watchlist_id: string | null
+        }
+        Insert: {
+          alert_data?: Json | null
+          alert_message: string
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          user_id: string
+          watchlist_id?: string | null
+        }
+        Update: {
+          alert_data?: Json | null
+          alert_message?: string
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          user_id?: string
+          watchlist_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_alerts_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlist"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -460,6 +501,54 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      watchlist: {
+        Row: {
+          alert_enabled: boolean | null
+          alert_price_above: number | null
+          alert_price_below: number | null
+          alert_volume_threshold: number | null
+          asset_id: string
+          asset_name: string
+          asset_symbol: string | null
+          asset_type: string
+          created_at: string
+          id: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_enabled?: boolean | null
+          alert_price_above?: number | null
+          alert_price_below?: number | null
+          alert_volume_threshold?: number | null
+          asset_id: string
+          asset_name: string
+          asset_symbol?: string | null
+          asset_type: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_enabled?: boolean | null
+          alert_price_above?: number | null
+          alert_price_below?: number | null
+          alert_volume_threshold?: number | null
+          asset_id?: string
+          asset_name?: string
+          asset_symbol?: string | null
+          asset_type?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
