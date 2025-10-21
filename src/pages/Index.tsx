@@ -417,18 +417,6 @@ const Index = () => {
                 </p>
               </div>
             </div>
-
-            <div className="bg-blue-50 border-l-4 border-primary p-6 rounded-lg">
-              <div className="flex gap-4">
-                <Info className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                <div>
-                  <h4 className="font-bold mb-2">Important Disclaimer</h4>
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Investor Stream is not a brokerage or licensed advisor.</strong> Our content is educational and informational only. We provide independent research and analysis to help you make informed decisions, but we do not provide investment advice or recommendations to buy or sell securities.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -443,10 +431,10 @@ const Index = () => {
               <Button
                 size="lg"
                 onClick={scrollToSampleAlerts}
-                className="bg-white text-black hover:bg-gray-100 h-14 px-8 text-base font-semibold"
+                className="bg-white text-black hover:bg-gray-100 h-16 px-10 text-lg font-bold animate-bounce shadow-2xl"
               >
-                <Bell className="w-5 h-5 mr-2" />
-                See Sample Alerts
+                <Bell className="w-6 h-6 mr-2" />
+                Don't Miss Out on Free Alerts!
               </Button>
             </div>
           </div>
@@ -1020,6 +1008,23 @@ const Index = () => {
               <p className="text-sm text-blue-200 mt-6">
                 No credit card required • Unsubscribe anytime • 100% free
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Disclaimer Section - Moved to Bottom */}
+        <section className="py-12 px-4 bg-muted/30">
+          <div className="container mx-auto max-w-6xl">
+            <div className="bg-blue-50 border-l-4 border-primary p-6 rounded-lg">
+              <div className="flex gap-4">
+                <Info className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="font-bold mb-2">Important Disclaimer</h4>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Investor Stream is not a brokerage or licensed advisor.</strong> Our content is educational and informational only. We provide independent research and analysis to help you make informed decisions, but we do not provide investment advice or recommendations to buy or sell securities.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
