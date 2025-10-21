@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Bell, Play, Shield, Clock, Users, BarChart3, AlertTriangle, TrendingUp, Info, Search, Filter, FileText, Video, BookOpen, Star, Lock, Award, Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Bell, Play, Shield, Clock, Users, BarChart3, AlertTriangle, TrendingUp, Info, Search, Filter, FileText, Video, BookOpen, Star, Lock, Award, Menu, ArrowLeft } from "lucide-react";
 import { InvestorSignupWizard } from "@/components/landing/InvestorSignupWizard";
 import { IPODetailModal } from "@/components/landing/IPODetailModal";
 import { Button } from "@/components/ui/button";
@@ -150,6 +151,7 @@ const ipoData = {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [selectedIPO, setSelectedIPO] = useState<typeof ipoData[keyof typeof ipoData] | null>(null);
   const [showIPODetail, setShowIPODetail] = useState(false);
@@ -172,6 +174,14 @@ const Index = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => navigate('/overview')}
+              className="mr-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <BarChart3 className="w-6 h-6 text-primary-foreground" />
             </div>
