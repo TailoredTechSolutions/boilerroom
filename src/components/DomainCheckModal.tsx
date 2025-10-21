@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, ExternalLink } from "lucide-react";
 import { useState } from "react";
@@ -21,12 +21,15 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
     setResults(null);
 
     try {
-      // Generate domain from company name
-      const domain = companyName
+      // Generate domain from company name (remove common company suffixes)
+      const sanitized = companyName
+        .replace(/\b(limited|ltd|inc|incorporated|corp|corporation|plc|llc|l\.l\.c|co|company)\b/gi, '')
+        .trim();
+      const sld = sanitized
         .toLowerCase()
         .replace(/[^a-z0-9]/g, '')
-        .substring(0, 63) + '.com';
-
+        .substring(0, 63);
+      const domain = `${sld}.com`;
       console.log('Checking domain:', domain);
 
       const { data, error } = await supabase.functions.invoke('check-domain', {
@@ -45,6 +48,16 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
     } catch (error) {
       console.error('Domain check error:', error);
       toast.error('Failed to check domain availability');
+      // Show something in the modal instead of empty state
+      const sanitized = companyName
+        .replace(/\b(limited|ltd|inc|incorporated|corp|corporation|plc|llc|l\.l\.c|co|company)\b/gi, '')
+        .trim();
+      const sld = sanitized
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .substring(0, 63);
+      const fallbackDomain = `${sld}.com`;
+      setResults({ domain: fallbackDomain, godaddy: { error: 'Failed to check availability' } });
     } finally {
       setLoading(false);
     }
@@ -64,6 +77,7 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Domain Availability Check</DialogTitle>
+          <DialogDescription>Checks .com availability and price via GoDaddy.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -82,10 +96,15 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
               {/* GoDaddy Results */}
               <div className="rounded-lg border p-4 space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">GoDaddy</span>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </div>
+                    <a
+                      href={`https://www.godaddy.com/en-ph/domainsearch/find?domainToCheck=${encodeURIComponent(results.domain)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      <span className="font-semibold">GoDaddy</span>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                    </a>
                   {results.godaddy?.error ? (
                     <span className="text-sm text-muted-foreground italic">{results.godaddy.error}</span>
                   ) : (
