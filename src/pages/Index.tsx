@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { CompanyTicker } from "@/components/landing/CompanyTicker";
-import { EmailSignupModal } from "@/components/landing/EmailSignupModal";
+import { InvestorSignupWizard } from "@/components/landing/InvestorSignupWizard";
 import { LandingNav } from "@/components/landing/LandingNav";
 
 const Index = () => {
@@ -77,7 +77,7 @@ const Index = () => {
         </section>
       </main>
       
-      <EmailSignupModal open={showSignupModal} onOpenChange={setShowSignupModal} />
+      <InvestorSignupWizard open={showSignupModal} onOpenChange={setShowSignupModal} />
     </div>
   );
 };
