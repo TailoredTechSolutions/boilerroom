@@ -4,11 +4,62 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { DataSourceGrid } from "@/components/DataSourceGrid";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2, Play } from "lucide-react";
 import ukLogo from "@/assets/uk-companies-house-logo.png";
 import gleifLogo from "@/assets/gleif-logo.png";
 
 const DataSources = () => {
-  const [selectedSource, setSelectedSource] = useState("uk");
+  const [selectedSource, setSelectedSource] = useState("CH");
+  const [searchTerm, setSearchTerm] = useState("venture capital");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleRunScrape = async () => {
+    if (!searchTerm.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Search term required",
+        description: "Please enter a search term to scrape",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    console.log("Triggering scrape for:", { source: selectedSource, searchTerm });
+
+    try {
+      const { data, error } = await supabase.functions.invoke("trigger-scrape", {
+        body: {
+          source: selectedSource,
+          searchTerm: searchTerm,
+          filters: {},
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Scraping job started",
+        description: `Job ${data.jobId} has been queued for processing`,
+      });
+
+      console.log("Scraping job created:", data);
+    } catch (error: any) {
+      console.error("Error triggering scrape:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to start scraping",
+        description: error.message || "An error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -25,6 +76,45 @@ const DataSources = () => {
             </div>
 
             <DataSourceGrid selectedSource={selectedSource} onSelectSource={setSelectedSource} />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Scraping Configuration</CardTitle>
+                <CardDescription>Configure and run scraping jobs for the selected data source</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="searchTerm">Search Term</Label>
+                  <Input
+                    id="searchTerm"
+                    placeholder="e.g., venture capital, private equity"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Enter keywords to search for companies in the selected registry
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleRunScrape} 
+                  disabled={isLoading || !selectedSource}
+                  className="w-full"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Running Scrape...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4 mr-2" />
+                      Run Scrape
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
 
             <Card>
               <CardHeader>
