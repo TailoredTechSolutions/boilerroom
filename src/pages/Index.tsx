@@ -12,6 +12,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // IPO Data
 const ipoData = {
@@ -224,6 +231,9 @@ const Index = () => {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [selectedIPO, setSelectedIPO] = useState<typeof ipoData[keyof typeof ipoData] | null>(null);
   const [showIPODetail, setShowIPODetail] = useState(false);
+  const [showValuationDialog, setShowValuationDialog] = useState(false);
+  const [showRiskDialog, setShowRiskDialog] = useState(false);
+  const [showGrowthDialog, setShowGrowthDialog] = useState(false);
 
   const handleViewAnalysis = (ipoId: keyof typeof ipoData) => {
     setSelectedIPO(ipoData[ipoId]);
@@ -296,23 +306,14 @@ const Index = () => {
                 Get free, instant alerts on the hottest upcoming IPOs before they hit the market. Stay ahead with independent research, curated watchlists, and exclusive insights.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <div className="flex justify-center pt-4">
                 <Button
                   size="lg"
                   onClick={() => setShowSignupModal(true)}
-                  className="bg-white text-primary hover:bg-blue-50 text-base font-semibold h-14 px-8"
+                  className="bg-white text-black hover:bg-gray-100 text-xl font-semibold h-20 px-16"
                 >
-                  <Bell className="w-5 h-5 mr-2" />
+                  <Bell className="w-6 h-6 mr-3" />
                   Get Free Alerts Now
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={scrollToSampleAlerts}
-                  className="border-white/30 text-white hover:bg-white/10 text-base font-semibold h-14 px-8"
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  See Sample Alerts
                 </Button>
               </div>
 
@@ -350,11 +351,10 @@ const Index = () => {
               <div className="flex items-center justify-between">
                 <Badge variant="secondary" className="bg-blue-50 text-blue-700">High Growth</Badge>
                 <Button 
-                  variant="link" 
                   onClick={() => handleViewAnalysis('techcorp')}
-                  className="text-primary font-semibold"
+                  className="bg-primary text-white hover:bg-primary/90"
                 >
-                  Read Full Analysis →
+                  Read Full Analysis
                 </Button>
               </div>
             </div>
@@ -378,7 +378,10 @@ const Index = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
+              <div 
+                onClick={() => setShowValuationDialog(true)}
+                className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
                 <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
                   <FileText className="w-7 h-7 text-primary" />
                 </div>
@@ -388,7 +391,10 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
+              <div 
+                onClick={() => setShowRiskDialog(true)}
+                className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              >
                 <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
                   <AlertTriangle className="w-7 h-7 text-blue-600" />
                 </div>
@@ -398,7 +404,10 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+              <div 
+                onClick={() => setShowGrowthDialog(true)}
+                className="bg-card p-8 rounded-xl border shadow-sm hover:shadow-md transition-shadow md:col-span-2 cursor-pointer"
+              >
                 <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
                   <TrendingUp className="w-7 h-7 text-blue-500" />
                 </div>
@@ -433,11 +442,11 @@ const Index = () => {
               </p>
               <Button
                 size="lg"
-                onClick={() => setShowSignupModal(true)}
-                className="bg-white text-primary hover:bg-blue-50 h-14 px-8 text-base font-semibold"
+                onClick={scrollToSampleAlerts}
+                className="bg-white text-black hover:bg-gray-100 h-14 px-8 text-base font-semibold"
               >
                 <Bell className="w-5 h-5 mr-2" />
-                Start Getting Alerts
+                See Sample Alerts
               </Button>
             </div>
           </div>
@@ -1017,11 +1026,94 @@ const Index = () => {
       </main>
 
       <InvestorSignupWizard open={showSignupModal} onOpenChange={setShowSignupModal} />
-      <IPODetailModal 
+      <IPODetailModal
         open={showIPODetail} 
         onOpenChange={setShowIPODetail} 
         ipoData={selectedIPO}
       />
+      
+      {/* Valuation Analysis Dialog */}
+      <Dialog open={showValuationDialog} onOpenChange={setShowValuationDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Valuation Analysis</DialogTitle>
+            <DialogDescription className="text-base">
+              Comprehensive financial evaluation methodology
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-muted-foreground leading-relaxed">
+              Our valuation analysis provides deep insights into company financials, revenue models, and market positioning. We assess fair value through multiple frameworks including:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+              <li><strong>DCF Analysis:</strong> Discounted cash flow projections based on realistic growth assumptions</li>
+              <li><strong>Comparable Companies:</strong> Peer group analysis across similar businesses and stages</li>
+              <li><strong>Revenue Multiples:</strong> Industry-standard metrics and historical IPO pricing data</li>
+              <li><strong>Growth Trajectory:</strong> Assessment of revenue acceleration, customer acquisition costs, and retention metrics</li>
+              <li><strong>Market Positioning:</strong> Competitive advantages, moats, and differentiation factors</li>
+            </ul>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              Each IPO alert includes specific valuation metrics tailored to the company's sector, stage, and business model. We provide context on whether the proposed valuation appears reasonable, aggressive, or conservative relative to comparable offerings.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Risk Assessment Dialog */}
+      <Dialog open={showRiskDialog} onOpenChange={setShowRiskDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Risk Assessment</DialogTitle>
+            <DialogDescription className="text-base">
+              Comprehensive risk evaluation framework
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-muted-foreground leading-relaxed">
+              We provide thorough risk analysis covering all material factors that could impact investment performance:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+              <li><strong>Market Risks:</strong> Economic conditions, sector trends, and timing considerations</li>
+              <li><strong>Competitive Landscape:</strong> Threats from established players and emerging competitors</li>
+              <li><strong>Regulatory Environment:</strong> Compliance requirements, pending legislation, and policy changes</li>
+              <li><strong>Financial Risks:</strong> Profitability path, cash burn rate, and funding requirements</li>
+              <li><strong>Operational Risks:</strong> Key person dependencies, technology vulnerabilities, and execution challenges</li>
+              <li><strong>Customer Concentration:</strong> Revenue dependency and customer diversification analysis</li>
+            </ul>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              Our risk assessments are designed to help you understand potential downsides and make informed decisions. We highlight both company-specific risks and broader market factors that could affect performance.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Growth Potential Dialog */}
+      <Dialog open={showGrowthDialog} onOpenChange={setShowGrowthDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Growth Potential</DialogTitle>
+            <DialogDescription className="text-base">
+              Market opportunity and expansion analysis
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-muted-foreground leading-relaxed">
+              Our growth potential analysis evaluates the company's runway for expansion and value creation:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+              <li><strong>Total Addressable Market (TAM):</strong> Size and characteristics of the target market opportunity</li>
+              <li><strong>Market Share Projections:</strong> Realistic capture rates based on competitive positioning</li>
+              <li><strong>Revenue Growth Trajectory:</strong> Historical performance and forward-looking indicators</li>
+              <li><strong>Expansion Opportunities:</strong> Geographic expansion, new products, and adjacent markets</li>
+              <li><strong>Unit Economics:</strong> Customer lifetime value, acquisition costs, and scalability metrics</li>
+              <li><strong>Innovation Pipeline:</strong> R&D capabilities and product roadmap assessment</li>
+            </ul>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              We combine industry research, company disclosures, and market trends to project realistic growth scenarios. Our analysis helps you understand whether the company's growth story is credible and sustainable.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
