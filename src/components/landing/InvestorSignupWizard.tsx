@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, X } from "lucide-react";
 import { z } from "zod";
+import { CountryCodeSelector, countries, type Country } from "./CountryCodeSelector";
 
 interface InvestorSignupWizardProps {
   open: boolean;
@@ -61,6 +62,8 @@ export const InvestorSignupWizard = ({ open, onOpenChange }: InvestorSignupWizar
     agreePolicy: false,
   });
 
+  const [selectedCountry, setSelectedCountry] = useState<Country>(countries[0]); // Default to UK
+
   const currentStepIndex = STEPS.indexOf(currentStep);
   const progress = ((currentStepIndex + 1) / STEPS.length) * 100;
 
@@ -111,7 +114,7 @@ export const InvestorSignupWizard = ({ open, onOpenChange }: InvestorSignupWizar
     try {
       const formattedPhone = formData.phone.startsWith('+') 
         ? formData.phone 
-        : `+44${formData.phone.replace(/^0+/, '')}`;
+        : `${selectedCountry.dialCode}${formData.phone.replace(/^0+/, '')}`;
 
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`,
@@ -303,20 +306,20 @@ export const InvestorSignupWizard = ({ open, onOpenChange }: InvestorSignupWizar
                 <div>
                   <Label htmlFor="phone">Your Best Phone Number</Label>
                   <div className="flex gap-2">
-                    <div className="flex items-center gap-2 px-3 border rounded-md bg-muted">
-                      <span>🇬🇧</span>
-                      <span>+44</span>
-                    </div>
+                    <CountryCodeSelector
+                      value={selectedCountry}
+                      onChange={setSelectedCountry}
+                    />
                     <Input
                       id="phone"
-                      placeholder="7400 123456"
+                      placeholder="Enter phone number"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="flex-1"
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    UK only. We'll text you a 4-digit PIN to verify.
+                    We'll text you a 4-digit PIN to verify your number.
                   </p>
                 </div>
 
