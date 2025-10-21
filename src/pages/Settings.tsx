@@ -20,6 +20,12 @@ const Settings = () => {
   });
 
   const [webhookUrl, setWebhookUrl] = useState("https://n8n-ffai-u38114.vm.elestio.app/webhook-test/vc-registry-scraper");
+  
+  const [twilioConfig, setTwilioConfig] = useState({
+    accountSid: "",
+    authToken: "",
+    verifySid: ""
+  });
 
   const saveChanges = () => {
     toast({
@@ -28,10 +34,10 @@ const Settings = () => {
     });
   };
 
-  const saveApiKeys = () => {
+  const saveTwilioConfig = () => {
     toast({
-      title: "API keys saved",
-      description: "Your API configuration has been updated",
+      title: "Twilio configuration saved",
+      description: "Your SMS integration has been updated",
     });
   };
 
@@ -60,9 +66,10 @@ const Settings = () => {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="general">General</TabsTrigger>
                 <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                <TabsTrigger value="integrations">Integrations</TabsTrigger>
                 <TabsTrigger value="team">Team</TabsTrigger>
               </TabsList>
 
@@ -141,6 +148,49 @@ const Settings = () => {
                       </div>
                       <Switch checked={settings.systemUpdates} onCheckedChange={() => toggleSetting('systemUpdates')} />
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="integrations" className="space-y-6 mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Twilio SMS Configuration</CardTitle>
+                    <CardDescription>Configure Twilio for SMS verification in signup flow</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="twilioAccountSid">Account SID</Label>
+                      <Input 
+                        id="twilioAccountSid" 
+                        placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        value={twilioConfig.accountSid}
+                        onChange={(e) => setTwilioConfig(prev => ({ ...prev, accountSid: e.target.value }))}
+                      />
+                      <p className="text-xs text-muted-foreground">Find in your Twilio Console</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="twilioAuthToken">Auth Token</Label>
+                      <Input 
+                        id="twilioAuthToken" 
+                        type="password"
+                        placeholder="••••••••••••••••••••••••••••••••"
+                        value={twilioConfig.authToken}
+                        onChange={(e) => setTwilioConfig(prev => ({ ...prev, authToken: e.target.value }))}
+                      />
+                      <p className="text-xs text-muted-foreground">Your Twilio Auth Token (kept secure)</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="twilioVerifySid">Verify Service SID</Label>
+                      <Input 
+                        id="twilioVerifySid" 
+                        placeholder="VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        value={twilioConfig.verifySid}
+                        onChange={(e) => setTwilioConfig(prev => ({ ...prev, verifySid: e.target.value }))}
+                      />
+                      <p className="text-xs text-muted-foreground">Create a Verify Service in Twilio Console</p>
+                    </div>
+                    <Button onClick={saveTwilioConfig}>Save Twilio Configuration</Button>
                   </CardContent>
                 </Card>
               </TabsContent>
