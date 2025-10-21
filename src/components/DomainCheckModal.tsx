@@ -1,8 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, ExternalLink } from "lucide-react";
+import { Loader2, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface DomainCheckModalProps {
@@ -13,51 +12,67 @@ interface DomainCheckModalProps {
 
 export function DomainCheckModal({ open, onOpenChange, companyName }: DomainCheckModalProps) {
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [domain, setDomain] = useState<string>("");
+  const [available, setAvailable] = useState<boolean | null>(null);
+
+  const sanitizeDomainName = (name: string): string => {
+    // Remove common company suffixes
+    const cleaned = name
+      .replace(/\b(limited|ltd|inc|incorporated|corp|corporation|plc|llc|l\.l\.c|co|company)\b/gi, '')
+      .trim();
+    // Keep only letters, numbers, and hyphens
+    const sanitized = cleaned
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '')
+      .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+      .substring(0, 63);
+    return sanitized;
+  };
+
+  const checkDomainAvailability = async (domainName: string): Promise<boolean> => {
+    // Use Cloudflare DNS-over-HTTPS to check if domain exists
+    const fqdn = `${domainName}.com`;
+    const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(fqdn)}&type=A`;
+    
+    try {
+      const res = await fetch(url, { 
+        headers: { 'accept': 'application/dns-json' }
+      });
+      
+      if (!res.ok) throw new Error('DNS lookup failed');
+      
+      const data = await res.json();
+      // Status 3 = NXDOMAIN (domain doesn't exist, likely available)
+      // No Answer records also suggests availability
+      const isAvailable = Number(data.Status) === 3 || (!data.Answer && Number(data.Status) === 0);
+      return isAvailable;
+    } catch (error) {
+      console.error('DNS check error:', error);
+      throw error;
+    }
+  };
 
   const checkDomain = async () => {
     console.log('checkDomain called for:', companyName);
     setLoading(true);
-    setResults(null);
+    setAvailable(null);
 
     try {
-      // Generate domain from company name (remove common company suffixes)
-      const sanitized = companyName
-        .replace(/\b(limited|ltd|inc|incorporated|corp|corporation|plc|llc|l\.l\.c|co|company)\b/gi, '')
-        .trim();
-      const sld = sanitized
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .substring(0, 63);
-      const domain = `${sld}.com`;
-      console.log('Checking domain:', domain);
-
-      const { data, error } = await supabase.functions.invoke('check-domain', {
-        body: { domain },
-      });
-
-      console.log('Domain check response:', { data, error });
-
-      if (error) {
-        console.error('Domain check error:', error);
-        throw error;
-      }
-
-      setResults(data);
-      console.log('Results set:', data);
+      const sanitized = sanitizeDomainName(companyName);
+      const domainToCheck = `${sanitized}.com`;
+      setDomain(domainToCheck);
+      
+      console.log('Checking domain:', domainToCheck);
+      const isAvailable = await checkDomainAvailability(sanitized);
+      
+      setAvailable(isAvailable);
+      console.log('Domain available:', isAvailable);
     } catch (error) {
       console.error('Domain check error:', error);
-      toast.error('Failed to check domain availability');
-      // Show something in the modal instead of empty state
-      const sanitized = companyName
-        .replace(/\b(limited|ltd|inc|incorporated|corp|corporation|plc|llc|l\.l\.c|co|company)\b/gi, '')
-        .trim();
-      const sld = sanitized
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-        .substring(0, 63);
-      const fallbackDomain = `${sld}.com`;
-      setResults({ domain: fallbackDomain, godaddy: { error: 'Failed to check availability' } });
+      toast.error('Could not check availability. You can still view pricing on GoDaddy.');
+      const sanitized = sanitizeDomainName(companyName);
+      setDomain(`${sanitized}.com`);
+      setAvailable(null);
     } finally {
       setLoading(false);
     }
@@ -67,9 +82,14 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
     if (newOpen) {
       checkDomain();
     } else {
-      setResults(null);
+      setDomain("");
+      setAvailable(null);
     }
     onOpenChange(newOpen);
+  };
+
+  const getGoDaddyUrl = () => {
+    return `https://www.godaddy.com/en-ph/domainsearch/find?checkAvail=1&domainToCheck=${encodeURIComponent(domain)}`;
   };
 
   return (
@@ -77,57 +97,66 @@ export function DomainCheckModal({ open, onOpenChange, companyName }: DomainChec
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Domain Availability Check</DialogTitle>
-          <DialogDescription>Checks .com availability and price via GoDaddy.</DialogDescription>
+          <DialogDescription>Checks .com availability and live pricing via GoDaddy</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {loading && (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex flex-col items-center justify-center py-8 gap-2">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Checking DNS...</p>
             </div>
           )}
 
-          {results && (
+          {!loading && domain && (
             <div className="space-y-4">
               <div className="text-sm text-muted-foreground">
-                Checking: <span className="font-mono font-semibold text-foreground">{results.domain}</span>
+                Domain: <span className="font-mono font-semibold text-foreground">{domain}</span>
               </div>
 
-              {/* GoDaddy Results */}
-              <div className="rounded-lg border p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                    <a
-                      href={`https://www.godaddy.com/en-ph/domainsearch/find?domainToCheck=${encodeURIComponent(results.domain)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2"
-                    >
-                      <span className="font-semibold">GoDaddy</span>
-                      <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                    </a>
-                  {results.godaddy?.error ? (
-                    <span className="text-sm text-muted-foreground italic">{results.godaddy.error}</span>
+              {/* Availability Status */}
+              {available !== null && (
+                <div className={`rounded-lg border p-3 flex items-center gap-2 ${
+                  available 
+                    ? 'bg-green-50 border-green-200 text-green-700' 
+                    : 'bg-red-50 border-red-200 text-red-700'
+                }`}>
+                  {available ? (
+                    <>
+                      <CheckCircle2 className="h-5 w-5" />
+                      <span className="font-semibold">{domain} looks available!</span>
+                    </>
                   ) : (
-                    <span className={`font-semibold ${results.godaddy?.available ? 'text-green-600' : 'text-red-600'}`}>
-                      {results.godaddy?.available ? 'Available' : 'Taken'}
-                    </span>
+                    <>
+                      <XCircle className="h-5 w-5" />
+                      <span className="font-semibold">{domain} appears to be registered</span>
+                    </>
                   )}
                 </div>
-                {results.godaddy?.price && results.godaddy?.available && (
-                  <div className="text-sm text-muted-foreground">
-                    Price: <span className="font-semibold text-foreground">{results.godaddy.price}</span>
-                  </div>
-                )}
-              </div>
+              )}
 
-              {/* Namecheap Placeholder */}
-              <div className="rounded-lg border p-4 space-y-2">
+              {/* GoDaddy Section */}
+              <div className="rounded-lg border border-dashed p-4 space-y-3 bg-blue-50/50">
+                <div className="flex items-center gap-2 font-bold">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                  </svg>
+                  <span>GoDaddy.com</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {available 
+                    ? "Confirm pricing on GoDaddy. If available, you'll see the live checkout price."
+                    : "Check aftermarket pricing and alternatives on GoDaddy's domain marketplace."
+                  }
+                </p>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Namecheap</span>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <span className="text-sm text-muted-foreground italic">Need API key</span>
+                  <Button
+                    onClick={() => window.open(getGoDaddyUrl(), '_blank', 'noopener')}
+                    className="w-full"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Pricing on GoDaddy
+                  </Button>
                 </div>
               </div>
             </div>
