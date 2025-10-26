@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
@@ -14,12 +14,60 @@ import { Loader2, Play, ChevronRight } from "lucide-react";
 import ukLogo from "@/assets/uk-companies-house-logo.png";
 import gleifLogo from "@/assets/gleif-logo.png";
 
+interface SourceStats {
+  registry_source: string;
+  count: number;
+}
+
+const sourceMap: Record<string, { name: string; logo: string; id: string }> = {
+  COMPANIES_HOUSE: { name: "UK Companies House", logo: ukLogo, id: "CH" },
+  GLEIF: { name: "GLEIF Global", logo: gleifLogo, id: "GLEIF" },
+  SEC_EDGAR: { name: "SEC EDGAR", logo: "", id: "SEC_EDGAR" },
+  ASIC: { name: "ASIC (Australia)", logo: "", id: "ASIC" },
+};
+
 const DataSources = () => {
   const [selectedSource, setSelectedSource] = useState("CH");
   const [searchTerm, setSearchTerm] = useState("venture capital");
   const [isLoading, setIsLoading] = useState(false);
+  const [sourceStats, setSourceStats] = useState<SourceStats[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchSourceStats();
+  }, []);
+
+  const fetchSourceStats = async () => {
+    try {
+      setStatsLoading(true);
+      const { data, error } = await supabase
+        .from('entities')
+        .select('registry_source')
+        .not('registry_source', 'is', null);
+
+      if (error) throw error;
+
+      // Count entities per source
+      const counts = data.reduce((acc: Record<string, number>, curr) => {
+        const source = curr.registry_source;
+        acc[source] = (acc[source] || 0) + 1;
+        return acc;
+      }, {});
+
+      const stats: SourceStats[] = Object.entries(counts).map(([source, count]) => ({
+        registry_source: source,
+        count: count as number,
+      }));
+
+      setSourceStats(stats);
+    } catch (error) {
+      console.error("Error fetching source stats:", error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
 
   const handleRunScrape = async () => {
     if (!searchTerm.trim()) {
@@ -51,6 +99,9 @@ const DataSources = () => {
       });
 
       console.log("Scraping job created:", data);
+      
+      // Refresh stats after scrape
+      setTimeout(fetchSourceStats, 2000);
     } catch (error: any) {
       console.error("Error triggering scrape:", error);
       toast({
@@ -61,6 +112,14 @@ const DataSources = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getSourceName = (registrySource: string) => {
+    return sourceMap[registrySource]?.name || registrySource;
+  };
+
+  const getSourceLogo = (registrySource: string) => {
+    return sourceMap[registrySource]?.logo || "";
   };
 
   return (
@@ -82,11 +141,15 @@ const DataSources = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Scraping Configuration</CardTitle>
-                <CardDescription>Configure and run scraping jobs for the selected data source</CardDescription>
+                <CardDescription>
+                  Selected Source: <span className="font-semibold text-primary">
+                    {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
+                  </span>
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="searchTerm">Search Term</Label>
+                  <Label htmlFor="searchTerm">Search Term (Optional)</Label>
                   <Input
                     id="searchTerm"
                     placeholder="e.g., venture capital, private equity"
@@ -95,7 +158,7 @@ const DataSources = () => {
                     disabled={isLoading}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Enter keywords to search for companies in the selected registry
+                    Enter keywords to search for companies in {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || "the selected registry"}
                   </p>
                 </div>
                 <Button 
@@ -111,7 +174,7 @@ const DataSources = () => {
                   ) : (
                     <>
                       <Play className="w-4 h-4 mr-2" />
-                      Run Scrape
+                      Run Scrape for {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
                     </>
                   )}
                 </Button>
@@ -124,40 +187,51 @@ const DataSources = () => {
                 <CardDescription>Overview of data collection from each source</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <button
-                    onClick={() => navigate('/lead-generation?source=COMPANIES_HOUSE')}
-                    className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img src={ukLogo} alt="UK Companies House" className="w-8 h-8 object-contain" />
-                      <div>
-                        <p className="font-medium text-foreground">UK Companies House</p>
-                        <p className="text-sm text-muted-foreground">12,456 entities</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge>Active</Badge>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => navigate('/lead-generation?source=GLEIF')}
-                    className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img src={gleifLogo} alt="GLEIF Global" className="w-8 h-8 object-contain" />
-                      <div>
-                        <p className="font-medium text-foreground">GLEIF Global</p>
-                        <p className="text-sm text-muted-foreground">8,234 entities</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge>Active</Badge>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                  </button>
-                </div>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : sourceStats.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No data sources available yet</p>
+                    <p className="text-sm mt-2">Run your first scrape to see statistics</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {sourceStats.map((stat) => {
+                      const sourceName = getSourceName(stat.registry_source);
+                      const sourceLogo = getSourceLogo(stat.registry_source);
+                      
+                      return (
+                        <button
+                          key={stat.registry_source}
+                          onClick={() => navigate(`/lead-generation?source=${stat.registry_source}`)}
+                          className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
+                        >
+                          <div className="flex items-center gap-3">
+                            {sourceLogo ? (
+                              <img src={sourceLogo} alt={sourceName} className="w-8 h-8 object-contain" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+                                {stat.registry_source.substring(0, 2)}
+                              </div>
+                            )}
+                            <div className="text-left">
+                              <p className="font-medium text-foreground">{sourceName}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {stat.count.toLocaleString()} entities
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">Active</Badge>
+                            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
