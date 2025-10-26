@@ -10,9 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Play, ChevronRight } from "lucide-react";
+import { Loader2, Play, ChevronRight, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 import ukLogo from "@/assets/uk-companies-house-logo.png";
 import gleifLogo from "@/assets/gleif-logo.png";
+import { format } from "date-fns";
 
 interface SourceStats {
   registry_source: string;
@@ -34,10 +36,19 @@ const DataSources = () => {
   const [statsLoading, setStatsLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { jobs, activeJobs } = useScrapingJobs();
 
   useEffect(() => {
     fetchSourceStats();
   }, []);
+
+  // Refresh stats when jobs complete
+  useEffect(() => {
+    const completedJobs = jobs.filter(j => j.status === 'completed');
+    if (completedJobs.length > 0) {
+      fetchSourceStats();
+    }
+  }, [jobs]);
 
   const fetchSourceStats = async () => {
     try {
@@ -95,13 +106,10 @@ const DataSources = () => {
 
       toast({
         title: "Scraping job started",
-        description: `Job ${data.jobId} has been queued for processing`,
+        description: `Job is running. You'll be notified when it completes.`,
       });
 
       console.log("Scraping job created:", data);
-      
-      // Refresh stats after scrape
-      setTimeout(fetchSourceStats, 2000);
     } catch (error: any) {
       console.error("Error triggering scrape:", error);
       toast({
@@ -120,6 +128,29 @@ const DataSources = () => {
 
   const getSourceLogo = (registrySource: string) => {
     return sourceMap[registrySource]?.logo || "";
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+      case 'failed':
+        return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'running':
+        return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
+      default:
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const variants: Record<string, "default" | "destructive" | "outline" | "secondary"> = {
+      completed: "default",
+      failed: "destructive",
+      running: "secondary",
+      pending: "outline",
+    };
+    return variants[status] || "outline";
   };
 
   return (
@@ -183,8 +214,56 @@ const DataSources = () => {
 
             <Card>
               <CardHeader>
+                <CardTitle>Recent Scraping Jobs</CardTitle>
+                <CardDescription>
+                  {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {jobs.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No scraping jobs yet</p>
+                    <p className="text-sm mt-2">Run your first scrape to see results here</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {jobs.slice(0, 5).map((job) => (
+                      <div
+                        key={job.id}
+                        className="flex items-center justify-between p-4 border border-border rounded-lg"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          {getStatusIcon(job.status)}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-foreground">
+                                {sourceMap[job.source]?.name || job.source}
+                              </p>
+                              <Badge variant={getStatusBadge(job.status)}>
+                                {job.status}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {job.search_term && `Search: ${job.search_term} • `}
+                              {job.records_processed} entities processed
+                              {job.created_at && ` • ${format(new Date(job.created_at), 'MMM d, h:mm a')}`}
+                            </p>
+                            {job.error_message && (
+                              <p className="text-sm text-red-500 mt-1">{job.error_message}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Source Statistics</CardTitle>
-                <CardDescription>Overview of data collection from each source</CardDescription>
+                <CardDescription>Total entities collected from each source</CardDescription>
               </CardHeader>
               <CardContent>
                 {statsLoading ? (
