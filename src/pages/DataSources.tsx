@@ -259,7 +259,13 @@ const DataSources = () => {
                       return (
                         <button
                           key={stat.registry_source}
-                          onClick={() => navigate(`/lead-generation?source=${stat.registry_source}`)}
+                          onClick={() => {
+                            if (stat.registry_source === 'COMPANIES_HOUSE') {
+                              window.open('https://www.gov.uk/government/organisations/companies-house', '_blank');
+                            } else {
+                              navigate(`/lead-generation?source=${stat.registry_source}`);
+                            }
+                          }}
                           className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
                         >
                           <div className="flex items-center gap-3">

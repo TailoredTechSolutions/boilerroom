@@ -20,7 +20,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { name: "Overview", icon: Grid, path: "/" },
+  { name: "Overview", icon: Grid, path: "/overview" },
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { name: "Admin", icon: Shield, path: "/admin" },
   { name: "IPO Landing Page", icon: Target, path: "/ipo-landing" },
