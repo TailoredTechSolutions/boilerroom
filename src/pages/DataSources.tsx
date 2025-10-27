@@ -6,8 +6,6 @@ import { DataSourceGrid } from "@/components/DataSourceGrid";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Play, ChevronRight, CheckCircle2, XCircle, Clock } from "lucide-react";
@@ -31,7 +29,6 @@ const sourceMap: Record<string, { name: string; logo: string; id: string }> = {
 
 const DataSources = () => {
   const [selectedSource, setSelectedSource] = useState("CH");
-  const [searchTerm, setSearchTerm] = useState("venture capital");
   const [isLoading, setIsLoading] = useState(false);
   const [sourceStats, setSourceStats] = useState<SourceStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -82,23 +79,14 @@ const DataSources = () => {
   };
 
   const handleRunScrape = async () => {
-    if (!searchTerm.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Search term required",
-        description: "Please enter a search term to scrape",
-      });
-      return;
-    }
-
     setIsLoading(true);
-    console.log("Triggering scrape for:", { source: selectedSource, searchTerm });
+    console.log("Triggering scrape for:", { source: selectedSource });
 
     try {
       const { data, error } = await supabase.functions.invoke("trigger-scrape", {
         body: {
           source: selectedSource,
-          searchTerm: searchTerm,
+          searchTerm: "",
           filters: {},
         },
       });
@@ -179,20 +167,7 @@ const DataSources = () => {
                   </span>
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="searchTerm">Search Term (Optional)</Label>
-                  <Input
-                    id="searchTerm"
-                    placeholder="e.g., venture capital, private equity"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    disabled={isLoading}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Enter keywords to search for companies in {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || "the selected registry"}
-                  </p>
-                </div>
+              <CardContent>
                 <Button 
                   onClick={handleRunScrape} 
                   disabled={isLoading || !selectedSource}
@@ -245,7 +220,6 @@ const DataSources = () => {
                               </Badge>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              {job.search_term && `Search: ${job.search_term} • `}
                               {job.records_processed} entities processed
                               {job.created_at && ` • ${format(new Date(job.created_at), 'MMM d, h:mm a')}`}
                             </p>

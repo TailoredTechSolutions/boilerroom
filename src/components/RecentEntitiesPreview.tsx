@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CompanyDetailView } from "@/components/CompanyDetailView";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface Entity {
   id: string;
@@ -137,12 +138,16 @@ export const RecentEntitiesPreview = () => {
         </button>
       </div>
 
-      {selectedEntity && (
-        <CompanyDetailView
-          company={selectedEntity}
-          onClose={() => setSelectedEntity(null)}
-        />
-      )}
+      <Dialog open={!!selectedEntity} onOpenChange={(open) => !open && setSelectedEntity(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedEntity && (
+            <CompanyDetailView
+              company={selectedEntity}
+              onClose={() => setSelectedEntity(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
