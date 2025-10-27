@@ -38,6 +38,7 @@ export const RecentEntitiesPreview = () => {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,15 +63,22 @@ export const RecentEntitiesPreview = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [showAll]);
 
   const fetchRecentEntities = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      const query = supabase
         .from('entities')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
+        .order('created_at', { ascending: false });
+      
+      // Only limit if not showing all
+      if (!showAll) {
+        query.limit(5);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setEntities(data || []);
@@ -131,10 +139,10 @@ export const RecentEntitiesPreview = () => {
           </div>
         ))}
         <button
-          onClick={() => navigate('/lead-generation')}
-          className="w-full text-sm text-primary hover:underline py-2"
+          onClick={() => setShowAll(!showAll)}
+          className="w-full text-sm text-primary hover:underline py-2 font-medium"
         >
-          View all entities →
+          {showAll ? '← Show less' : 'View all entities →'}
         </button>
       </div>
 
