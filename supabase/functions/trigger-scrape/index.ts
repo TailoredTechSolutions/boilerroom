@@ -19,26 +19,36 @@ serve(async (req) => {
   }
 
   try {
-    // Get user from auth header (optional for now)
+    // Get user from auth header
     const authHeader = req.headers.get('Authorization');
     let userId = null;
 
-    if (authHeader) {
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-        { global: { headers: { Authorization: authHeader } } }
-      );
-
-      const { data: { user } } = await supabase.auth.getUser();
-      userId = user?.id;
-      if (!userId) {
-        console.warn('trigger-scrape: missing user auth');
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+    // Create Supabase client with the Authorization header from the request
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: authHeader ? { Authorization: authHeader } : {},
+        },
       }
+    );
+
+    // Try to get the user from the JWT
+    if (authHeader) {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.error('Auth error:', authError);
+      }
+      userId = user?.id;
+    }
+
+    if (!userId) {
+      console.warn('trigger-scrape: missing user auth');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Validate input
