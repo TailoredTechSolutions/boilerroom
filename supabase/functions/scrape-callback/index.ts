@@ -276,6 +276,21 @@ serve(async (req) => {
     
     console.log(`[${validatedData.job_id}] ✅ Stored in inbox for processing`);
     
+    // Trigger async processor in background (non-blocking)
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+    
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+      // Fire-and-forget: trigger processor without awaiting
+      fetch(`${SUPABASE_URL}/functions/v1/process-callback-inbox`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }).catch(err => console.error('Failed to trigger processor:', err));
+    }
+    
     // Immediately return 202 Accepted (N8N gets response in <500ms)
     return new Response(
       JSON.stringify({ 
