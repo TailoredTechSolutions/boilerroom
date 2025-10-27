@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useFilteringAudit, useFilteringStats } from "@/hooks/useFilteringAudit";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -20,10 +21,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertTriangle, CheckCircle, Search, TrendingDown, TrendingUp } from "lucide-react";
+import { AlertTriangle, CheckCircle, Search, TrendingDown, TrendingUp, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 
 export default function SentimentMonitor() {
+  const navigate = useNavigate();
   const [selectedDays, setSelectedDays] = useState(7);
   const [testCompany, setTestCompany] = useState("");
   const [testing, setTesting] = useState(false);
@@ -80,9 +82,19 @@ export default function SentimentMonitor() {
   return (
     <div className="min-h-screen bg-background p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Sentiment Monitor</h1>
-          <p className="text-muted-foreground">Track and tune negative press filtering</p>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/overview")}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Overview
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Sentiment Monitor</h1>
+            <p className="text-muted-foreground">Track and tune negative press filtering</p>
+          </div>
         </div>
         <div className="flex gap-2">
           {[1, 7, 30].map(days => (
