@@ -20,3 +20,9 @@ verify_jwt = false
 
 [functions.test-sentiment]
 verify_jwt = false
+
+[functions.trigger-scrape]
+verify_jwt = false
+
+[functions.cleanup-stale-jobs]
+verify_jwt = false

@@ -409,11 +409,72 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
     
+    // Check if job has been running for more than 2 minutes (timeout check)
+    const { data: jobData } = await supabaseClient
+      .from('scraping_jobs')
+      .select('started_at, status')
+      .eq('id', validatedData.job_id)
+      .single();
+    
+    if (jobData?.started_at) {
+      const startTime = new Date(jobData.started_at).getTime();
+      const now = Date.now();
+      const elapsedMinutes = (now - startTime) / (1000 * 60);
+      
+      if (elapsedMinutes > 2) {
+        console.log(`⏰ Job timeout: ${elapsedMinutes.toFixed(1)} minutes elapsed`);
+        await supabaseClient
+          .from('scraping_jobs')
+          .update({
+            status: 'failed',
+            error_message: 'Job timed out after 2 minutes',
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', validatedData.job_id);
+        
+        return new Response(
+          JSON.stringify({ success: false, error: 'Job timeout exceeded 2 minutes' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 408 }
+        );
+      }
+    }
+    
+    // Load suppression list for duplicate checking
+    const { data: suppressionData } = await supabaseClient
+      .from('suppression_list')
+      .select('canonical_name');
+    
+    const suppressedNames = new Set(
+      (suppressionData || []).map(s => s.canonical_name)
+    );
+    console.log(`Loaded ${suppressedNames.size} suppressed companies`);
+    
     const strictFilteredEntities = [];
     const rejectedEntities = [];
 
     for (const entity of (validatedData.entities || [])) {
       console.log(`\n--- Checking ${entity.legal_name} ---`);
+      
+      // Check 0: Suppression list (skip dismissed companies)
+      const entityCanonical = normalizeCompany(entity.legal_name);
+      if (suppressedNames.has(entityCanonical)) {
+        console.log(`  ❌ REJECTED: Company in suppression list - ${entity.legal_name}`);
+        rejectedEntities.push({
+          entity: entity.legal_name,
+          reason: 'suppressed',
+          details: { canonical: entityCanonical }
+        });
+        
+        await supabaseClient.from('filtering_audit').insert({
+          company_name: entity.legal_name,
+          scraping_job_id: validatedData.job_id,
+          filter_type: 'suppressed',
+          blocked: true,
+          decision_details: { canonical: entityCanonical }
+        });
+        
+        continue;
+      }
       
       // Check 1: Website existence (STRICT)
       const websiteCheck = await checkWebsiteExistsStrict(entity.legal_name);
@@ -570,21 +631,54 @@ serve(async (req) => {
 
     // Insert entities if provided
     if (strictFilteredEntities.length > 0) {
-      console.log(`Upserting ${strictFilteredEntities.length} entities...`);
+      console.log(`Processing ${strictFilteredEntities.length} entities for insertion...`);
       
-      const { error: entitiesError } = await supabaseClient
+      // Check for existing duplicates by canonical name
+      const { data: existingEntities } = await supabaseClient
         .from('entities')
-        .upsert(strictFilteredEntities.map(e => ({
-          ...e,
-          score: calculateEntityScore(e)
-        })), { onConflict: 'registry_id' });
-
-      if (entitiesError) {
-        console.error('Error upserting entities:', entitiesError);
-        throw entitiesError;
-      }
+        .select('id, legal_name, registry_id');
       
-      console.log('Entities upserted successfully');
+      const existingCanonicalSet = new Set(
+        (existingEntities || []).map(e => normalizeCompany(e.legal_name))
+      );
+      
+      const existingRegistryIds = new Set(
+        (existingEntities || []).map(e => e.registry_id)
+      );
+      
+      // Filter out duplicates based on both canonical name and registry_id
+      const uniqueEntities = strictFilteredEntities.filter(e => {
+        const canonical = normalizeCompany(e.legal_name);
+        if (existingCanonicalSet.has(canonical)) {
+          console.log(`  🗑️ Skipping duplicate by name: ${e.legal_name}`);
+          return false;
+        }
+        if (existingRegistryIds.has(e.registry_id)) {
+          console.log(`  🗑️ Skipping duplicate by registry ID: ${e.legal_name} (${e.registry_id})`);
+          return false;
+        }
+        return true;
+      });
+      
+      console.log(`Upserting ${uniqueEntities.length} unique entities (${strictFilteredEntities.length - uniqueEntities.length} duplicates skipped)...`);
+      
+      if (uniqueEntities.length > 0) {
+        const { error: entitiesError } = await supabaseClient
+          .from('entities')
+          .upsert(uniqueEntities.map(e => ({
+            ...e,
+            score: calculateEntityScore(e)
+          })), { onConflict: 'registry_id,registry_source' });
+
+        if (entitiesError) {
+          console.error('Error upserting entities:', entitiesError);
+          throw entitiesError;
+        }
+        
+        console.log('Entities upserted successfully');
+      } else {
+        console.log('No new unique entities to insert');
+      }
     }
 
     return new Response(
