@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useFilteringAudit, useFilteringStats } from "@/hooks/useFilteringAudit";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { LatestScrapedJobs } from "@/components/LatestScrapedJobs";
 import {
   Table,
   TableBody,
@@ -28,6 +30,7 @@ export default function SentimentMonitor() {
   const navigate = useNavigate();
   const [selectedDays, setSelectedDays] = useState(7);
   const [testCompany, setTestCompany] = useState("");
+  const [testArticleText, setTestArticleText] = useState("");
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<any>(null);
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
@@ -63,7 +66,10 @@ export default function SentimentMonitor() {
     setTesting(true);
     try {
       const { data, error } = await supabase.functions.invoke('test-sentiment', {
-        body: { companyName: testCompany }
+        body: { 
+          companyName: testCompany,
+          articleText: testArticleText.trim() || undefined 
+        }
       });
 
       if (error) throw error;
@@ -107,6 +113,11 @@ export default function SentimentMonitor() {
             </Button>
           ))}
         </div>
+      </div>
+
+      {/* Latest Scraped Jobs Section */}
+      <div className="mb-6">
+        <LatestScrapedJobs limit={100} statusFilter="new" />
       </div>
 
       {/* Stats Cards */}
@@ -157,12 +168,18 @@ export default function SentimentMonitor() {
       {/* Test Company */}
       <Card className="p-6">
         <h2 className="text-xl font-semibold mb-4">Test Company Sentiment</h2>
-        <div className="flex gap-4">
+        <div className="space-y-4">
           <Input
             placeholder="Enter company name..."
             value={testCompany}
             onChange={(e) => setTestCompany(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleTestCompany()}
+          />
+          <Textarea
+            placeholder="Article text (optional - paste article content or description for more accurate scoring)"
+            value={testArticleText}
+            onChange={(e) => setTestArticleText(e.target.value)}
+            rows={6}
+            className="resize-none"
           />
           <Button onClick={handleTestCompany} disabled={testing}>
             <Search className="w-4 h-4 mr-2" />

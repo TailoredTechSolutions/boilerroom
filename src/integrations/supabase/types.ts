@@ -53,6 +53,41 @@ export type Database = {
         }
         Relationships: []
       }
+      company_actions: {
+        Row: {
+          action_type: string
+          actor: string | null
+          created_at: string | null
+          entity_id: string | null
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          action_type: string
+          actor?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          action_type?: string
+          actor?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_actions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_subscribers: {
         Row: {
           alert_preferences: Json | null
@@ -150,9 +185,14 @@ export type Database = {
           country: string
           created_at: string | null
           data_quality_score: number | null
+          dismissed_at: string | null
+          dismissed_by: string | null
           domain_available: boolean | null
           email_contacts: Json | null
+          exported_at: string | null
           filings: Json | null
+          flagged_at: string | null
+          flagged_by: string | null
           id: string
           incorporation_date: string | null
           is_saved: boolean | null
@@ -180,9 +220,14 @@ export type Database = {
           country: string
           created_at?: string | null
           data_quality_score?: number | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
           domain_available?: boolean | null
           email_contacts?: Json | null
+          exported_at?: string | null
           filings?: Json | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           incorporation_date?: string | null
           is_saved?: boolean | null
@@ -210,9 +255,14 @@ export type Database = {
           country?: string
           created_at?: string | null
           data_quality_score?: number | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
           domain_available?: boolean | null
           email_contacts?: Json | null
+          exported_at?: string | null
           filings?: Json | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           incorporation_date?: string | null
           is_saved?: boolean | null
@@ -496,6 +546,30 @@ export type Database = {
         }
         Relationships: []
       }
+      suppression_list: {
+        Row: {
+          canonical_name: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          canonical_name: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          canonical_name?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       user_alerts: {
         Row: {
           alert_data: Json | null
@@ -611,6 +685,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      canonical_name: { Args: { name: string }; Returns: string }
       has_premium_access: { Args: { user_id: string }; Returns: boolean }
       has_role: {
         Args: {
