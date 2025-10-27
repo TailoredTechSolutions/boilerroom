@@ -4,12 +4,14 @@ import { KPICard } from "@/components/KPICard";
 import { TopEntitiesList } from "@/components/TopEntitiesList";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Database, Activity, TrendingUp, Clock, Target, DollarSign, LineChart, Building2, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useEntities } from "@/hooks/useEntities";
 import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
 const Overview = () => {
+  const navigate = useNavigate();
   const { entities, isLoading } = useEntities();
   const { jobs, activeJobs } = useScrapingJobs();
 
@@ -239,26 +241,32 @@ const Overview = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <KPICard
-                title="Total Entities"
-                value={totalEntities}
-                subtitle="in database"
-                icon={Database}
-              />
-              <KPICard
-                title="New (24h)"
-                value={newEntitiesData.length}
-                subtitle="added today"
-                icon={TrendingUp}
-                variant="success"
-              />
-              <KPICard
-                title="High Score (80+)"
-                value={highScoreTargetsData.length}
-                subtitle="quality targets"
-                icon={Activity}
-                variant="purple"
-              />
+              <div onClick={() => navigate('/lead-generation')} className="cursor-pointer transition-transform hover:scale-105">
+                <KPICard
+                  title="Total Entities"
+                  value={totalEntities}
+                  subtitle="in database"
+                  icon={Database}
+                />
+              </div>
+              <div onClick={() => navigate('/lead-generation?timeframe=24h')} className="cursor-pointer transition-transform hover:scale-105">
+                <KPICard
+                  title="New (24h)"
+                  value={newEntitiesData.length}
+                  subtitle="added today"
+                  icon={TrendingUp}
+                  variant="success"
+                />
+              </div>
+              <div onClick={() => navigate('/lead-generation?score=80')} className="cursor-pointer transition-transform hover:scale-105">
+                <KPICard
+                  title="High Score (80+)"
+                  value={highScoreTargetsData.length}
+                  subtitle="quality targets"
+                  icon={Activity}
+                  variant="purple"
+                />
+              </div>
               <KPICard
                 title="Active Jobs"
                 value={activeJobs}

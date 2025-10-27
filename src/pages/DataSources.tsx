@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Play, ChevronRight, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useScrapingJobs } from "@/hooks/useScrapingJobs";
+import { RecentEntitiesPreview } from "@/components/RecentEntitiesPreview";
 import ukLogo from "@/assets/uk-companies-house-logo.png";
 import gleifLogo from "@/assets/gleif-logo.png";
 import { format } from "date-fns";
@@ -260,59 +261,71 @@ const DataSources = () => {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Source Statistics</CardTitle>
-                <CardDescription>Total entities collected from each source</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {statsLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                  </div>
-                ) : sourceStats.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No data sources available yet</p>
-                    <p className="text-sm mt-2">Run your first scrape to see statistics</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {sourceStats.map((stat) => {
-                      const sourceName = getSourceName(stat.registry_source);
-                      const sourceLogo = getSourceLogo(stat.registry_source);
-                      
-                      return (
-                        <button
-                          key={stat.registry_source}
-                          onClick={() => navigate(`/lead-generation?source=${stat.registry_source}`)}
-                          className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
-                        >
-                          <div className="flex items-center gap-3">
-                            {sourceLogo ? (
-                              <img src={sourceLogo} alt={sourceName} className="w-8 h-8 object-contain" />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
-                                {stat.registry_source.substring(0, 2)}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Source Statistics</CardTitle>
+                  <CardDescription>Total entities collected from each source</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {statsLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : sourceStats.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>No data sources available yet</p>
+                      <p className="text-sm mt-2">Run your first scrape to see statistics</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {sourceStats.map((stat) => {
+                        const sourceName = getSourceName(stat.registry_source);
+                        const sourceLogo = getSourceLogo(stat.registry_source);
+                        
+                        return (
+                          <button
+                            key={stat.registry_source}
+                            onClick={() => navigate(`/lead-generation?source=${stat.registry_source}`)}
+                            className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
+                          >
+                            <div className="flex items-center gap-3">
+                              {sourceLogo ? (
+                                <img src={sourceLogo} alt={sourceName} className="w-8 h-8 object-contain" />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+                                  {stat.registry_source.substring(0, 2)}
+                                </div>
+                              )}
+                              <div className="text-left">
+                                <p className="font-medium text-foreground">{sourceName}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {stat.count.toLocaleString()} entities
+                                </p>
                               </div>
-                            )}
-                            <div className="text-left">
-                              <p className="font-medium text-foreground">{sourceName}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {stat.count.toLocaleString()} entities
-                              </p>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline">Active</Badge>
-                            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">Active</Badge>
+                              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Latest Scraped Data</CardTitle>
+                  <CardDescription>Preview of most recently added entities</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <RecentEntitiesPreview />
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </main>
       </div>
