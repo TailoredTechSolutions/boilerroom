@@ -111,16 +111,17 @@ export const useEntities = () => {
     const toastId = toast.loading('Initiating scrape...');
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Supabase client automatically includes auth headers
       const { data, error } = await supabase.functions.invoke('trigger-scrape', {
         body: { source, searchTerm, filters: {} },
-        headers: session?.access_token ? {
-          Authorization: `Bearer ${session.access_token}`,
-        } : undefined,
       });
 
-      if (error || !data?.success || !data?.jobId) {
-        throw error || new Error('Scraper did not start');
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.success || !data?.jobId) {
+        throw new Error('Scraper did not start');
       }
 
       toast.dismiss(toastId);
@@ -142,7 +143,7 @@ export const useEntities = () => {
     const toastId = toast.loading('Generating export...');
     
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Supabase client automatically includes auth headers
       const { data, error } = await supabase.functions.invoke('export-entities', {
         body: {
           filters: {
@@ -164,9 +165,6 @@ export const useEntities = () => {
           ],
           format,
         },
-        headers: session?.access_token ? {
-          Authorization: `Bearer ${session.access_token}`,
-        } : undefined,
       });
 
       if (error) throw error;

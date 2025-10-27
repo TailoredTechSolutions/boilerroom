@@ -19,11 +19,10 @@ serve(async (req) => {
   }
 
   try {
-    // Get user from auth header
+    // JWT is verified by platform - extract user from request
     const authHeader = req.headers.get('Authorization');
-    let userId = null;
-
-    // Create Supabase client with the Authorization header from the request
+    
+    // Create Supabase client with the Authorization header
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -34,22 +33,18 @@ serve(async (req) => {
       }
     );
 
-    // Try to get the user from the JWT
-    if (authHeader) {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError) {
-        console.error('Auth error:', authError);
-      }
-      userId = user?.id;
-    }
-
-    if (!userId) {
-      console.warn('trigger-scrape: missing user auth');
+    // Get authenticated user (JWT already verified by platform)
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error('Failed to get user:', authError);
       return new Response(
         JSON.stringify({ error: 'Authentication required' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    const userId = user.id;
+    console.log('User authenticated:', userId);
 
     // Validate input
     const rawBody = await req.json();
