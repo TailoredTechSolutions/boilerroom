@@ -2,27 +2,3 @@ project_id = "utzxdzkebdgwxgqhieee"
 
 [functions.scrape-callback]
 verify_jwt = false
-
-[functions.check-domain]
-verify_jwt = false
-
-[functions.send-sms]
-verify_jwt = false
-
-[functions.score-article]
-verify_jwt = false
-
-[functions.entity-action]
-verify_jwt = false
-
-[functions.entity-bulk-export]
-verify_jwt = false
-
-[functions.test-sentiment]
-verify_jwt = false
-
-[functions.trigger-scrape]
-verify_jwt = false
-
-[functions.cleanup-stale-jobs]
-verify_jwt = false
