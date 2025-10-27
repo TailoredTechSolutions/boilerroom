@@ -170,96 +170,98 @@ const DataSources = () => {
 
             <DataSourceGrid selectedSource={selectedSource} onSelectSource={setSelectedSource} />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Scraping Configuration</CardTitle>
-                <CardDescription>
-                  Selected Source: <span className="font-semibold text-primary">
-                    {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
-                  </span>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="searchTerm">Search Term (Optional)</Label>
-                  <Input
-                    id="searchTerm"
-                    placeholder="e.g., venture capital, private equity"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    disabled={isLoading}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Enter keywords to search for companies in {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || "the selected registry"}
-                  </p>
-                </div>
-                <Button 
-                  onClick={handleRunScrape} 
-                  disabled={isLoading || !selectedSource}
-                  className="w-full"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Running Scrape...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 mr-2" />
-                      Run Scrape for {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Scraping Jobs</CardTitle>
-                <CardDescription>
-                  {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {jobs.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No scraping jobs yet</p>
-                    <p className="text-sm mt-2">Run your first scrape to see results here</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Scraping Configuration</CardTitle>
+                  <CardDescription>
+                    Selected Source: <span className="font-semibold text-primary">
+                      {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
+                    </span>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="searchTerm">Search Term (Optional)</Label>
+                    <Input
+                      id="searchTerm"
+                      placeholder="e.g., venture capital, private equity"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      disabled={isLoading}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Enter keywords to search for companies in {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || "the selected registry"}
+                    </p>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {jobs.slice(0, 5).map((job) => (
-                      <div
-                        key={job.id}
-                        className="flex items-center justify-between p-4 border border-border rounded-lg"
-                      >
-                        <div className="flex items-center gap-3 flex-1">
-                          {getStatusIcon(job.status)}
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <p className="font-medium text-foreground">
-                                {sourceMap[job.source]?.name || job.source}
+                  <Button 
+                    onClick={handleRunScrape} 
+                    disabled={isLoading || !selectedSource}
+                    className="w-full"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Running Scrape...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 mr-2" />
+                        Run Scrape for {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
+                      </>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Scraping Jobs</CardTitle>
+                  <CardDescription>
+                    {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {jobs.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>No scraping jobs yet</p>
+                      <p className="text-sm mt-2">Run your first scrape to see results here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {jobs.slice(0, 5).map((job) => (
+                        <div
+                          key={job.id}
+                          className="flex items-center justify-between p-4 border border-border rounded-lg"
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            {getStatusIcon(job.status)}
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium text-foreground">
+                                  {sourceMap[job.source]?.name || job.source}
+                                </p>
+                                <Badge variant={getStatusBadge(job.status)}>
+                                  {job.status}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground">
+                                {job.search_term && `Search: ${job.search_term} • `}
+                                {job.records_processed} entities processed
+                                {job.created_at && ` • ${format(new Date(job.created_at), 'MMM d, h:mm a')}`}
                               </p>
-                              <Badge variant={getStatusBadge(job.status)}>
-                                {job.status}
-                              </Badge>
+                              {job.error_message && (
+                                <p className="text-sm text-red-500 mt-1">{job.error_message}</p>
+                              )}
                             </div>
-                            <p className="text-sm text-muted-foreground">
-                              {job.search_term && `Search: ${job.search_term} • `}
-                              {job.records_processed} entities processed
-                              {job.created_at && ` • ${format(new Date(job.created_at), 'MMM d, h:mm a')}`}
-                            </p>
-                            {job.error_message && (
-                              <p className="text-sm text-red-500 mt-1">{job.error_message}</p>
-                            )}
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
