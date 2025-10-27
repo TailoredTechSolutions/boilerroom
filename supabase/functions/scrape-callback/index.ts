@@ -207,9 +207,11 @@ serve(async (req) => {
         checkDomainAvailability(coukDomain)
       ]);
       
-      // Only include if at least one domain is available
-      if (comAvailable === false && coukAvailable === false) {
-        console.log(`Filtered out ${companyName}: no domains available`);
+      // Keep only if at least one domain is available for registration
+      // If both are taken (not available), the company likely has a website, so reject
+      const hasAvailableDomain = comAvailable === true || coukAvailable === true;
+      if (!hasAvailableDomain && (comAvailable === false || coukAvailable === false)) {
+        console.log(`Filtered out ${companyName}: both domains already taken`);
         continue;
       }
       
