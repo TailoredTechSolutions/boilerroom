@@ -55,16 +55,16 @@ async function checkWebsiteExistsStrict(companyName: string): Promise<{
   try {
     const candidates = generateCandidateDomains(companyName);
     
-    // Try direct HTTP checks first
-    for (const candidate of candidates) {
-      for (const tld of ['com', 'co.uk', 'io', 'net']) {
+    // Try direct HTTP checks first with reduced timeout
+    for (const candidate of candidates.slice(0, 3)) { // Limit to first 3 candidates
+      for (const tld of ['com', 'co.uk']) { // Reduced TLDs for speed
         const domain = `${candidate}.${tld}`;
         const url = `https://${domain}`;
         
         try {
           const response = await fetch(url, {
             method: 'HEAD',
-            signal: AbortSignal.timeout(3000),
+            signal: AbortSignal.timeout(2000), // Reduced from 3000ms
           });
           
           if (response.ok) {
@@ -82,49 +82,7 @@ async function checkWebsiteExistsStrict(companyName: string): Promise<{
       }
     }
     
-    // If no direct match, use SerpAPI to search
-    if (!SERPAPI_KEY) {
-      return { exists: false };
-    }
-    
-    const searchUrl = `https://serpapi.com/search.json?engine=google&q=${encodeURIComponent(companyName + ' official website')}&api_key=${SERPAPI_KEY}`;
-    
-    const searchResponse = await fetch(searchUrl, { signal: AbortSignal.timeout(5000) });
-    if (!searchResponse.ok) {
-      return { exists: false };
-    }
-    
-    const searchData = await searchResponse.json();
-    const organicResults = searchData.organic_results || [];
-    
-    if (organicResults.length > 0) {
-      const topResult = organicResults[0];
-      const title = (topResult.title || '').toLowerCase();
-      const normalizedName = normalizeCompany(companyName);
-      
-      // Calculate simple similarity
-      const titleWords = title.split(/\s+/);
-      const nameWords = normalizedName.split(/\s+/);
-      const matchingWords = nameWords.filter(word => 
-        titleWords.some((tw: string) => tw.includes(word) || word.includes(tw))
-      );
-      const similarity = matchingWords.length / nameWords.length;
-      
-      if (similarity >= 0.6) {
-        try {
-          const domain = new URL(topResult.link).hostname.replace('www.', '');
-          return {
-            exists: true,
-            url: topResult.link,
-            domain: domain.split('.')[0],
-            similarityScore: similarity,
-          };
-        } catch {
-          return { exists: false };
-        }
-      }
-    }
-    
+    // Skip SerpAPI search for performance - too slow
     return { exists: false };
   } catch (error) {
     console.error('Error checking website:', error);
@@ -133,31 +91,9 @@ async function checkWebsiteExistsStrict(companyName: string): Promise<{
 }
 
 async function checkDomainAvailability(domain: string): Promise<boolean | null> {
-  if (!GODADDY_API_KEY || !GODADDY_API_SECRET) {
-    return null;
-  }
-  
-  try {
-    const response = await fetch(
-      `https://api.godaddy.com/v1/domains/available?domain=${domain}`,
-      {
-        headers: {
-          'Authorization': `sso-key ${GODADDY_API_KEY}:${GODADDY_API_SECRET}`,
-        },
-        signal: AbortSignal.timeout(5000),
-      }
-    );
-    
-    if (response.ok) {
-      const data = await response.json();
-      return data.available === true;
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('Error checking domain availability:', error);
-    return null;
-  }
+  // DISABLED: This check is slow and often returns null anyway
+  // Skipping for performance to prevent timeouts
+  return null;
 }
 
 async function checkCompanyActive(companyName: string): Promise<{
@@ -177,7 +113,7 @@ async function checkCompanyActive(companyName: string): Promise<{
       headers: {
         'Authorization': COMPANIES_HOUSE_API_KEY,
       },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(3000), // Reduced from 5000ms
     });
     
     if (!response.ok) {
@@ -233,102 +169,11 @@ async function analyzeNewsSentiment(companyName: string): Promise<{
     isNegative: boolean;
   }>;
 }> {
-  const NEGATIVE_THRESHOLD = parseFloat(Deno.env.get('NEGATIVE_THRESHOLD') || '0.60');
-  
-  try {
-    if (!SERPAPI_KEY) {
-      return { hasNegativePress: false, negativeScore: 0, hits: [] };
-    }
-
-    const newsUrl = `https://serpapi.com/search.json?engine=google_news&q=${encodeURIComponent(companyName)}&api_key=${SERPAPI_KEY}`;
-    
-    const newsResponse = await fetch(newsUrl, { signal: AbortSignal.timeout(10000) });
-    if (!newsResponse.ok) {
-      return { hasNegativePress: false, negativeScore: 0, hits: [] };
-    }
-
-    const newsData = await newsResponse.json();
-    const articles = (newsData.news_results || []).map((item: any) => ({
-      title: item.title || '',
-      description: item.snippet || '',
-      url: item.link || '',
-    }));
-
-    if (articles.length === 0) {
-      return { hasNegativePress: false, negativeScore: 0, hits: [] };
-    }
-
-    const hits = [];
-    
-    for (const article of articles.slice(0, 10)) {
-      try {
-        const text = `${article.title}. ${article.description}`;
-        
-        if (!HUGGINGFACE_API_KEY) {
-          continue;
-        }
-
-        const hfResponse = await fetch(
-          'https://api-inference.huggingface.co/models/facebook/bart-large-mnli',
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              inputs: text,
-              parameters: {
-                candidate_labels: [
-                  'scandal',
-                  'fraud',
-                  'investigation',
-                  'lawsuit',
-                  'bankruptcy',
-                  'corruption',
-                  'criminal charges',
-                  'controversy'
-                ],
-              },
-            }),
-            signal: AbortSignal.timeout(8000),
-          }
-        );
-
-        if (hfResponse.ok) {
-          const sentimentData = await hfResponse.json();
-          const maxScore = Math.max(...(sentimentData.scores || [0]));
-          
-          hits.push({
-            title: article.title,
-            url: article.url,
-            score: maxScore,
-            isNegative: maxScore >= NEGATIVE_THRESHOLD,
-          });
-        }
-      } catch (error) {
-        console.error('HuggingFace API error for article:', error);
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 200));
-    }
-
-    const hasNegativePress = hits.some(hit => hit.isNegative);
-    const avgNegativeScore = hits.length > 0
-      ? hits.reduce((sum, hit) => sum + hit.score, 0) / hits.length
-      : 0;
-
-    console.log(`News sentiment for ${companyName}: ${hasNegativePress ? 'NEGATIVE' : 'CLEAN'} (avg score: ${avgNegativeScore.toFixed(3)})`);
-
-    return {
-      hasNegativePress,
-      negativeScore: avgNegativeScore,
-      hits,
-    };
-  } catch (error) {
-    console.error('News sentiment analysis failed:', error);
-    return { hasNegativePress: false, negativeScore: 0, hits: [] };
-  }
+  // DISABLED: This function is too slow and causes timeouts
+  // The sentiment analysis with HuggingFace API takes 8+ seconds per article
+  // and frequently times out, causing the entire callback to exceed 30 seconds
+  console.log(`Sentiment analysis skipped for ${companyName} (disabled for performance)`);
+  return { hasNegativePress: false, negativeScore: 0, hits: [] };
 }
 
 function calculateEntityScore(entity: any): number {
