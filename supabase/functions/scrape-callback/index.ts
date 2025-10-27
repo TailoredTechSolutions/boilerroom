@@ -385,11 +385,17 @@ const EntitySchema = z.object({
 }).passthrough();
 
 const CallbackSchema = z.object({
-  job_id: z.string().uuid(),
+  job_id: z.string().uuid().optional(),
+  jobId: z.string().uuid().optional(),
   status: z.enum(['pending', 'running', 'completed', 'failed']),
   entities: z.array(EntitySchema).max(1000).optional(),
   total_count: z.number().int().min(0).optional(),
   error_message: z.string().max(2000).optional().nullable()
+}).transform((data) => ({
+  ...data,
+  job_id: data.job_id || data.jobId,
+})).refine((data) => !!data.job_id, {
+  message: "Either job_id or jobId is required"
 });
 
 serve(async (req) => {
