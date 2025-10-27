@@ -32,69 +32,71 @@ export const TopEntitiesList = ({ entities, title, emptyMessage = "No entities t
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       {entities.map((entity) => (
-      <div 
+        <div 
           key={entity.id} 
-          className="p-4 border border-border rounded-lg bg-background hover:border-primary/50 transition-colors"
+          className="p-3 border border-border rounded-lg bg-background hover:border-primary/50 transition-colors cursor-pointer"
+          onClick={() => onCompanyClick?.(entity)}
         >
-          <div className="flex items-start justify-between mb-3">
+          <div className="flex items-start justify-between mb-2">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Building2 className="w-4 h-4 text-primary flex-shrink-0" />
-                <h4 
-                  className="font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => onCompanyClick?.(entity)}
-                >
+              <div className="flex items-center gap-1.5 mb-1">
+                <Building2 className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                <h4 className="text-sm font-semibold text-foreground truncate">
                   {entity.legal_name}
                 </h4>
               </div>
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge variant="outline" className="text-xs py-0 h-5">
                   {entity.country}
-                </span>
-                <Badge variant="outline" className="text-xs">
-                  {entity.registry_source}
                 </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {entity.registry_source}
+                </span>
               </div>
-            </div>
-            <div className="text-right flex-shrink-0 ml-4">
-              <div className="text-2xl font-bold text-primary">{entity.score}</div>
-              <div className="text-xs text-muted-foreground">Score</div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-3">
-            {entity.data_quality_score !== undefined && entity.data_quality_score !== null && (
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">Data Quality</span>
-                  <span className="font-medium text-foreground">{entity.data_quality_score}%</span>
-                </div>
-                <Progress value={entity.data_quality_score} className="h-1.5" />
-              </div>
-            )}
-            {entity.web_presence_score !== undefined && entity.web_presence_score !== null && (
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-muted-foreground">Web Presence</span>
-                  <span className="font-medium text-foreground">{entity.web_presence_score}%</span>
-                </div>
-                <Progress value={entity.web_presence_score} className="h-1.5" />
-              </div>
-            )}
+          <div className="text-center py-2 mb-2 border-y border-border/50">
+            <div className="text-xl font-bold text-primary">{entity.score}</div>
+            <div className="text-xs text-muted-foreground">Score</div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          {(entity.data_quality_score !== undefined && entity.data_quality_score !== null) || 
+           (entity.web_presence_score !== undefined && entity.web_presence_score !== null) ? (
+            <div className="space-y-2 mb-2">
+              {entity.data_quality_score !== undefined && entity.data_quality_score !== null && (
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Quality</span>
+                    <span className="font-medium text-foreground">{entity.data_quality_score}%</span>
+                  </div>
+                  <Progress value={entity.data_quality_score} className="h-1" />
+                </div>
+              )}
+              {entity.web_presence_score !== undefined && entity.web_presence_score !== null && (
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Presence</span>
+                    <span className="font-medium text-foreground">{entity.web_presence_score}%</span>
+                  </div>
+                  <Progress value={entity.web_presence_score} className="h-1" />
+                </div>
+              )}
+            </div>
+          ) : null}
+
+          <div className="space-y-1 text-xs text-muted-foreground">
             {entity.website && (
-              <div className="flex items-center gap-1">
-                <Globe className="w-3 h-3" />
-                <span className="truncate max-w-[200px]">{entity.website}</span>
+              <div className="flex items-center gap-1 truncate">
+                <Globe className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{entity.website}</span>
               </div>
             )}
             {entity.email_contacts && Array.isArray(entity.email_contacts) && entity.email_contacts.length > 0 && (
               <div className="flex items-center gap-1">
-                <Mail className="w-3 h-3" />
+                <Mail className="w-3 h-3 flex-shrink-0" />
                 <span>{entity.email_contacts.length} contact{entity.email_contacts.length !== 1 ? 's' : ''}</span>
               </div>
             )}

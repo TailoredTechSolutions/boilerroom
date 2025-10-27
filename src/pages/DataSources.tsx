@@ -83,14 +83,13 @@ const DataSources = () => {
     console.log("Triggering scrape for:", { source: selectedSource });
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Supabase client automatically includes auth headers
       const { data, error } = await supabase.functions.invoke("trigger-scrape", {
         body: {
           source: selectedSource,
           searchTerm: "",
           filters: {},
         },
-        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined,
       });
 
       if (error) throw error;
@@ -205,7 +204,7 @@ const DataSources = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {jobs.slice(0, 5).map((job) => (
+                    {jobs.map((job) => (
                       <div
                         key={job.id}
                         className="flex items-center justify-between p-4 border border-border rounded-lg"

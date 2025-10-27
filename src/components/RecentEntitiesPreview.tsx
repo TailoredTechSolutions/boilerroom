@@ -108,43 +108,41 @@ export const RecentEntitiesPreview = () => {
 
   return (
     <>
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {entities.map((entity) => (
           <div
             key={entity.id}
-            className="p-3 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all cursor-pointer"
+            className="p-2.5 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all cursor-pointer"
             onClick={() => setSelectedEntity(entity)}
           >
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="font-medium text-foreground truncate">
-                    {entity.legal_name}
-                  </p>
-                  <ExternalLink className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline" className="text-xs">
-                    {entity.country}
-                  </Badge>
-                  <Badge variant="secondary" className="text-xs">
-                    Score: {entity.score || 0}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {entity.registry_source}
+            <div className="space-y-2">
+              <div className="flex items-start gap-1.5">
+                <p className="font-medium text-sm text-foreground truncate flex-1">
+                  {entity.legal_name}
                 </p>
+                <ExternalLink className="w-3 h-3 text-muted-foreground flex-shrink-0 mt-0.5" />
               </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Badge variant="outline" className="text-xs py-0 h-5">
+                  {entity.country}
+                </Badge>
+                <Badge variant="secondary" className="text-xs py-0 h-5">
+                  {entity.score || 0}
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground truncate">
+                {entity.registry_source}
+              </p>
             </div>
           </div>
         ))}
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="w-full text-sm text-primary hover:underline py-2 font-medium"
-        >
-          {showAll ? '← Show less' : 'View all entities →'}
-        </button>
       </div>
+      <button
+        onClick={() => setShowAll(!showAll)}
+        className="w-full text-sm text-primary hover:underline py-2 font-medium mt-3"
+      >
+        {showAll ? '← Show less' : 'View all entities →'}
+      </button>
 
       <Dialog open={!!selectedEntity} onOpenChange={(open) => !open && setSelectedEntity(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
