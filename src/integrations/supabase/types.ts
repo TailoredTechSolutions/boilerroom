@@ -21,7 +21,7 @@ export type Database = {
           before_data: Json | null
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           resource_id: string | null
           resource_type: string | null
           user_agent: string | null
@@ -33,7 +33,7 @@ export type Database = {
           before_data?: Json | null
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type?: string | null
           user_agent?: string | null
@@ -45,7 +45,7 @@ export type Database = {
           before_data?: Json | null
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           resource_id?: string | null
           resource_type?: string | null
           user_agent?: string | null
@@ -155,6 +155,7 @@ export type Database = {
           filings: Json | null
           id: string
           incorporation_date: string | null
+          is_saved: boolean | null
           jurisdiction: string | null
           last_seen: string | null
           legal_name: string
@@ -184,6 +185,7 @@ export type Database = {
           filings?: Json | null
           id?: string
           incorporation_date?: string | null
+          is_saved?: boolean | null
           jurisdiction?: string | null
           last_seen?: string | null
           legal_name: string
@@ -213,6 +215,7 @@ export type Database = {
           filings?: Json | null
           id?: string
           incorporation_date?: string | null
+          is_saved?: boolean | null
           jurisdiction?: string | null
           last_seen?: string | null
           legal_name?: string
@@ -558,10 +561,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_premium_access: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      has_premium_access: { Args: { user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

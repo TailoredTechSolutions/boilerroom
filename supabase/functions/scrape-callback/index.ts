@@ -151,6 +151,24 @@ serve(async (req) => {
     if (normalizedEntities && normalizedEntities.length > 0) {
       console.log(`Upserting ${normalizedEntities.length} entities...`)
       
+      // Delete old non-saved entities from this source before inserting new ones
+      const sourceToDelete = normalizedEntities[0].registry_source;
+      if (sourceToDelete) {
+        console.log(`Deleting old non-saved entities from ${sourceToDelete}...`);
+        const { error: deleteError } = await supabase
+          .from('entities')
+          .delete()
+          .eq('registry_source', sourceToDelete)
+          .eq('is_saved', false);
+        
+        if (deleteError) {
+          console.error('Error deleting old entities:', deleteError);
+          // Continue anyway - don't block the upsert
+        } else {
+          console.log('Old non-saved entities deleted successfully');
+        }
+      }
+      
       const { error: entitiesError } = await supabase
         .from('entities')
         .upsert(normalizedEntities, { onConflict: 'registry_id' })
