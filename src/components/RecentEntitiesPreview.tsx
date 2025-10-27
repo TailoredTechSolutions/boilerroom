@@ -3,19 +3,40 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CompanyDetailView } from "@/components/CompanyDetailView";
 
 interface Entity {
   id: string;
   legal_name: string;
   country: string;
   registry_source: string;
+  registry_id: string;
+  status: string;
   score: number;
   created_at: string;
+  website?: string;
+  email_contacts?: any;
+  officers?: any;
+  address?: any;
+  sic_codes?: string[];
+  data_quality_score?: number;
+  web_presence_score?: number;
+  company_type?: string;
+  jurisdiction?: string;
+  incorporation_date?: string;
+  trading_name?: string;
+  psc?: any;
+  domain_available?: boolean;
+  negative_press_flag?: boolean;
+  last_seen?: string;
+  updated_at?: string;
+  raw_payload?: any;
 }
 
 export const RecentEntitiesPreview = () => {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +67,7 @@ export const RecentEntitiesPreview = () => {
     try {
       const { data, error } = await supabase
         .from('entities')
-        .select('id, legal_name, country, registry_source, score, created_at')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(5);
 
@@ -77,42 +98,51 @@ export const RecentEntitiesPreview = () => {
   }
 
   return (
-    <div className="space-y-3">
-      {entities.map((entity) => (
-        <div
-          key={entity.id}
-          className="p-3 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all cursor-pointer"
-          onClick={() => navigate('/lead-generation')}
-        >
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <p className="font-medium text-foreground truncate">
-                  {entity.legal_name}
+    <>
+      <div className="space-y-3">
+        {entities.map((entity) => (
+          <div
+            key={entity.id}
+            className="p-3 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all cursor-pointer"
+            onClick={() => setSelectedEntity(entity)}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-medium text-foreground truncate">
+                    {entity.legal_name}
+                  </p>
+                  <ExternalLink className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className="text-xs">
+                    {entity.country}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Score: {entity.score || 0}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {entity.registry_source}
                 </p>
-                <ExternalLink className="w-3 h-3 text-muted-foreground flex-shrink-0" />
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="outline" className="text-xs">
-                  {entity.country}
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  Score: {entity.score || 0}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {entity.registry_source}
-              </p>
             </div>
           </div>
-        </div>
-      ))}
-      <button
-        onClick={() => navigate('/lead-generation')}
-        className="w-full text-sm text-primary hover:underline py-2"
-      >
-        View all entities →
-      </button>
-    </div>
+        ))}
+        <button
+          onClick={() => navigate('/lead-generation')}
+          className="w-full text-sm text-primary hover:underline py-2"
+        >
+          View all entities →
+        </button>
+      </div>
+
+      {selectedEntity && (
+        <CompanyDetailView
+          company={selectedEntity}
+          onClose={() => setSelectedEntity(null)}
+        />
+      )}
+    </>
   );
 };
