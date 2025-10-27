@@ -278,6 +278,56 @@ export type Database = {
         }
         Relationships: []
       }
+      filtering_audit: {
+        Row: {
+          articles_found: number | null
+          blocked: boolean
+          company_name: string
+          created_at: string
+          decision_details: Json | null
+          filter_type: string
+          id: string
+          scraping_job_id: string | null
+          sentiment_score: number | null
+          top_article_title: string | null
+          top_article_url: string | null
+        }
+        Insert: {
+          articles_found?: number | null
+          blocked: boolean
+          company_name: string
+          created_at?: string
+          decision_details?: Json | null
+          filter_type: string
+          id?: string
+          scraping_job_id?: string | null
+          sentiment_score?: number | null
+          top_article_title?: string | null
+          top_article_url?: string | null
+        }
+        Update: {
+          articles_found?: number | null
+          blocked?: boolean
+          company_name?: string
+          created_at?: string
+          decision_details?: Json | null
+          filter_type?: string
+          id?: string
+          scraping_job_id?: string | null
+          sentiment_score?: number | null
+          top_article_title?: string | null
+          top_article_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filtering_audit_scraping_job_id_fkey"
+            columns: ["scraping_job_id"]
+            isOneToOne: false
+            referencedRelation: "scraping_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_alerts: {
         Row: {
           alert_data: Json | null

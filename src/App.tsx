@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Overview from "./pages/Overview";
 import DataSources from "./pages/DataSources";
+import SentimentMonitor from "./pages/SentimentMonitor";
 import LeadGeneration from "./pages/LeadGeneration";
 import CRM from "./pages/CRM";
 import AIAgent from "./pages/AIAgent";
@@ -63,6 +64,7 @@ const App = () => (
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/overview" element={<ProtectedRoute><Overview /></ProtectedRoute>} />
             <Route path="/data-sources" element={<ProtectedRoute><DataSources /></ProtectedRoute>} />
+            <Route path="/sentiment-monitor" element={<ProtectedRoute><SentimentMonitor /></ProtectedRoute>} />
             <Route path="/investor-fund-scraper" element={<ProtectedRoute><InvestorFundScraper /></ProtectedRoute>} />
             <Route path="/lead-generation" element={<ProtectedRoute><LeadGeneration /></ProtectedRoute>} />
             <Route path="/crm" element={<ProtectedRoute><CRM /></ProtectedRoute>} />
