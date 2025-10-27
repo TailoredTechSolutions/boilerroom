@@ -8,7 +8,7 @@ import { useFilteringAudit, useFilteringStats } from "@/hooks/useFilteringAudit"
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { LatestScrapedJobs } from "@/components/LatestScrapedJobs";
+import { ScoringLegend } from "@/components/ScoringLegend";
 import {
   Table,
   TableBody,
@@ -115,10 +115,8 @@ export default function SentimentMonitor() {
         </div>
       </div>
 
-      {/* Latest Scraped Jobs Section */}
-      <div className="mb-6">
-        <LatestScrapedJobs limit={100} statusFilter="new" />
-      </div>
+      {/* Scoring System Legend */}
+      <ScoringLegend />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
