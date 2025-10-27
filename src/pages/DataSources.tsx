@@ -170,164 +170,160 @@ const DataSources = () => {
 
             <DataSourceGrid selectedSource={selectedSource} onSelectSource={setSelectedSource} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Scraping Configuration</CardTitle>
-                  <CardDescription>
-                    Selected Source: <span className="font-semibold text-primary">
-                      {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
-                    </span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="searchTerm">Search Term (Optional)</Label>
-                    <Input
-                      id="searchTerm"
-                      placeholder="e.g., venture capital, private equity"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      disabled={isLoading}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Enter keywords to search for companies in {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || "the selected registry"}
-                    </p>
-                  </div>
-                  <Button 
-                    onClick={handleRunScrape} 
-                    disabled={isLoading || !selectedSource}
-                    className="w-full"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Running Scrape...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4 mr-2" />
-                        Run Scrape for {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Scraping Jobs</CardTitle>
-                  <CardDescription>
-                    {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {jobs.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>No scraping jobs yet</p>
-                      <p className="text-sm mt-2">Run your first scrape to see results here</p>
-                    </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Scraping Configuration</CardTitle>
+                <CardDescription>
+                  Selected Source: <span className="font-semibold text-primary">
+                    {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
+                  </span>
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="searchTerm">Search Term (Optional)</Label>
+                  <Input
+                    id="searchTerm"
+                    placeholder="e.g., venture capital, private equity"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Enter keywords to search for companies in {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || "the selected registry"}
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleRunScrape} 
+                  disabled={isLoading || !selectedSource}
+                  className="w-full"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Running Scrape...
+                    </>
                   ) : (
-                    <div className="space-y-3">
-                      {jobs.slice(0, 5).map((job) => (
-                        <div
-                          key={job.id}
-                          className="flex items-center justify-between p-4 border border-border rounded-lg"
-                        >
-                          <div className="flex items-center gap-3 flex-1">
-                            {getStatusIcon(job.status)}
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <p className="font-medium text-foreground">
-                                  {sourceMap[job.source]?.name || job.source}
-                                </p>
-                                <Badge variant={getStatusBadge(job.status)}>
-                                  {job.status}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground">
-                                {job.search_term && `Search: ${job.search_term} • `}
-                                {job.records_processed} entities processed
-                                {job.created_at && ` • ${format(new Date(job.created_at), 'MMM d, h:mm a')}`}
+                    <>
+                      <Play className="w-4 h-4 mr-2" />
+                      Run Scrape for {sourceMap[Object.keys(sourceMap).find(k => sourceMap[k].id === selectedSource) || '']?.name || selectedSource}
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Scraping Jobs</CardTitle>
+                <CardDescription>
+                  {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {jobs.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No scraping jobs yet</p>
+                    <p className="text-sm mt-2">Run your first scrape to see results here</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {jobs.slice(0, 5).map((job) => (
+                      <div
+                        key={job.id}
+                        className="flex items-center justify-between p-4 border border-border rounded-lg"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          {getStatusIcon(job.status)}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-foreground">
+                                {sourceMap[job.source]?.name || job.source}
                               </p>
-                              {job.error_message && (
-                                <p className="text-sm text-red-500 mt-1">{job.error_message}</p>
-                              )}
+                              <Badge variant={getStatusBadge(job.status)}>
+                                {job.status}
+                              </Badge>
                             </div>
+                            <p className="text-sm text-muted-foreground">
+                              {job.search_term && `Search: ${job.search_term} • `}
+                              {job.records_processed} entities processed
+                              {job.created_at && ` • ${format(new Date(job.created_at), 'MMM d, h:mm a')}`}
+                            </p>
+                            {job.error_message && (
+                              <p className="text-sm text-red-500 mt-1">{job.error_message}</p>
+                            )}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Source Statistics</CardTitle>
-                  <CardDescription>Total entities collected from each source</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {statsLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : sourceStats.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>No data sources available yet</p>
-                      <p className="text-sm mt-2">Run your first scrape to see statistics</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {sourceStats.map((stat) => {
-                        const sourceName = getSourceName(stat.registry_source);
-                        const sourceLogo = getSourceLogo(stat.registry_source);
-                        
-                        return (
-                          <button
-                            key={stat.registry_source}
-                            onClick={() => navigate(`/lead-generation?source=${stat.registry_source}`)}
-                            className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
-                          >
-                            <div className="flex items-center gap-3">
-                              {sourceLogo ? (
-                                <img src={sourceLogo} alt={sourceName} className="w-8 h-8 object-contain" />
-                              ) : (
-                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
-                                  {stat.registry_source.substring(0, 2)}
-                                </div>
-                              )}
-                              <div className="text-left">
-                                <p className="font-medium text-foreground">{sourceName}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {stat.count.toLocaleString()} entities
-                                </p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Source Statistics</CardTitle>
+                <CardDescription>Total entities collected from each source</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : sourceStats.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No data sources available yet</p>
+                    <p className="text-sm mt-2">Run your first scrape to see statistics</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {sourceStats.map((stat) => {
+                      const sourceName = getSourceName(stat.registry_source);
+                      const sourceLogo = getSourceLogo(stat.registry_source);
+                      
+                      return (
+                        <button
+                          key={stat.registry_source}
+                          onClick={() => navigate(`/lead-generation?source=${stat.registry_source}`)}
+                          className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary hover:bg-card/80 transition-all group"
+                        >
+                          <div className="flex items-center gap-3">
+                            {sourceLogo ? (
+                              <img src={sourceLogo} alt={sourceName} className="w-8 h-8 object-contain" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+                                {stat.registry_source.substring(0, 2)}
                               </div>
+                            )}
+                            <div className="text-left">
+                              <p className="font-medium text-foreground">{sourceName}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {stat.count.toLocaleString()} entities
+                              </p>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline">Active</Badge>
-                              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">Active</Badge>
+                            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Latest Scraped Data</CardTitle>
-                  <CardDescription>Preview of most recently added entities</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RecentEntitiesPreview />
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Latest Scraped Data</CardTitle>
+                <CardDescription>Preview of most recently added entities</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RecentEntitiesPreview />
+              </CardContent>
+            </Card>
           </div>
         </main>
       </div>

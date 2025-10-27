@@ -277,159 +277,155 @@ const Overview = () => {
             </div>
 
             {/* Top Entities Detail Sections */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5" />
-                    Top Scoring Entities
-                  </CardTitle>
-                  <CardDescription>
-                    Highest quality targets based on all criteria
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TopEntitiesList 
-                    entities={topScoringEntities}
-                    title="Top Scoring"
-                    emptyMessage="No entities found"
-                  />
-                </CardContent>
-              </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" />
+                  Top Scoring Entities
+                </CardTitle>
+                <CardDescription>
+                  Highest quality targets based on all criteria
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TopEntitiesList 
+                  entities={topScoringEntities}
+                  title="Top Scoring"
+                  emptyMessage="No entities found"
+                />
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="w-5 h-5" />
-                    Newest Entities (24h)
-                  </CardTitle>
-                  <CardDescription>
-                    Recently added companies from scrapers
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TopEntitiesList 
-                    entities={topNewEntities}
-                    title="New Entities"
-                    emptyMessage="No new entities in the last 24 hours"
-                  />
-                </CardContent>
-              </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  Newest Entities (24h)
+                </CardTitle>
+                <CardDescription>
+                  Recently added companies from scrapers
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TopEntitiesList 
+                  entities={topNewEntities}
+                  title="New Entities"
+                  emptyMessage="No new entities in the last 24 hours"
+                />
+              </CardContent>
+            </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-5 h-5" />
-                    Premium Targets (80+)
-                  </CardTitle>
-                  <CardDescription>
-                    High-score entities ready for outreach
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TopEntitiesList 
-                    entities={topHighScoreEntities}
-                    title="High Score"
-                    emptyMessage="No high-score entities yet"
-                  />
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5" />
+                  Premium Targets (80+)
+                </CardTitle>
+                <CardDescription>
+                  High-score entities ready for outreach
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TopEntitiesList 
+                  entities={topHighScoreEntities}
+                  title="High Score"
+                  emptyMessage="No high-score entities yet"
+                />
+              </CardContent>
+            </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Scraping Jobs</CardTitle>
-                  <CardDescription>Latest data collection activities from registries</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {recentJobs.map((job) => (
-                      <div key={job.id} className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-semibold text-foreground">{job.source}</p>
-                              <Badge variant={
-                                job.status === 'completed' ? 'default' :
-                                job.status === 'running' ? 'secondary' :
-                                job.status === 'failed' ? 'destructive' : 'outline'
-                              }>
-                                {job.status}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              Search: "{job.search_term}"
-                            </p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Scraping Jobs</CardTitle>
+                <CardDescription>Latest data collection activities from registries</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {recentJobs.map((job) => (
+                    <div key={job.id} className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-semibold text-foreground">{job.source}</p>
+                            <Badge variant={
+                              job.status === 'completed' ? 'default' :
+                              job.status === 'running' ? 'secondary' :
+                              job.status === 'failed' ? 'destructive' : 'outline'
+                            }>
+                              {job.status}
+                            </Badge>
                           </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">Fetched:</span>
-                            <span className="ml-2 font-medium text-foreground">{job.records_fetched} records</span>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Processed:</span>
-                            <span className="ml-2 font-medium text-foreground">{job.records_processed} records</span>
-                          </div>
-                        </div>
-                        {job.status === 'running' && (
-                          <div className="mt-3">
-                            <Progress value={(job.records_processed / Math.max(job.records_fetched, 1)) * 100} className="h-2" />
-                          </div>
-                        )}
-                        {job.error_message && (
-                          <div className="mt-2 flex items-start gap-2 text-sm text-destructive">
-                            <AlertCircle className="w-4 h-4 mt-0.5" />
-                            <span>{job.error_message}</span>
-                          </div>
-                        )}
-                        <div className="mt-2 text-xs text-muted-foreground">
-                          Started: {new Date(job.created_at).toLocaleString()}
+                          <p className="text-sm text-muted-foreground mb-2">
+                            Search: "{job.search_term}"
+                          </p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Data Quality Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Complete Profiles</span>
-                        <span className="text-sm font-medium text-foreground">78%</span>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Fetched:</span>
+                          <span className="ml-2 font-medium text-foreground">{job.records_fetched} records</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Processed:</span>
+                          <span className="ml-2 font-medium text-foreground">{job.records_processed} records</span>
+                        </div>
                       </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full" style={{ width: '78%' }}></div>
+                      {job.status === 'running' && (
+                        <div className="mt-3">
+                          <Progress value={(job.records_processed / Math.max(job.records_fetched, 1)) * 100} className="h-2" />
+                        </div>
+                      )}
+                      {job.error_message && (
+                        <div className="mt-2 flex items-start gap-2 text-sm text-destructive">
+                          <AlertCircle className="w-4 h-4 mt-0.5" />
+                          <span>{job.error_message}</span>
+                        </div>
+                      )}
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        Started: {new Date(job.created_at).toLocaleString()}
                       </div>
                     </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Verified Websites</span>
-                        <span className="text-sm font-medium text-foreground">65%</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full" style={{ width: '65%' }}></div>
-                      </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Data Quality Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">Complete Profiles</span>
+                      <span className="text-sm font-medium text-foreground">78%</span>
                     </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Contact Info</span>
-                        <span className="text-sm font-medium text-foreground">42%</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full" style={{ width: '42%' }}></div>
-                      </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '78%' }}></div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">Verified Websites</span>
+                      <span className="text-sm font-medium text-foreground">65%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '65%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">Contact Info</span>
+                      <span className="text-sm font-medium text-foreground">42%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '42%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Feedback & Optimization</h3>
