@@ -2,18 +2,22 @@ import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { KPICard } from "@/components/KPICard";
 import { TopEntitiesList } from "@/components/TopEntitiesList";
+import { CompanyDetailView } from "@/components/CompanyDetailView";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Database, Activity, TrendingUp, Clock, Target, DollarSign, LineChart, Building2, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEntities } from "@/hooks/useEntities";
 import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useState } from "react";
 
 const Overview = () => {
   const navigate = useNavigate();
   const { entities, isLoading } = useEntities();
   const { jobs, activeJobs } = useScrapingJobs();
+  const [selectedCompany, setSelectedCompany] = useState<any>(null);
 
   // Dummy data for demonstration - New Entities (24h)
   const dummyNewEntities = [
@@ -168,17 +172,6 @@ const Overview = () => {
       error_message: null
     },
     {
-      id: "job-3",
-      source: "Delaware Registry",
-      status: "completed",
-      records_fetched: 203,
-      records_processed: 203,
-      search_term: "private equity",
-      created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      completed_at: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
-      error_message: null
-    },
-    {
       id: "job-4",
       source: "GLEIF LEI",
       status: "completed",
@@ -241,7 +234,7 @@ const Overview = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div onClick={() => navigate('/lead-generation')} className="cursor-pointer transition-transform hover:scale-105">
+              <div onClick={() => navigate('/data-sources')} className="cursor-pointer transition-transform hover:scale-105">
                 <KPICard
                   title="Total Entities"
                   value={totalEntities}
@@ -249,7 +242,7 @@ const Overview = () => {
                   icon={Database}
                 />
               </div>
-              <div onClick={() => navigate('/lead-generation?timeframe=24h')} className="cursor-pointer transition-transform hover:scale-105">
+              <div onClick={() => navigate('/data-sources')} className="cursor-pointer transition-transform hover:scale-105">
                 <KPICard
                   title="New (24h)"
                   value={newEntitiesData.length}
@@ -258,7 +251,7 @@ const Overview = () => {
                   variant="success"
                 />
               </div>
-              <div onClick={() => navigate('/lead-generation?score=80')} className="cursor-pointer transition-transform hover:scale-105">
+              <div onClick={() => navigate('/data-sources')} className="cursor-pointer transition-transform hover:scale-105">
                 <KPICard
                   title="High Score (80+)"
                   value={highScoreTargetsData.length}
@@ -267,13 +260,15 @@ const Overview = () => {
                   variant="purple"
                 />
               </div>
-              <KPICard
-                title="Active Jobs"
-                value={activeJobs}
-                subtitle="currently running"
-                icon={Clock}
-                variant="warning"
-              />
+              <div onClick={() => navigate('/data-sources')} className="cursor-pointer transition-transform hover:scale-105">
+                <KPICard
+                  title="Active Jobs"
+                  value={activeJobs}
+                  subtitle="currently running"
+                  icon={Clock}
+                  variant="warning"
+                />
+              </div>
             </div>
 
             {/* Top Entities Detail Sections */}
@@ -292,6 +287,7 @@ const Overview = () => {
                   entities={topScoringEntities}
                   title="Top Scoring"
                   emptyMessage="No entities found"
+                  onCompanyClick={setSelectedCompany}
                 />
               </CardContent>
             </Card>
@@ -311,6 +307,7 @@ const Overview = () => {
                   entities={topNewEntities}
                   title="New Entities"
                   emptyMessage="No new entities in the last 24 hours"
+                  onCompanyClick={setSelectedCompany}
                 />
               </CardContent>
             </Card>
@@ -330,6 +327,7 @@ const Overview = () => {
                   entities={topHighScoreEntities}
                   title="High Score"
                   emptyMessage="No high-score entities yet"
+                  onCompanyClick={setSelectedCompany}
                 />
               </CardContent>
             </Card>
@@ -698,6 +696,18 @@ const Overview = () => {
           </div>
         </main>
       </div>
+
+      {/* Company Details Modal */}
+      <Dialog open={!!selectedCompany} onOpenChange={() => setSelectedCompany(null)}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0">
+          {selectedCompany && (
+            <CompanyDetailView
+              company={selectedCompany}
+              onClose={() => setSelectedCompany(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

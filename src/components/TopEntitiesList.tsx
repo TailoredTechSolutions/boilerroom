@@ -19,9 +19,10 @@ interface TopEntitiesListProps {
   entities: Entity[];
   title: string;
   emptyMessage?: string;
+  onCompanyClick?: (entity: Entity) => void;
 }
 
-export const TopEntitiesList = ({ entities, title, emptyMessage = "No entities to display" }: TopEntitiesListProps) => {
+export const TopEntitiesList = ({ entities, title, emptyMessage = "No entities to display", onCompanyClick }: TopEntitiesListProps) => {
   if (entities.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -41,7 +42,12 @@ export const TopEntitiesList = ({ entities, title, emptyMessage = "No entities t
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Building2 className="w-4 h-4 text-primary flex-shrink-0" />
-                <h4 className="font-semibold text-foreground truncate">{entity.legal_name}</h4>
+                <h4 
+                  className="font-semibold text-foreground truncate cursor-pointer hover:text-primary transition-colors"
+                  onClick={() => onCompanyClick?.(entity)}
+                >
+                  {entity.legal_name}
+                </h4>
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
