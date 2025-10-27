@@ -207,13 +207,13 @@ async function analyzeNewsSentiment(companyName: string): Promise<{
   }
 
   try {
-    // Fetch recent news articles (requires NewsAPI)
-    const newsApiKey = Deno.env.get('NEWSAPI_KEY');
-    if (!newsApiKey) {
+    // Fetch recent news articles using SerpAPI Google News
+    if (!SERPAPI_KEY) {
+      console.log('SerpAPI key not configured, skipping news check');
       return { hasNegativePress: false, negativeScore: 0, hits: [] };
     }
 
-    const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(companyName)}&pageSize=20&sortBy=publishedAt&apiKey=${newsApiKey}`;
+    const newsUrl = `https://serpapi.com/search.json?engine=google_news&q=${encodeURIComponent(companyName)}&api_key=${SERPAPI_KEY}`;
     
     const newsResponse = await fetch(newsUrl, { signal: AbortSignal.timeout(10000) });
     if (!newsResponse.ok) {
@@ -221,7 +221,12 @@ async function analyzeNewsSentiment(companyName: string): Promise<{
     }
 
     const newsData = await newsResponse.json();
-    const articles = newsData.articles || [];
+    const articles = (newsData.news_results || []).map((item: any) => ({
+      title: item.title || '',
+      description: item.snippet || '',
+      url: item.link || '',
+      publishedAt: item.date || new Date().toISOString(),
+    }));
 
     if (articles.length === 0) {
       return { hasNegativePress: false, negativeScore: 0, hits: [] };
