@@ -10,42 +10,114 @@ const corsHeaders = {
 const SERPAPI_KEY = Deno.env.get('SERPAPI_API_KEY');
 const GODADDY_KEY = Deno.env.get('GODADDY_API_KEY');
 const GODADDY_SECRET = Deno.env.get('GODADDY_API_SECRET');
+const HF_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY');
+const NEGATIVE_THRESHOLD = parseFloat(Deno.env.get('NEGATIVE_THRESHOLD') || '0.60');
 
-// Check if a company has a website using SerpAPI
-async function checkWebsiteExists(companyName: string): Promise<{ hasWebsite: boolean; urls: string[] }> {
-  if (!SERPAPI_KEY) {
-    console.log('SERPAPI_KEY not configured, skipping website check');
-    return { hasWebsite: false, urls: [] };
+// Normalize company name for domain matching
+function normalizeCompany(name: string): string {
+  return name.toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '');
+}
+
+// Generate candidate domains for checking
+function generateCandidateDomains(name: string): string[] {
+  const base = normalizeCompany(name);
+  const candidates = new Set<string>();
+  
+  candidates.add(`${base}.com`);
+  candidates.add(`${name.replace(/\s+/g, '').toLowerCase()}.com`);
+  
+  const tokens = name.toLowerCase().split(/\W+/).filter(Boolean);
+  if (tokens.length >= 2) {
+    candidates.add(`${tokens[0]}${tokens[1]}.com`);
+    candidates.add(`${tokens.join('')}.com`);
   }
+  
+  return Array.from(candidates);
+}
 
-  try {
-    const query = encodeURIComponent(`${companyName} official site`);
-    const url = `https://serpapi.com/search.json?q=${query}&engine=google&api_key=${SERPAPI_KEY}&num=5`;
-    
-    const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (!response.ok) {
-      console.error(`SerpAPI error: ${response.status}`);
-      return { hasWebsite: false, urls: [] };
-    }
+// STRICT website existence check with similarity detection
+async function checkWebsiteExistsStrict(companyName: string): Promise<{
+  canonical: string;
+  candidates: string[];
+  foundAny: boolean;
+  found: string[];
+  similarDetected: boolean;
+  similarDetectedList: Array<{ url: string; reason: string }>;
+}> {
+  const candidates = generateCandidateDomains(companyName);
+  const found: string[] = [];
+  const similarDetected: Array<{ url: string; reason: string }> = [];
 
-    const data = await response.json();
-    const organicResults = data.organic_results || [];
-    
-    const sanitized = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const foundUrls: string[] = [];
-    
-    for (const result of organicResults) {
-      const url = result.link?.toLowerCase() || '';
-      if (url.includes(sanitized) || url.includes('.com') || url.includes('.co.uk')) {
-        foundUrls.push(result.link);
+  // Direct domain checks
+  for (const domain of candidates) {
+    try {
+      const url = `https://${domain}`;
+      const response = await fetch(url, {
+        method: 'HEAD',
+        redirect: 'follow',
+        signal: AbortSignal.timeout(5000),
+      });
+      
+      if (response.ok) {
+        found.push(url);
+        console.log(`✓ Found active website: ${url}`);
       }
+    } catch {
+      // Domain not reachable, continue
     }
-
-    return { hasWebsite: foundUrls.length > 0, urls: foundUrls };
-  } catch (error) {
-    console.error('Error checking website:', error);
-    return { hasWebsite: false, urls: [] };
   }
+
+  // If nothing found directly, use SerpAPI for similarity detection
+  if (found.length === 0 && SERPAPI_KEY) {
+    try {
+      const query = encodeURIComponent(`${companyName} site:.com "official" OR "home" OR "website"`);
+      const searchUrl = `https://serpapi.com/search.json?q=${query}&engine=google&api_key=${SERPAPI_KEY}&num=10`;
+      
+      const response = await fetch(searchUrl, { signal: AbortSignal.timeout(8000) });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const pages = data.organic_results || [];
+        const tokens = companyName.toLowerCase().split(/\W+/).filter(Boolean);
+        
+        for (const page of pages) {
+          const url = (page.link || '').toLowerCase();
+          const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+          const title = (page.title || '').toLowerCase();
+          const snippet = (page.snippet || '').toLowerCase();
+          
+          // Token matching in domain
+          let tokenHits = 0;
+          for (const token of tokens) {
+            if (domain.includes(token)) tokenHits++;
+          }
+          
+          if (tokenHits >= Math.max(1, Math.floor(tokens.length / 2))) {
+            similarDetected.push({ url: page.link, reason: 'domain-token-match' });
+          } else if (title.includes(tokens[0]) || snippet.includes(tokens[0])) {
+            similarDetected.push({ url: page.link, reason: 'title-snippet-match' });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('SerpAPI similarity check failed:', error);
+    }
+  }
+
+  const canonical = normalizeCompany(companyName);
+  
+  return {
+    canonical,
+    candidates,
+    foundAny: found.length > 0,
+    found,
+    similarDetected: similarDetected.length > 0,
+    similarDetectedList: similarDetected,
+  };
 }
 
 // Check domain availability using GoDaddy API
@@ -75,6 +147,161 @@ async function checkDomainAvailability(domain: string): Promise<boolean | null> 
   } catch (error) {
     console.error(`Error checking domain ${domain}:`, error);
     return null;
+  }
+}
+
+// Check company active status via Companies House
+async function checkCompanyActive(companyName: string): Promise<{
+  active: boolean;
+  source: string;
+  note?: string;
+  matches?: any[];
+}> {
+  const companiesHouseKey = Deno.env.get('COMPANIES_HOUSE_API_KEY');
+  
+  if (!companiesHouseKey) {
+    return { active: true, source: 'unknown', note: 'assumed active (no registry available)' };
+  }
+
+  try {
+    const searchUrl = `https://api.company-information.service.gov.uk/search/companies?q=${encodeURIComponent(companyName)}`;
+    const auth = btoa(`${companiesHouseKey}:`);
+    
+    const response = await fetch(searchUrl, {
+      headers: { Authorization: `Basic ${auth}` },
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const items = data.items || [];
+      
+      if (items.length > 0) {
+        const active = items.some((item: any) => item?.company_status === 'active');
+        return { active, source: 'companies_house', matches: items.slice(0, 5) };
+      }
+    }
+  } catch (error) {
+    console.error('Companies House check failed:', error);
+  }
+
+  return { active: true, source: 'unknown', note: 'assumed active (registry check failed)' };
+}
+
+// Analyze news articles for negative sentiment using HuggingFace
+async function analyzeNewsSentiment(companyName: string): Promise<{
+  hasNegativePress: boolean;
+  negativeScore: number;
+  hits: Array<{
+    title: string;
+    url: string;
+    description: string;
+    publishedAt: string;
+    negative_score: number;
+    isNegative: boolean;
+  }>;
+}> {
+  if (!HF_API_KEY) {
+    console.log('HuggingFace API key not configured, skipping news sentiment analysis');
+    return { hasNegativePress: false, negativeScore: 0, hits: [] };
+  }
+
+  try {
+    // Fetch recent news articles (requires NewsAPI)
+    const newsApiKey = Deno.env.get('NEWSAPI_KEY');
+    if (!newsApiKey) {
+      return { hasNegativePress: false, negativeScore: 0, hits: [] };
+    }
+
+    const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(companyName)}&pageSize=20&sortBy=publishedAt&apiKey=${newsApiKey}`;
+    
+    const newsResponse = await fetch(newsUrl, { signal: AbortSignal.timeout(10000) });
+    if (!newsResponse.ok) {
+      return { hasNegativePress: false, negativeScore: 0, hits: [] };
+    }
+
+    const newsData = await newsResponse.json();
+    const articles = newsData.articles || [];
+
+    if (articles.length === 0) {
+      return { hasNegativePress: false, negativeScore: 0, hits: [] };
+    }
+
+    const hits = [];
+
+    // Analyze each article with HuggingFace zero-shot classification
+    for (const article of articles.slice(0, 10)) {
+      const text = `${article.title || ''} ${article.description || ''}`.slice(0, 500);
+      
+      if (!text.trim()) continue;
+
+      try {
+        const hfResponse = await fetch(
+          'https://api-inference.huggingface.co/models/facebook/bart-large-mnli',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${HF_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              inputs: text,
+              parameters: {
+                candidate_labels: [
+                  'lawsuit',
+                  'fraud',
+                  'bankruptcy',
+                  'scandal',
+                  'regulatory fine',
+                  'data breach',
+                  'criminal charges',
+                  'product recall',
+                  'negative news',
+                ],
+              },
+            }),
+          }
+        );
+
+        if (hfResponse.ok) {
+          const hfData = await hfResponse.json();
+          
+          // Calculate negative score (max score from negative labels)
+          const maxNegativeScore = Math.max(...(hfData.scores || [0]));
+          const isNegative = maxNegativeScore >= NEGATIVE_THRESHOLD;
+
+          hits.push({
+            title: article.title || '',
+            url: article.url || '',
+            description: article.description || '',
+            publishedAt: article.publishedAt || '',
+            negative_score: maxNegativeScore,
+            isNegative,
+          });
+        }
+      } catch (error) {
+        console.error('HuggingFace API error for article:', error);
+      }
+
+      // Rate limiting
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+
+    const hasNegativePress = hits.some(hit => hit.isNegative);
+    const avgNegativeScore = hits.length > 0
+      ? hits.reduce((sum, hit) => sum + hit.negative_score, 0) / hits.length
+      : 0;
+
+    console.log(`News sentiment for ${companyName}: ${hasNegativePress ? 'NEGATIVE' : 'CLEAN'} (avg score: ${avgNegativeScore.toFixed(3)})`);
+
+    return {
+      hasNegativePress,
+      negativeScore: avgNegativeScore,
+      hits,
+    };
+  } catch (error) {
+    console.error('News sentiment analysis failed:', error);
+    return { hasNegativePress: false, negativeScore: 0, hits: [] };
   }
 }
 
@@ -190,28 +417,51 @@ serve(async (req) => {
       const src = normalizeSource((entity as any).registry_source);
       if (!src || !allowedSources.includes(src)) continue;
       
-      // Check if company has a website
-      const websiteCheck = await checkWebsiteExists(companyName);
-      if (websiteCheck.hasWebsite) {
-        console.log(`Filtered out ${companyName}: has website (${websiteCheck.urls[0]})`);
+      // STRICT FILTERING: Check website existence with similarity detection
+      const websiteCheck = await checkWebsiteExistsStrict(companyName);
+      
+      // Block if ANY website or similar match found
+      if (websiteCheck.foundAny || websiteCheck.similarDetected) {
+        console.log(`❌ Filtered out ${companyName}: website or similar detected`, {
+          foundAny: websiteCheck.foundAny,
+          found: websiteCheck.found,
+          similarDetected: websiteCheck.similarDetected,
+        });
+        continue;
+      }
+
+      // Check company active status
+      const companyStatus = await checkCompanyActive(companyName);
+      
+      if (!companyStatus.active) {
+        console.log(`❌ Filtered out ${companyName}: company not active`);
+        continue;
+      }
+
+      // STRICT DOMAIN CHECK: .com must be available (only .com matters)
+      const canonical = websiteCheck.canonical;
+      const comDomain = `${canonical}.com`;
+      const comAvailable = await checkDomainAvailability(comDomain);
+      
+      // If .com is taken or unknown, reject
+      if (comAvailable === false) {
+        console.log(`❌ Filtered out ${companyName}: .com domain not available`);
         continue;
       }
       
-      // Check domain availability for .com and .co.uk
-      const sanitized = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const comDomain = `${sanitized}.com`;
-      const coukDomain = `${sanitized}.co.uk`;
+      if (comAvailable === null) {
+        console.log(`❌ Filtered out ${companyName}: .com availability unknown (conservative block)`);
+        continue;
+      }
+
+      // NEGATIVE PRESS CHECK: Analyze news sentiment
+      const newsSentiment = await analyzeNewsSentiment(companyName);
       
-      const [comAvailable, coukAvailable] = await Promise.all([
-        checkDomainAvailability(comDomain),
-        checkDomainAvailability(coukDomain)
-      ]);
-      
-      // Keep only if at least one domain is available for registration
-      // If both are taken (not available), the company likely has a website, so reject
-      const hasAvailableDomain = comAvailable === true || coukAvailable === true;
-      if (!hasAvailableDomain && (comAvailable === false || coukAvailable === false)) {
-        console.log(`Filtered out ${companyName}: both domains already taken`);
+      if (newsSentiment.hasNegativePress) {
+        console.log(`❌ Filtered out ${companyName}: negative press detected`, {
+          negativeScore: newsSentiment.negativeScore,
+          hitCount: newsSentiment.hits.filter(h => h.isNegative).length,
+        });
         continue;
       }
       
@@ -223,7 +473,7 @@ serve(async (req) => {
         registry_source: src,
         status: stat,
         score: calculatedScore,
-        domain_available: comAvailable || coukAvailable || null,
+        domain_available: comAvailable,
       });
     }
     
