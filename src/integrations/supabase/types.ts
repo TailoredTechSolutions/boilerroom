@@ -53,6 +53,50 @@ export type Database = {
         }
         Relationships: []
       }
+      callback_inbox: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          job_id: string
+          payload: Json
+          processing_completed_at: string | null
+          processing_started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_id: string
+          payload: Json
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          job_id?: string
+          payload?: Json
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "callback_inbox_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "scraping_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_actions: {
         Row: {
           action_type: string

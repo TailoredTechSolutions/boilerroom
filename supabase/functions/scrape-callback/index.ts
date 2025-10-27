@@ -252,14 +252,59 @@ serve(async (req) => {
     const rawBody = await req.json();
     const validatedData = CallbackSchema.parse(rawBody);
     
-    console.log(`=== Starting to process ${validatedData.entities?.length || 0} entities ===`);
+    console.log(`[${validatedData.job_id}] Fast ACK: Received ${validatedData.entities?.length || 0} entities`);
     
-    // Initialize Supabase client early for audit logging
+    // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
     
+    // Store payload in inbox for async processing
+    const { error: inboxError } = await supabaseClient
+      .from('callback_inbox')
+      .insert({
+        job_id: validatedData.job_id,
+        payload: rawBody,
+        status: 'pending'
+      });
+    
+    if (inboxError) {
+      console.error(`[${validatedData.job_id}] Failed to store in inbox:`, inboxError);
+      throw inboxError;
+    }
+    
+    console.log(`[${validatedData.job_id}] ✅ Stored in inbox for processing`);
+    
+    // Immediately return 202 Accepted (N8N gets response in <500ms)
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        message: 'Callback received and queued for processing',
+        job_id: validatedData.job_id 
+      }),
+      { 
+        status: 202,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    );
+  } catch (error) {
+    console.error('Error in scrape-callback:', error);
+    
+    const message = error instanceof z.ZodError ? 'Invalid callback data' : 'Unable to process callback';
+    
+    return new Response(
+      JSON.stringify({ error: message }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});
+
+// ========== LEGACY PROCESSING CODE (moved to process-callback-inbox function) ==========
+// The following functions are kept here for reference but not used in this fast-ACK version
+// All actual processing now happens asynchronously via the process-callback-inbox edge function
+
+async function processCallbackLegacy(validatedData: any, supabaseClient: any) {
     // Check if job has been running for more than 2 minutes (timeout check)
     const { data: jobData } = await supabaseClient
       .from('scraping_jobs')
@@ -283,10 +328,7 @@ serve(async (req) => {
           })
           .eq('id', validatedData.job_id);
         
-        return new Response(
-          JSON.stringify({ success: false, error: 'Job timeout exceeded 2 minutes' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 408 }
-        );
+        return { success: false, error: 'Job timeout exceeded 2 minutes' };
       }
     }
     
@@ -296,7 +338,7 @@ serve(async (req) => {
       .select('canonical_name');
     
     const suppressedNames = new Set(
-      (suppressionData || []).map(s => s.canonical_name)
+      (suppressionData || []).map((s: any) => s.canonical_name)
     );
     console.log(`Loaded ${suppressedNames.size} suppressed companies`);
     
@@ -490,11 +532,11 @@ serve(async (req) => {
         .select('id, legal_name, registry_id');
       
       const existingCanonicalSet = new Set(
-        (existingEntities || []).map(e => normalizeCompany(e.legal_name))
+        (existingEntities || []).map((e: any) => normalizeCompany(e.legal_name))
       );
       
       const existingRegistryIds = new Set(
-        (existingEntities || []).map(e => e.registry_id)
+        (existingEntities || []).map((e: any) => e.registry_id)
       );
       
       // Filter out duplicates based on both canonical name and registry_id
@@ -532,18 +574,5 @@ serve(async (req) => {
       }
     }
 
-    return new Response(
-      JSON.stringify({ success: true }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (error) {
-    console.error('Error in scrape-callback:', error);
-    
-    const message = error instanceof z.ZodError ? 'Invalid callback data' : 'Unable to process callback';
-    
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  }
-});
+    return { success: true };
+}
