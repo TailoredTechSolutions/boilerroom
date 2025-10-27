@@ -32,6 +32,13 @@ serve(async (req) => {
 
       const { data: { user } } = await supabase.auth.getUser();
       userId = user?.id;
+      if (!userId) {
+        console.warn('trigger-scrape: missing user auth');
+        return new Response(
+          JSON.stringify({ error: 'Authentication required' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Validate input
