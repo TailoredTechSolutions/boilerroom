@@ -7,6 +7,77 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const SERPAPI_KEY = Deno.env.get('SERPAPI_API_KEY');
+const GODADDY_KEY = Deno.env.get('GODADDY_API_KEY');
+const GODADDY_SECRET = Deno.env.get('GODADDY_API_SECRET');
+
+// Check if a company has a website using SerpAPI
+async function checkWebsiteExists(companyName: string): Promise<{ hasWebsite: boolean; urls: string[] }> {
+  if (!SERPAPI_KEY) {
+    console.log('SERPAPI_KEY not configured, skipping website check');
+    return { hasWebsite: false, urls: [] };
+  }
+
+  try {
+    const query = encodeURIComponent(`${companyName} official site`);
+    const url = `https://serpapi.com/search.json?q=${query}&engine=google&api_key=${SERPAPI_KEY}&num=5`;
+    
+    const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!response.ok) {
+      console.error(`SerpAPI error: ${response.status}`);
+      return { hasWebsite: false, urls: [] };
+    }
+
+    const data = await response.json();
+    const organicResults = data.organic_results || [];
+    
+    const sanitized = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const foundUrls: string[] = [];
+    
+    for (const result of organicResults) {
+      const url = result.link?.toLowerCase() || '';
+      if (url.includes(sanitized) || url.includes('.com') || url.includes('.co.uk')) {
+        foundUrls.push(result.link);
+      }
+    }
+
+    return { hasWebsite: foundUrls.length > 0, urls: foundUrls };
+  } catch (error) {
+    console.error('Error checking website:', error);
+    return { hasWebsite: false, urls: [] };
+  }
+}
+
+// Check domain availability using GoDaddy API
+async function checkDomainAvailability(domain: string): Promise<boolean | null> {
+  if (!GODADDY_KEY || !GODADDY_SECRET) {
+    console.log('GoDaddy credentials not configured, skipping domain check');
+    return null;
+  }
+
+  try {
+    const url = `https://api.godaddy.com/v1/domains/available?domain=${encodeURIComponent(domain)}`;
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(8000),
+      headers: {
+        'Authorization': `sso-key ${GODADDY_KEY}:${GODADDY_SECRET}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`GoDaddy API error for ${domain}: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.available === true;
+  } catch (error) {
+    console.error(`Error checking domain ${domain}:`, error);
+    return null;
+  }
+}
+
 // Calculate entity score based on available data
 function calculateEntityScore(entity: any): number {
   let score = 0;
@@ -108,20 +179,53 @@ serve(async (req) => {
       return 'Unknown';
     };
 
-    const normalizedEntities = (entities || [])
-      .map((entity) => {
-        const src = normalizeSource((entity as any).registry_source);
-        const stat = normalizeStatus((entity as any).status);
-        const calculatedScore = calculateEntityScore(entity);
-        return {
-          ...(entity as any),
-          registry_source: src,
-          status: stat,
-          score: calculatedScore, // Override with calculated score
-        };
-      })
-      // Keep only supported registry sources
-      .filter((e) => e.registry_source && allowedSources.includes(e.registry_source as string));
+    // Process and filter entities
+    console.log(`Processing ${entities?.length || 0} entities with filtering...`);
+    const normalizedEntities = [];
+    
+    for (const entity of (entities || [])) {
+      const companyName = (entity as any).legal_name || (entity as any).company_name || (entity as any).title;
+      if (!companyName) continue;
+      
+      const src = normalizeSource((entity as any).registry_source);
+      if (!src || !allowedSources.includes(src)) continue;
+      
+      // Check if company has a website
+      const websiteCheck = await checkWebsiteExists(companyName);
+      if (websiteCheck.hasWebsite) {
+        console.log(`Filtered out ${companyName}: has website (${websiteCheck.urls[0]})`);
+        continue;
+      }
+      
+      // Check domain availability for .com and .co.uk
+      const sanitized = companyName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const comDomain = `${sanitized}.com`;
+      const coukDomain = `${sanitized}.co.uk`;
+      
+      const [comAvailable, coukAvailable] = await Promise.all([
+        checkDomainAvailability(comDomain),
+        checkDomainAvailability(coukDomain)
+      ]);
+      
+      // Only include if at least one domain is available
+      if (comAvailable === false && coukAvailable === false) {
+        console.log(`Filtered out ${companyName}: no domains available`);
+        continue;
+      }
+      
+      const stat = normalizeStatus((entity as any).status);
+      const calculatedScore = calculateEntityScore(entity);
+      
+      normalizedEntities.push({
+        ...(entity as any),
+        registry_source: src,
+        status: stat,
+        score: calculatedScore,
+        domain_available: comAvailable || coukAvailable || null,
+      });
+    }
+    
+    console.log(`Filtered to ${normalizedEntities.length} entities after checks`);
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -148,7 +252,7 @@ serve(async (req) => {
     }
 
     // Insert entities if provided
-    if (normalizedEntities && normalizedEntities.length > 0) {
+    if (normalizedEntities.length > 0) {
       console.log(`Upserting ${normalizedEntities.length} entities...`)
       
       // Delete old non-saved entities from this source before inserting new ones
