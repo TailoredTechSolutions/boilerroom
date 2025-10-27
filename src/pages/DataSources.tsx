@@ -83,12 +83,14 @@ const DataSources = () => {
     console.log("Triggering scrape for:", { source: selectedSource });
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const { data, error } = await supabase.functions.invoke("trigger-scrape", {
         body: {
           source: selectedSource,
           searchTerm: "",
           filters: {},
         },
+        headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : undefined,
       });
 
       if (error) throw error;
