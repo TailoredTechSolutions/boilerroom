@@ -319,14 +319,15 @@ serve(async (req) => {
 
   } catch (error) {
     console.error("Error in aggregate-filter-results:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({
-        error: error.message,
+        error: errorMessage,
         entity_id: null,
         overall_status: "error",
         passed_checks: [],
         failed_checks: [],
-        filter_notes: [`Error: ${error.message}`],
+        filter_notes: [`Error: ${errorMessage}`],
         last_checked: new Date().toISOString(),
         check_details: {},
         score: 0,

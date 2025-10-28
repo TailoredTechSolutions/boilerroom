@@ -112,7 +112,7 @@ async function checkDomainAvailability(domain: string): Promise<{
         }
       } catch (whoisError) {
         console.error("WHOIS lookup failed:", whoisError);
-        result.details.whois_error = whoisError.message;
+        result.details.whois_error = whoisError instanceof Error ? whoisError.message : String(whoisError);
       }
     }
 
@@ -130,7 +130,7 @@ async function checkDomainAvailability(domain: string): Promise<{
   } catch (error) {
     console.error(`Domain check failed for ${domain}:`, error);
     result.status = "error";
-    result.details.error = error.message;
+    result.details.error = error instanceof Error ? error.message : String(error);
   }
 
   return result;
@@ -265,7 +265,7 @@ serve(async (req) => {
     console.error("Error in check-domain-availability:", error);
     return new Response(
       JSON.stringify({
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         available: false,
         status: "error",
         registrar: null,

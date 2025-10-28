@@ -325,7 +325,7 @@ Deno.test("Error Handling - Missing Required Fields", async () => {
     });
   } catch (error) {
     assertExists(error);
-    console.log("Expected error:", error.message);
+    console.log("Expected error:", error instanceof Error ? error.message : String(error));
   }
 });
 

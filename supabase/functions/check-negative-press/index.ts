@@ -257,7 +257,7 @@ serve(async (req) => {
     console.error("Error in check-negative-press:", error);
     return new Response(
       JSON.stringify({
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         has_negative_press: false,
         articles: [],
         sentiment_score: 0,

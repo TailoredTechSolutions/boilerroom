@@ -329,7 +329,7 @@ serve(async (req) => {
     console.error("Error in check-online-presence:", error);
     return new Response(
       JSON.stringify({
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         domain_exists: false,
         website_active: false,
         social_profiles: {},
