@@ -19,32 +19,29 @@ serve(async (req) => {
   }
 
   try {
-    // JWT is verified by platform - extract user from request
+    // JWT is verified by platform - extract user ID from JWT token
     const authHeader = req.headers.get('Authorization');
-    
-    // Create Supabase client with the Authorization header
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: authHeader ? { Authorization: authHeader } : {},
-        },
-      }
-    );
-
-    // Get authenticated user (JWT already verified by platform)
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      console.error('Failed to get user:', authError);
+    if (!authHeader) {
       return new Response(
         JSON.stringify({ error: 'Authentication required' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const userId = user.id;
-    console.log('User authenticated:', userId);
+    // Extract user ID from JWT token (format: "Bearer <token>")
+    let userId: string | null = null;
+    try {
+      const token = authHeader.replace('Bearer ', '');
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      userId = payload.sub;
+      console.log('User authenticated:', userId);
+    } catch (e) {
+      console.error('Failed to decode JWT:', e);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Validate input
     const rawBody = await req.json();
