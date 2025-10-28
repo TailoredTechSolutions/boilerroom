@@ -74,76 +74,114 @@ async function checkWebsiteActive(domain: string): Promise<{ active: boolean; st
   }
 }
 
-// Search Google Custom Search for social media profiles
-async function searchSocialMedia(
+// Search Facebook using SerpAPI Google Search with site filter
+async function searchFacebook(
   entityName: string,
-  platform: string,
-  apiKey: string,
-  searchEngineId: string
+  apiKey: string
 ): Promise<{ found: boolean; url?: string; count: number }> {
   try {
-    const siteMap: { [key: string]: string } = {
-      linkedin: "linkedin.com/company",
-      twitter: "twitter.com",
-      facebook: "facebook.com",
-    };
-
-    const site = siteMap[platform];
-    const query = `site:${site} "${entityName}"`;
-
-    const searchUrl = new URL("https://www.googleapis.com/customsearch/v1");
-    searchUrl.searchParams.set("key", apiKey);
-    searchUrl.searchParams.set("cx", searchEngineId);
+    const query = `site:facebook.com "${entityName}"`;
+    const searchUrl = new URL("https://serpapi.com/search");
+    searchUrl.searchParams.set("api_key", apiKey);
     searchUrl.searchParams.set("q", query);
     searchUrl.searchParams.set("num", "3");
 
-    console.log(`Searching ${platform} for: ${entityName}`);
+    console.log(`Searching Facebook for: ${entityName}`);
 
     const response = await fetch(searchUrl.toString());
 
     if (!response.ok) {
-      console.error(`Google Custom Search error: ${response.status}`);
+      console.error(`SerpAPI Facebook search error: ${response.status}`);
       return { found: false, count: 0 };
     }
 
     const data = await response.json();
-    const resultCount = parseInt(data.searchInformation?.totalResults || "0");
-
+    const organicResults = data.organic_results || [];
+    
     return {
-      found: resultCount > 0,
-      url: data.items?.[0]?.link,
-      count: resultCount,
+      found: organicResults.length > 0,
+      url: organicResults[0]?.link,
+      count: organicResults.length,
     };
   } catch (error) {
-    console.error(`Social media search failed for ${platform}:`, error);
+    console.error("Facebook search failed:", error);
     return { found: false, count: 0 };
   }
 }
 
-// General web search count
-async function getWebSearchCount(
+// Search YouTube using SerpAPI YouTube Search API
+async function searchYouTube(
   entityName: string,
-  apiKey: string,
-  searchEngineId: string
-): Promise<number> {
+  apiKey: string
+): Promise<{ found: boolean; url?: string; count: number; channel?: string }> {
   try {
-    const searchUrl = new URL("https://www.googleapis.com/customsearch/v1");
-    searchUrl.searchParams.set("key", apiKey);
-    searchUrl.searchParams.set("cx", searchEngineId);
-    searchUrl.searchParams.set("q", `"${entityName}"`);
-    searchUrl.searchParams.set("num", "1");
+    const searchUrl = new URL("https://serpapi.com/search");
+    searchUrl.searchParams.set("engine", "youtube");
+    searchUrl.searchParams.set("search_query", entityName);
+    searchUrl.searchParams.set("api_key", apiKey);
+
+    console.log(`Searching YouTube for: ${entityName}`);
 
     const response = await fetch(searchUrl.toString());
 
     if (!response.ok) {
-      return 0;
+      console.error(`SerpAPI YouTube search error: ${response.status}`);
+      return { found: false, count: 0 };
     }
 
     const data = await response.json();
-    return parseInt(data.searchInformation?.totalResults || "0");
+    const videoResults = data.video_results || [];
+    const channelResults = data.channel_results || [];
+    
+    const hasResults = videoResults.length > 0 || channelResults.length > 0;
+    
+    return {
+      found: hasResults,
+      url: channelResults[0]?.link || videoResults[0]?.link,
+      count: videoResults.length + channelResults.length,
+      channel: channelResults[0]?.title,
+    };
   } catch (error) {
-    console.error("Web search count failed:", error);
-    return 0;
+    console.error("YouTube search failed:", error);
+    return { found: false, count: 0 };
+  }
+}
+
+// General web search using SerpAPI Google Search
+async function getWebSearchCount(
+  entityName: string,
+  apiKey: string
+): Promise<{ count: number; topResults: Array<{ title: string; link: string }> }> {
+  try {
+    const searchUrl = new URL("https://serpapi.com/search");
+    searchUrl.searchParams.set("api_key", apiKey);
+    searchUrl.searchParams.set("q", `"${entityName}"`);
+    searchUrl.searchParams.set("num", "10");
+
+    console.log(`Searching web for: ${entityName}`);
+
+    const response = await fetch(searchUrl.toString());
+
+    if (!response.ok) {
+      console.error(`SerpAPI web search error: ${response.status}`);
+      return { count: 0, topResults: [] };
+    }
+
+    const data = await response.json();
+    const organicResults = data.organic_results || [];
+    
+    const topResults = organicResults.slice(0, 5).map((result: any) => ({
+      title: result.title,
+      link: result.link,
+    }));
+
+    return {
+      count: organicResults.length,
+      topResults,
+    };
+  } catch (error) {
+    console.error("Web search failed:", error);
+    return { count: 0, topResults: [] };
   }
 }
 
@@ -195,19 +233,18 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Get API keys
-    const googleApiKey = Deno.env.get("GOOGLE_CUSTOM_SEARCH_API_KEY");
-    const searchEngineId = Deno.env.get("GOOGLE_CUSTOM_SEARCH_ENGINE_ID");
+    // Get SerpAPI key
+    const serpApiKey = Deno.env.get("SERPAPI_API_KEY");
 
     const results: any = {
       domain_exists: false,
       website_active: false,
       social_profiles: {
-        linkedin: false,
-        twitter: false,
         facebook: false,
+        youtube: false,
       },
       web_search_results: 0,
+      top_web_results: [],
       details: {},
       checked_at: new Date().toISOString(),
       entity_name,
@@ -246,47 +283,12 @@ serve(async (req) => {
       }
     }
 
-    // If Google API is configured, check social media
-    if (googleApiKey && searchEngineId) {
-      // LinkedIn
-      const linkedinResult = await searchSocialMedia(
-        entity_name,
-        "linkedin",
-        googleApiKey,
-        searchEngineId
-      );
-      results.social_profiles.linkedin = linkedinResult.found;
-      results.details.linkedin = linkedinResult;
+    // If SerpAPI is configured, perform web presence checks
+    if (serpApiKey) {
+      console.log("Running SerpAPI web presence checks...");
 
-      await storeCheck(supabase, registry_id, "linkedin_profile", !linkedinResult.found, {
-        found: linkedinResult.found,
-        url: linkedinResult.url,
-        count: linkedinResult.count,
-      });
-
-      // Twitter
-      const twitterResult = await searchSocialMedia(
-        entity_name,
-        "twitter",
-        googleApiKey,
-        searchEngineId
-      );
-      results.social_profiles.twitter = twitterResult.found;
-      results.details.twitter = twitterResult;
-
-      await storeCheck(supabase, registry_id, "twitter_profile", !twitterResult.found, {
-        found: twitterResult.found,
-        url: twitterResult.url,
-        count: twitterResult.count,
-      });
-
-      // Facebook
-      const facebookResult = await searchSocialMedia(
-        entity_name,
-        "facebook",
-        googleApiKey,
-        searchEngineId
-      );
+      // Facebook search
+      const facebookResult = await searchFacebook(entity_name, serpApiKey);
       results.social_profiles.facebook = facebookResult.found;
       results.details.facebook = facebookResult;
 
@@ -296,17 +298,33 @@ serve(async (req) => {
         count: facebookResult.count,
       });
 
-      // General web search
-      const webSearchCount = await getWebSearchCount(entity_name, googleApiKey, searchEngineId);
-      results.web_search_results = webSearchCount;
+      // YouTube search
+      const youtubeResult = await searchYouTube(entity_name, serpApiKey);
+      results.social_profiles.youtube = youtubeResult.found;
+      results.details.youtube = youtubeResult;
 
-      await storeCheck(supabase, registry_id, "web_search", webSearchCount < 10, {
-        count: webSearchCount,
+      await storeCheck(supabase, registry_id, "youtube_presence", !youtubeResult.found, {
+        found: youtubeResult.found,
+        url: youtubeResult.url,
+        channel: youtubeResult.channel,
+        count: youtubeResult.count,
+      });
+
+      // General web search
+      const webSearchResult = await getWebSearchCount(entity_name, serpApiKey);
+      results.web_search_results = webSearchResult.count;
+      results.top_web_results = webSearchResult.topResults;
+
+      await storeCheck(supabase, registry_id, "web_search", webSearchResult.count < 10, {
+        count: webSearchResult.count,
+        top_results: webSearchResult.topResults,
         entity_name,
       });
+
+      console.log(`Web presence check complete: Facebook=${facebookResult.found}, YouTube=${youtubeResult.found}, Web Results=${webSearchResult.count}`);
     } else {
-      console.log("Google Custom Search API not configured - skipping social media checks");
-      results.details.note = "Social media checks skipped - API not configured";
+      console.log("SERPAPI_API_KEY not configured - skipping web presence checks");
+      results.details.note = "Web presence checks skipped - SerpAPI not configured";
     }
 
     // Store overall online presence check
