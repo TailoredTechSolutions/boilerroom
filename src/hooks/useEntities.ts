@@ -15,6 +15,13 @@ export interface Entity {
   created_at: string;
   updated_at: string;
   raw_payload?: any;
+  filter_status?: string;
+  filter_notes?: string[];
+  domain_available?: boolean;
+  domain_status?: any;
+  news_mentions?: any;
+  social_media_presence?: any;
+  officers_data?: any;
 }
 
 interface FilterState {
@@ -22,6 +29,9 @@ interface FilterState {
   scoreRange: [number, number];
   country: string;
   source?: string;
+  filterStatus?: string;
+  hasNegativePress?: boolean;
+  domainAvailable?: boolean;
 }
 
 export const useEntities = () => {
@@ -98,6 +108,23 @@ export const useEntities = () => {
       filtered = filtered.filter((e) => e.registry_source === filters.source);
     }
 
+    // Filter by qualification status
+    if (filters.filterStatus) {
+      filtered = filtered.filter((e) => e.filter_status === filters.filterStatus);
+    }
+
+    // Filter by negative press
+    if (filters.hasNegativePress !== undefined) {
+      filtered = filtered.filter(
+        (e) => e.news_mentions?.has_negative_press === filters.hasNegativePress
+      );
+    }
+
+    // Filter by domain availability
+    if (filters.domainAvailable !== undefined) {
+      filtered = filtered.filter((e) => e.domain_available === filters.domainAvailable);
+    }
+
     filtered = filtered.filter(
       (e) => e.score >= filters.scoreRange[0] && e.score <= filters.scoreRange[1]
     );
@@ -161,6 +188,10 @@ export const useEntities = () => {
             'score',
             'country',
             'website',
+            'filter_status',
+            'filter_notes',
+            'domain_available',
+            'officers_data',
             'updated_at',
           ],
           format,

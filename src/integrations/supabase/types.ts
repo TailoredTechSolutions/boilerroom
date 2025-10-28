@@ -232,9 +232,12 @@ export type Database = {
           dismissed_at: string | null
           dismissed_by: string | null
           domain_available: boolean | null
+          domain_status: Json | null
           email_contacts: Json | null
           exported_at: string | null
           filings: Json | null
+          filter_notes: string[] | null
+          filter_status: string | null
           flagged_at: string | null
           flagged_by: string | null
           id: string
@@ -245,13 +248,16 @@ export type Database = {
           legal_name: string
           merged_from: Json | null
           negative_press_flag: boolean | null
+          news_mentions: Json | null
           officers: Json | null
+          officers_data: Json | null
           psc: Json | null
           raw_payload: Json | null
           registry_id: string
           registry_source: string
           score: number | null
           sic_codes: string[] | null
+          social_media_presence: Json | null
           status: string | null
           trading_name: string | null
           updated_at: string | null
@@ -267,9 +273,12 @@ export type Database = {
           dismissed_at?: string | null
           dismissed_by?: string | null
           domain_available?: boolean | null
+          domain_status?: Json | null
           email_contacts?: Json | null
           exported_at?: string | null
           filings?: Json | null
+          filter_notes?: string[] | null
+          filter_status?: string | null
           flagged_at?: string | null
           flagged_by?: string | null
           id?: string
@@ -280,13 +289,16 @@ export type Database = {
           legal_name: string
           merged_from?: Json | null
           negative_press_flag?: boolean | null
+          news_mentions?: Json | null
           officers?: Json | null
+          officers_data?: Json | null
           psc?: Json | null
           raw_payload?: Json | null
           registry_id: string
           registry_source: string
           score?: number | null
           sic_codes?: string[] | null
+          social_media_presence?: Json | null
           status?: string | null
           trading_name?: string | null
           updated_at?: string | null
@@ -302,9 +314,12 @@ export type Database = {
           dismissed_at?: string | null
           dismissed_by?: string | null
           domain_available?: boolean | null
+          domain_status?: Json | null
           email_contacts?: Json | null
           exported_at?: string | null
           filings?: Json | null
+          filter_notes?: string[] | null
+          filter_status?: string | null
           flagged_at?: string | null
           flagged_by?: string | null
           id?: string
@@ -315,13 +330,16 @@ export type Database = {
           legal_name?: string
           merged_from?: Json | null
           negative_press_flag?: boolean | null
+          news_mentions?: Json | null
           officers?: Json | null
+          officers_data?: Json | null
           psc?: Json | null
           raw_payload?: Json | null
           registry_id?: string
           registry_source?: string
           score?: number | null
           sic_codes?: string[] | null
+          social_media_presence?: Json | null
           status?: string | null
           trading_name?: string | null
           updated_at?: string | null
@@ -371,6 +389,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      filter_checks: {
+        Row: {
+          check_type: string
+          checked_at: string | null
+          created_at: string | null
+          details: Json | null
+          entity_id: string | null
+          id: string
+          passed: boolean
+        }
+        Insert: {
+          check_type: string
+          checked_at?: string | null
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          id?: string
+          passed: boolean
+        }
+        Update: {
+          check_type?: string
+          checked_at?: string | null
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          id?: string
+          passed?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filter_checks_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       filtering_audit: {
         Row: {

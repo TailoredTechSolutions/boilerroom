@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { DomainCheckModal } from "./DomainCheckModal";
+import { FilterStatusPanel } from "./entities/FilterStatusPanel";
 import { useState } from "react";
 
 interface CompanyDetail {
@@ -30,6 +31,12 @@ interface CompanyDetail {
   data_quality_score?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
+  filter_status?: string;
+  filter_notes?: string[];
+  domain_status?: any;
+  news_mentions?: any;
+  social_media_presence?: any;
+  officers_data?: any;
 }
 
 interface CompanyDetailViewProps {
@@ -183,6 +190,9 @@ export const CompanyDetailView = ({ company, onClose }: CompanyDetailViewProps) 
             </div>
           </div>
         </div>
+
+        {/* Filter Status Panel */}
+        <FilterStatusPanel entity={company} />
 
         {/* All Data Headers Section */}
         <div className="space-y-4 border-t border-border pt-4">
