@@ -2,136 +2,271 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+interface NewsAPIArticle {
+  title: string;
+  description: string;
+  url: string;
+  publishedAt: string;
+  source: {
+    name: string;
+  };
+}
+
+interface NewsAPIResponse {
+  status: string;
+  totalResults: number;
+  articles: NewsAPIArticle[];
+}
+
+interface RequestBody {
+  entity_name: string;
+  registry_id: string;
+  country?: string;
+}
+
+// Negative keywords for sentiment analysis
+const NEGATIVE_KEYWORDS = [
+  "fraud", "lawsuit", "bankruptcy", "scandal", "investigation",
+  "allegations", "accused", "charged", "convicted", "penalty",
+  "fine", "violation", "misconduct", "illegal", "criminal",
+  "embezzlement", "corruption", "bribery", "laundering", "scam",
+  "ponzi", "scheme", "collapse", "insolvent", "liquidation"
+];
+
+// Calculate sentiment score based on keyword matching
+function calculateSentimentScore(text: string): number {
+  const lowerText = text.toLowerCase();
+  let negativeCount = 0;
+
+  for (const keyword of NEGATIVE_KEYWORDS) {
+    if (lowerText.includes(keyword)) {
+      negativeCount++;
+    }
+  }
+
+  // Return score from 0 (no negative) to 1 (highly negative)
+  // More than 3 negative keywords = 1.0 score
+  return Math.min(negativeCount / 3, 1);
+}
+
+// Check cache for recent results
+async function getCachedResult(supabase: any, entityName: string) {
+  const { data, error } = await supabase
+    .from("filter_checks")
+    .select("*")
+    .eq("check_type", "negative_press")
+    .ilike("details->>entity_name", entityName)
+    .gte("checked_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24 hours
+    .order("checked_at", { ascending: false })
+    .limit(1);
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  return data[0];
+}
+
+// Store check result in database
+async function storeCheckResult(
+  supabase: any,
+  entityId: string | null,
+  passed: boolean,
+  details: any,
+  errorMessage: string | null = null
+) {
+  const { error } = await supabase
+    .from("filter_checks")
+    .insert({
+      entity_id: entityId,
+      check_type: "negative_press",
+      passed,
+      details,
+      error_message: errorMessage,
+      checked_at: new Date().toISOString(),
+    });
+
+  if (error) {
+    console.error("Failed to store check result:", error);
+  }
+}
+
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+  // Handle CORS
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { entity_name, registry_id, entity_id } = await req.json();
-    console.log('Checking negative press for:', entity_name);
+    // Parse request body
+    const { entity_name, registry_id, country }: RequestBody = await req.json();
 
-    const newsApiKey = Deno.env.get('NEWSAPI_KEY');
-    
-    let has_negative_press = false;
-    let articles: any[] = [];
-    let sentiment_score = 0;
-    let details = {};
-
-    // Only perform API check if NewsAPI key is available
-    if (newsApiKey) {
-      try {
-        // Search for company name in news articles
-        const newsResponse = await fetch(
-          `https://newsapi.org/v2/everything?q="${entity_name}"&language=en&sortBy=relevancy&pageSize=10`,
-          {
-            headers: {
-              'X-Api-Key': newsApiKey,
-            },
-          }
-        );
-
-        if (newsResponse.ok) {
-          const newsData = await newsResponse.json();
-          articles = newsData.articles || [];
-
-          // Simple negative keyword detection
-          const negativeKeywords = [
-            'fraud', 'scam', 'lawsuit', 'scandal', 'bankruptcy', 'insolvent',
-            'investigation', 'criminal', 'illegal', 'suspended', 'fined',
-            'violation', 'breach', 'misconduct', 'controversy', 'accused'
-          ];
-
-          // Check articles for negative keywords
-          for (const article of articles) {
-            const content = `${article.title} ${article.description}`.toLowerCase();
-            const negativeCount = negativeKeywords.filter(keyword => 
-              content.includes(keyword)
-            ).length;
-
-            if (negativeCount > 0) {
-              has_negative_press = true;
-              sentiment_score += negativeCount;
-            }
-          }
-
-          // Normalize sentiment score (higher = more negative)
-          sentiment_score = articles.length > 0 ? sentiment_score / articles.length : 0;
-
-          details = {
-            articles_found: articles.length,
-            negative_articles: articles.filter(a => {
-              const content = `${a.title} ${a.description}`.toLowerCase();
-              return negativeKeywords.some(keyword => content.includes(keyword));
-            }).length,
-            top_article: articles.length > 0 ? {
-              title: articles[0].title,
-              url: articles[0].url,
-              publishedAt: articles[0].publishedAt
-            } : null
-          };
+    if (!entity_name) {
+      return new Response(
+        JSON.stringify({ error: "entity_name is required" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
         }
-      } catch (apiError) {
-        console.error('NewsAPI error:', apiError);
-        // Don't fail the check, just log and continue with no data
-        details = { error: 'NewsAPI request failed', message: String(apiError) };
+      );
+    }
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Check cache first
+    const cachedResult = await getCachedResult(supabase, entity_name);
+    if (cachedResult) {
+      console.log(`Using cached result for ${entity_name}`);
+      return new Response(
+        JSON.stringify({
+          ...cachedResult.details,
+          cached: true,
+          cache_age_hours: Math.round(
+            (Date.now() - new Date(cachedResult.checked_at).getTime()) / (1000 * 60 * 60)
+          ),
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Get NewsAPI key from environment
+    const newsApiKey = Deno.env.get("NEWSAPI_KEY");
+    if (!newsApiKey) {
+      console.error("NEWSAPI_KEY not configured");
+      await storeCheckResult(supabase, registry_id, false, {
+        entity_name,
+        error: "NewsAPI not configured"
+      }, "NEWSAPI_KEY not configured");
+
+      return new Response(
+        JSON.stringify({
+          error: "News API not configured",
+          has_negative_press: false,
+          articles: [],
+          sentiment_score: 0,
+          checked_at: new Date().toISOString(),
+          note: "Unable to verify - skipping check"
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Build search query with negative keywords
+    const searchKeywords = NEGATIVE_KEYWORDS.slice(0, 5).join(" OR ");
+    const searchQuery = `"${entity_name}" AND (${searchKeywords})`;
+
+    // Call NewsAPI
+    const newsApiUrl = new URL("https://newsapi.org/v2/everything");
+    newsApiUrl.searchParams.set("q", searchQuery);
+    newsApiUrl.searchParams.set("language", "en");
+    newsApiUrl.searchParams.set("sortBy", "relevancy");
+    newsApiUrl.searchParams.set("pageSize", "10");
+    newsApiUrl.searchParams.set("apiKey", newsApiKey);
+
+    console.log(`Searching NewsAPI for: ${entity_name}`);
+
+    const newsResponse = await fetch(newsApiUrl.toString());
+
+    if (!newsResponse.ok) {
+      const errorText = await newsResponse.text();
+      console.error(`NewsAPI error: ${newsResponse.status} - ${errorText}`);
+
+      await storeCheckResult(supabase, registry_id, false, {
+        entity_name,
+        error: `NewsAPI error: ${newsResponse.status}`
+      }, errorText);
+
+      return new Response(
+        JSON.stringify({
+          error: `NewsAPI error: ${newsResponse.status}`,
+          has_negative_press: false,
+          articles: [],
+          sentiment_score: 0,
+          checked_at: new Date().toISOString()
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    const newsData: NewsAPIResponse = await newsResponse.json();
+
+    // Analyze articles for sentiment
+    const articles = newsData.articles.map((article) => {
+      const combinedText = `${article.title} ${article.description || ""}`;
+      const sentimentScore = calculateSentimentScore(combinedText);
+
+      return {
+        title: article.title,
+        description: article.description,
+        url: article.url,
+        published_at: article.publishedAt,
+        source: article.source.name,
+        sentiment_score: sentimentScore,
+        negative_keywords_found: NEGATIVE_KEYWORDS.filter(kw =>
+          combinedText.toLowerCase().includes(kw)
+        ),
+      };
+    });
+
+    // Calculate overall sentiment
+    const avgSentiment = articles.length > 0
+      ? articles.reduce((sum, a) => sum + a.sentiment_score, 0) / articles.length
+      : 0;
+
+    const hasNegativePress = avgSentiment > 0.3 || articles.some(a => a.sentiment_score > 0.5);
+
+    const result = {
+      has_negative_press: hasNegativePress,
+      articles,
+      sentiment_score: avgSentiment,
+      total_articles: newsData.totalResults,
+      checked_at: new Date().toISOString(),
+      entity_name,
+      registry_id,
+      country,
+    };
+
+    // Store result in database
+    await storeCheckResult(supabase, registry_id, !hasNegativePress, result);
+
+    return new Response(
+      JSON.stringify(result),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
-    } else {
-      console.log('NewsAPI key not configured, skipping news check');
-      details = { message: 'NewsAPI key not configured' };
-    }
+    );
 
-    // Store result in filter_checks table if entity_id provided
-    if (entity_id) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
-      await supabase.from('filter_checks').insert({
-        entity_id,
-        check_type: 'negative_press',
-        passed: !has_negative_press,
-        details: {
-          ...details,
-          sentiment_score,
-          articles_count: articles.length
-        }
-      });
-
-      // Update entity with news mentions data
-      await supabase.from('entities').update({
-        news_mentions: {
-          has_negative_press,
-          sentiment_score,
-          articles_found: articles.length,
-          last_checked: new Date().toISOString(),
-          top_article: articles.length > 0 ? {
-            title: articles[0].title,
-            url: articles[0].url
-          } : null
-        }
-      }).eq('id', entity_id);
-    }
-
+  } catch (error) {
+    console.error("Error in check-negative-press:", error);
     return new Response(
       JSON.stringify({
-        has_negative_press,
-        articles,
-        sentiment_score,
-        passed: !has_negative_press,
-        details
+        error: error.message,
+        has_negative_press: false,
+        articles: [],
+        sentiment_score: 0,
+        checked_at: new Date().toISOString()
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (error) {
-    console.error('Error in check-negative-press:', error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
     );
   }
 });

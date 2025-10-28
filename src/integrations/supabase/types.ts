@@ -236,6 +236,7 @@ export type Database = {
           email_contacts: Json | null
           exported_at: string | null
           filings: Json | null
+          filter_checked_at: string | null
           filter_notes: string[] | null
           filter_status: string | null
           flagged_at: string | null
@@ -277,6 +278,7 @@ export type Database = {
           email_contacts?: Json | null
           exported_at?: string | null
           filings?: Json | null
+          filter_checked_at?: string | null
           filter_notes?: string[] | null
           filter_status?: string | null
           flagged_at?: string | null
@@ -318,6 +320,7 @@ export type Database = {
           email_contacts?: Json | null
           exported_at?: string | null
           filings?: Json | null
+          filter_checked_at?: string | null
           filter_notes?: string[] | null
           filter_status?: string | null
           flagged_at?: string | null
@@ -397,6 +400,7 @@ export type Database = {
           created_at: string | null
           details: Json | null
           entity_id: string | null
+          error_message: string | null
           id: string
           passed: boolean
         }
@@ -406,6 +410,7 @@ export type Database = {
           created_at?: string | null
           details?: Json | null
           entity_id?: string | null
+          error_message?: string | null
           id?: string
           passed: boolean
         }
@@ -415,6 +420,7 @@ export type Database = {
           created_at?: string | null
           details?: Json | null
           entity_id?: string | null
+          error_message?: string | null
           id?: string
           passed?: boolean
         }
@@ -786,6 +792,15 @@ export type Database = {
     }
     Functions: {
       canonical_name: { Args: { name: string }; Returns: string }
+      get_latest_filter_checks: {
+        Args: { p_entity_id: string }
+        Returns: {
+          check_type: string
+          checked_at: string
+          details: Json
+          passed: boolean
+        }[]
+      }
       has_premium_access: { Args: { user_id: string }; Returns: boolean }
       has_role: {
         Args: {
