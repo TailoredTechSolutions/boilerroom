@@ -6,20 +6,29 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface NewsAPIArticle {
+interface NewsDataArticle {
+  article_id: string;
   title: string;
   description: string;
-  url: string;
-  publishedAt: string;
-  source: {
-    name: string;
-  };
+  link: string;
+  pubDate: string;
+  source_id: string;
+  source_url?: string;
+  source_icon?: string;
+  keywords?: string[];
+  creator?: string[];
+  image_url?: string;
+  content?: string;
+  country?: string[];
+  category?: string[];
+  language?: string;
 }
 
-interface NewsAPIResponse {
+interface NewsDataResponse {
   status: string;
   totalResults: number;
-  articles: NewsAPIArticle[];
+  results: NewsDataArticle[];
+  nextPage?: string;
 }
 
 interface RequestBody {
@@ -139,14 +148,14 @@ serve(async (req) => {
       );
     }
 
-    // Get NewsAPI key from environment
-    const newsApiKey = Deno.env.get("NEWSAPI_KEY");
-    if (!newsApiKey) {
-      console.error("NEWSAPI_KEY not configured");
+    // Get NewsData.io API key from environment
+    const newsDataApiKey = Deno.env.get("NEWSDATA_API_KEY");
+    if (!newsDataApiKey) {
+      console.error("NEWSDATA_API_KEY not configured");
       await storeCheckResult(supabase, registry_id, false, {
         entity_name,
-        error: "NewsAPI not configured"
-      }, "NEWSAPI_KEY not configured");
+        error: "NewsData.io API not configured"
+      }, "NEWSDATA_API_KEY not configured");
 
       return new Response(
         JSON.stringify({
@@ -164,34 +173,33 @@ serve(async (req) => {
       );
     }
 
-    // Build search query with negative keywords
+    // Build search query with negative keywords for NewsData.io
     const searchKeywords = NEGATIVE_KEYWORDS.slice(0, 5).join(" OR ");
     const searchQuery = `"${entity_name}" AND (${searchKeywords})`;
 
-    // Call NewsAPI
-    const newsApiUrl = new URL("https://newsapi.org/v2/everything");
-    newsApiUrl.searchParams.set("q", searchQuery);
-    newsApiUrl.searchParams.set("language", "en");
-    newsApiUrl.searchParams.set("sortBy", "relevancy");
-    newsApiUrl.searchParams.set("pageSize", "10");
-    newsApiUrl.searchParams.set("apiKey", newsApiKey);
+    // Call NewsData.io API
+    const newsDataUrl = new URL("https://newsdata.io/api/1/latest");
+    newsDataUrl.searchParams.set("apikey", newsDataApiKey);
+    newsDataUrl.searchParams.set("q", searchQuery);
+    newsDataUrl.searchParams.set("language", "en");
+    newsDataUrl.searchParams.set("size", "10");
 
-    console.log(`Searching NewsAPI for: ${entity_name}`);
+    console.log(`Searching NewsData.io for: ${entity_name}`);
 
-    const newsResponse = await fetch(newsApiUrl.toString());
+    const newsResponse = await fetch(newsDataUrl.toString());
 
     if (!newsResponse.ok) {
       const errorText = await newsResponse.text();
-      console.error(`NewsAPI error: ${newsResponse.status} - ${errorText}`);
+      console.error(`NewsData.io API error: ${newsResponse.status} - ${errorText}`);
 
       await storeCheckResult(supabase, registry_id, false, {
         entity_name,
-        error: `NewsAPI error: ${newsResponse.status}`
+        error: `NewsData.io API error: ${newsResponse.status}`
       }, errorText);
 
       return new Response(
         JSON.stringify({
-          error: `NewsAPI error: ${newsResponse.status}`,
+          error: `NewsData.io API error: ${newsResponse.status}`,
           has_negative_press: false,
           articles: [],
           sentiment_score: 0,
@@ -204,19 +212,43 @@ serve(async (req) => {
       );
     }
 
-    const newsData: NewsAPIResponse = await newsResponse.json();
+    const newsData: NewsDataResponse = await newsResponse.json();
+
+    // Check if there was an error in the response
+    if (newsData.status === "error") {
+      console.error(`NewsData.io API error:`, newsData);
+      
+      await storeCheckResult(supabase, registry_id, false, {
+        entity_name,
+        error: "NewsData.io API error"
+      }, JSON.stringify(newsData));
+
+      return new Response(
+        JSON.stringify({
+          error: "NewsData.io API error",
+          has_negative_press: false,
+          articles: [],
+          sentiment_score: 0,
+          checked_at: new Date().toISOString()
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
 
     // Analyze articles for sentiment
-    const articles = newsData.articles.map((article) => {
+    const articles = (newsData.results || []).map((article) => {
       const combinedText = `${article.title} ${article.description || ""}`;
       const sentimentScore = calculateSentimentScore(combinedText);
 
       return {
         title: article.title,
         description: article.description,
-        url: article.url,
-        published_at: article.publishedAt,
-        source: article.source.name,
+        url: article.link,
+        published_at: article.pubDate,
+        source: article.source_id,
         sentiment_score: sentimentScore,
         negative_keywords_found: NEGATIVE_KEYWORDS.filter(kw =>
           combinedText.toLowerCase().includes(kw)
