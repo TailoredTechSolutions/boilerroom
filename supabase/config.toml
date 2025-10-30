@@ -1,19 +1,4 @@
 project_id = "utzxdzkebdgwxgqhieee"
 
-[functions.check-negative-press]
-verify_jwt = false
-
-[functions.check-online-presence]
-verify_jwt = false
-
-[functions.aggregate-filter-results]
-verify_jwt = false
-
 [functions.scrape-callback]
-verify_jwt = false
-
-[functions.check-domain-availability]
-verify_jwt = false
-
-[functions.check-domain]
 verify_jwt = false
