@@ -23,6 +23,49 @@ const signupSchema = z.object({
   phone: z.string().trim().min(10, "Enter a valid phone number").max(20),
 });
 
+const surveySchema = z.object({
+  experience: z.enum(["I am experienced investor", "Somewhat Experience", "No Experience"], {
+    errorMap: () => ({ message: "Please select your experience level" })
+  }),
+  timeframe: z.enum(["Immediately", "Within 14 Days", "Within a month"], {
+    errorMap: () => ({ message: "Please select your investment timeframe" })
+  }),
+  portfolio: z.enum(["$100k-$250k", "$250k-$500k", "$500k+"], {
+    errorMap: () => ({ message: "Please select your portfolio size" })
+  }),
+  income: z.enum(["$0- $100k", "$100k-$250k", "$250k-$500k", "$500k+"], {
+    errorMap: () => ({ message: "Please select your annual income" })
+  }),
+  capital: z.enum(["20K+", "50K+", "100K+", "250K+"], {
+    errorMap: () => ({ message: "Please select available capital" })
+  }),
+  advisor: z.enum(["YES", "NOPE"], {
+    errorMap: () => ({ message: "Please indicate if you have an advisor" })
+  }),
+  alternatives: z.enum(["YES", "NOPE"], {
+    errorMap: () => ({ message: "Please indicate prior alternative investments" })
+  }),
+  alternativesDetail: z.string().max(500, "Detail must be less than 500 characters").optional(),
+  liquidity: z.enum(["Very", "Somewhat", "Not at all"], {
+    errorMap: () => ({ message: "Please select your liquidity comfort level" })
+  }),
+  sectors: z.enum(["Tech", "Fintech", "Biotech", "Consumer", "Clean Energy", "Other"], {
+    errorMap: () => ({ message: "Please select your sector interest" })
+  }),
+  curated: z.enum(["YES", "No"], {
+    errorMap: () => ({ message: "Please indicate curated deal preference" })
+  }),
+  kyc: z.enum(["Yes", "No", "I'd like more info"], {
+    errorMap: () => ({ message: "Please indicate KYC readiness" })
+  }),
+  decision: z.enum(["Yes", "No"], {
+    errorMap: () => ({ message: "Please indicate decision-maker status" })
+  }),
+  bestTime: z.enum(["Morning", "Afternoon", "Evening"], {
+    errorMap: () => ({ message: "Please select best time to reach you" })
+  }),
+});
+
 type WizardStep = 
   | "lead" | "otp" | "experience" | "timeframe" | "portfolio" 
   | "income" | "capital" | "advisor" | "alternatives" | "alternatives-detail"
@@ -178,6 +221,35 @@ export const InvestorSignupWizard = ({ open, onOpenChange }: InvestorSignupWizar
   };
 
   const handleFinalSubmit = async () => {
+    // Validate survey data before submission
+    try {
+      surveySchema.parse({
+        experience: formData.experience,
+        timeframe: formData.timeframe,
+        portfolio: formData.portfolio,
+        income: formData.income,
+        capital: formData.capital,
+        advisor: formData.advisor,
+        alternatives: formData.alternatives,
+        alternativesDetail: formData.alternativesDetail,
+        liquidity: formData.liquidity,
+        sectors: formData.sectors,
+        curated: formData.curated,
+        kyc: formData.kyc,
+        decision: formData.decision,
+        bestTime: formData.bestTime,
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Incomplete Survey",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("email_subscribers").insert({
