@@ -21,14 +21,14 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Find jobs that are still running or pending after 2 minutes
-    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+    // Find jobs that are still running or pending after 45 seconds
+    const timeoutThreshold = new Date(Date.now() - 45 * 1000).toISOString();
     
     const { data: staleJobs, error: fetchError } = await supabaseClient
       .from("scraping_jobs")
       .select("id, started_at, source, search_term")
       .in("status", ["running", "pending"])
-      .lt("started_at", twoMinutesAgo);
+      .lt("started_at", timeoutThreshold);
 
     if (fetchError) {
       throw fetchError;
@@ -53,7 +53,7 @@ serve(async (req) => {
       .from("scraping_jobs")
       .update({
         status: "failed",
-        error_message: "Job timed out after 2 minutes (auto-cleanup)",
+        error_message: "Job timed out after 45 seconds (auto-cleanup)",
         completed_at: new Date().toISOString(),
       })
       .in("id", jobIds);
