@@ -83,13 +83,15 @@ const DataSources = () => {
     console.log("Triggering scrape for:", { source: selectedSource });
 
     try {
-      // Supabase client automatically includes auth headers
-      const { data, error } = await supabase.functions.invoke("trigger-scrape", {
-        body: {
-          source: selectedSource,
-          searchTerm: "",
-          filters: {},
-        },
+      // Use direct Companies House scraper for CH source
+      const functionName = selectedSource === 'CH' 
+        ? 'scrape-companies-house' 
+        : 'trigger-scrape';
+      
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body: selectedSource === 'CH'
+          ? { searchTerm: "venture capital", itemsPerPage: 100 }
+          : { source: selectedSource, searchTerm: "", filters: {} }
       });
 
       if (error) throw error;
