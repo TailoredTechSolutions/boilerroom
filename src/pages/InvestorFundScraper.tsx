@@ -1,15 +1,15 @@
-rt { NavigationSidebar } from "@/components/NavigationSidebar";
+import { NavigationSidebar } from "@/components/NavigationSidebar";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Database,
-  Filter,
-  TrendingUp,
-  Clock,
-  DollarSign,
+import { 
+  Database, 
+  Filter, 
+  TrendingUp, 
+  Clock, 
+  DollarSign, 
   Download,
   CheckCircle,
   Target,
@@ -19,37 +19,10 @@ import {
   Building2,
   LineChart,
   Mail,
-  Phone,
-  Loader2
+  Phone
 } from "lucide-react";
-import { useTriggerScrape } from "@/hooks/useTriggerScrape";
 
 const InvestorFundScraper = () => {
-  const { triggerScrape, isLoading } = useTriggerScrape();
-
-  const handleStartFundsScrape = async () => {
-    await triggerScrape({
-      source: 'CH',
-      searchTerm: 'venture capital',
-      filters: {}
-    });
-  };
-
-  const handleStartInvestorsScrape = async () => {
-    await triggerScrape({
-      source: 'CH',
-      searchTerm: 'investors',
-      filters: {}
-    });
-  };
-
-  const handleStartCompanyAnalysis = async () => {
-    await triggerScrape({
-      source: 'CH',
-      searchTerm: 'company analysis',
-      filters: {}
-    });
-  };
   return (
     <div className="flex min-h-screen bg-gradient-bg relative">
       <NavigationSidebar />
@@ -90,20 +63,11 @@ const InvestorFundScraper = () => {
               <TabsContent value="funds" className="space-y-12 mt-8">
                 {/* Fund Scraper Hero */}
                 <div className="space-y-4">
-                  <h2 className="text-3xl font-bold text-foreground">Funds Scraper â Fund Intelligence Made Easy</h2>
+                  <h2 className="text-3xl font-bold text-foreground">Funds Scraper — Fund Intelligence Made Easy</h2>
                   <div className="flex gap-3">
-                    <Button size="lg" onClick={handleStartFundsScrape} disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Starting Scrape...
-                        </>
-                      ) : (
-                        <>
-                          <Database className="w-5 h-5 mr-2" />
-                          Start Scraping Funds
-                        </>
-                      )}
+                    <Button size="lg">
+                      <Database className="w-5 h-5 mr-2" />
+                      Start Scraping Funds
                     </Button>
                     <Button size="lg" variant="outline">
                       View Sample Data
@@ -190,24 +154,15 @@ const InvestorFundScraper = () => {
               <TabsContent value="investors" className="space-y-12 mt-8">
                 {/* Investor Scraper Hero */}
                 <div className="space-y-4">
-                  <h2 className="text-3xl font-bold text-foreground">Investors Scraper â Investor Intelligence Without the Manual Work</h2>
+                  <h2 className="text-3xl font-bold text-foreground">Investors Scraper — Investor Intelligence Without the Manual Work</h2>
                   <p className="text-lg text-muted-foreground">
-                    Access detailed investor data from 727,000+ investors worldwide. Get comprehensive details including AUM,
+                    Access detailed investor data from 727,000+ investors worldwide. Get comprehensive details including AUM, 
                     investment focus, geographic preferences, contact information, and performance metrics.
                   </p>
                   <div className="flex gap-3">
-                    <Button size="lg" onClick={handleStartInvestorsScrape} disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Starting Scrape...
-                        </>
-                      ) : (
-                        <>
-                          <Users className="w-5 h-5 mr-2" />
-                          Start Scraping Investors
-                        </>
-                      )}
+                    <Button size="lg">
+                      <Users className="w-5 h-5 mr-2" />
+                      Start Scraping Investors
                     </Button>
                     <Button size="lg" variant="outline">
                       View Sample Data
@@ -311,28 +266,28 @@ const InvestorFundScraper = () => {
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">Geography</h4>
                         <ul className="space-y-1 text-sm text-muted-foreground">
-                          <li>â¢ Regions (Africa, Americas, Asia, etc.)</li>
-                          <li>â¢ Countries (targeted analysis)</li>
-                          <li>â¢ Cities (local analysis)</li>
-                          <li>â¢ Preferred Geography</li>
+                          <li>• Regions (Africa, Americas, Asia, etc.)</li>
+                          <li>• Countries (targeted analysis)</li>
+                          <li>• Cities (local analysis)</li>
+                          <li>• Preferred Geography</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">Investor Characteristics</h4>
                         <ul className="space-y-1 text-sm text-muted-foreground">
-                          <li>â¢ Investor Types (30+ options)</li>
-                          <li>â¢ Other Investor Types</li>
-                          <li>â¢ Investor Status</li>
-                          <li>â¢ AUM Ranges (min/max)</li>
+                          <li>• Investor Types (30+ options)</li>
+                          <li>• Other Investor Types</li>
+                          <li>• Investor Status</li>
+                          <li>• AUM Ranges (min/max)</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">Performance Metrics</h4>
                         <ul className="space-y-1 text-sm text-muted-foreground">
-                          <li>â¢ Total Investments</li>
-                          <li>â¢ Active Portfolio</li>
-                          <li>â¢ Total Exits</li>
-                          <li>â¢ Investment Professionals Count</li>
+                          <li>• Total Investments</li>
+                          <li>• Active Portfolio</li>
+                          <li>• Total Exits</li>
+                          <li>• Investment Professionals Count</li>
                         </ul>
                       </div>
                     </div>
@@ -404,7 +359,7 @@ const InvestorFundScraper = () => {
                       <CardContent className="pt-6">
                         <Clock className="w-10 h-10 text-primary mb-3" />
                         <h4 className="font-semibold text-foreground mb-2">Time Savings</h4>
-                        <p className="text-sm text-muted-foreground">20â40 hours/week saved</p>
+                        <p className="text-sm text-muted-foreground">20–40 hours/week saved</p>
                       </CardContent>
                     </Card>
                   </div>
@@ -503,18 +458,9 @@ const InvestorFundScraper = () => {
                     Comprehensive company research and analysis by aggregating data from LinkedIn, PitchBook, and Crunchbase
                   </p>
                   <div className="flex gap-3">
-                    <Button size="lg" onClick={handleStartCompanyAnalysis} disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Starting Analysis...
-                        </>
-                      ) : (
-                        <>
-                          <BarChart3 className="w-5 h-5 mr-2" />
-                          Start Analysis
-                        </>
-                      )}
+                    <Button size="lg">
+                      <BarChart3 className="w-5 h-5 mr-2" />
+                      Start Analysis
                     </Button>
                     <Button size="lg" variant="outline">
                       View Sample Report
@@ -717,41 +663,41 @@ const InvestorFundScraper = () => {
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">1. Overview and Core Business</h4>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                          <li>â¢ Description and mission statement</li>
-                          <li>â¢ Founded date and headquarters location</li>
-                          <li>â¢ Industry and core business operations</li>
+                          <li>• Description and mission statement</li>
+                          <li>• Founded date and headquarters location</li>
+                          <li>• Industry and core business operations</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">2. Products and Services</h4>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                          <li>â¢ Platform details and key offerings</li>
-                          <li>â¢ Pre-built solutions and tools</li>
-                          <li>â¢ Technology stack and infrastructure</li>
+                          <li>• Platform details and key offerings</li>
+                          <li>• Pre-built solutions and tools</li>
+                          <li>• Technology stack and infrastructure</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">3. Market Presence and Performance</h4>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                          <li>â¢ Target audience and market positioning</li>
-                          <li>â¢ Website traffic and growth metrics</li>
-                          <li>â¢ Competitor landscape analysis</li>
+                          <li>• Target audience and market positioning</li>
+                          <li>• Website traffic and growth metrics</li>
+                          <li>• Competitor landscape analysis</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">4. Key Personnel and Organization</h4>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                          <li>â¢ Employee count and company type</li>
-                          <li>â¢ Leadership team and key personnel</li>
-                          <li>â¢ Organizational structure</li>
+                          <li>• Employee count and company type</li>
+                          <li>• Leadership team and key personnel</li>
+                          <li>• Organizational structure</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-2">5. Financial Metrics and Funding</h4>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                          <li>â¢ Total funding raised and funding rounds</li>
-                          <li>â¢ Investor information</li>
-                          <li>â¢ Patents and trademarks</li>
+                          <li>• Total funding raised and funding rounds</li>
+                          <li>• Investor information</li>
+                          <li>• Patents and trademarks</li>
                         </ul>
                       </div>
                     </CardContent>
@@ -849,21 +795,12 @@ const InvestorFundScraper = () => {
               <CardContent className="py-12 text-center space-y-6">
                 <h2 className="text-3xl font-bold text-foreground">Ready to Supercharge Your Research?</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Start your next search in seconds and unlock deeper market intelligence â all with zero manual work.
+                  Start your next search in seconds and unlock deeper market intelligence — all with zero manual work.
                 </p>
                 <div className="flex gap-4 justify-center">
-                  <Button size="lg" onClick={handleStartFundsScrape} disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Starting...
-                      </>
-                    ) : (
-                      <>
-                        <Database className="w-5 h-5 mr-2" />
-                        Get Started Now
-                      </>
-                    )}
+                  <Button size="lg">
+                    <Database className="w-5 h-5 mr-2" />
+                    Get Started Now
                   </Button>
                   <Button size="lg" variant="outline">
                     View Documentation
