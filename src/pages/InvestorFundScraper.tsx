@@ -4,12 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Database, 
-  Filter, 
-  TrendingUp, 
-  Clock, 
-  DollarSign, 
+import {
+  Database,
+  Filter,
+  TrendingUp,
+  Clock,
+  DollarSign,
   Download,
   CheckCircle,
   Target,
@@ -19,10 +19,38 @@ import {
   Building2,
   LineChart,
   Mail,
-  Phone
+  Phone,
+  Loader2
 } from "lucide-react";
+import { useTriggerScrape } from "@/hooks/useTriggerScrape";
 
 const InvestorFundScraper = () => {
+  const { triggerScrape, isLoading } = useTriggerScrape();
+
+  const handleStartFundsScrape = async () => {
+    await triggerScrape({
+      source: 'CH',
+      searchTerm: 'venture capital',
+      filters: {}
+    });
+  };
+
+  const handleStartInvestorsScrape = async () => {
+    await triggerScrape({
+      source: 'CH',
+      searchTerm: 'investors',
+      filters: {}
+    });
+  };
+
+  const handleStartCompanyAnalysis = async () => {
+    await triggerScrape({
+      source: 'CH',
+      searchTerm: 'company analysis',
+      filters: {}
+    });
+  };
+
   return (
     <div className="flex min-h-screen bg-gradient-bg relative">
       <NavigationSidebar />
@@ -65,9 +93,18 @@ const InvestorFundScraper = () => {
                 <div className="space-y-4">
                   <h2 className="text-3xl font-bold text-foreground">Funds Scraper — Fund Intelligence Made Easy</h2>
                   <div className="flex gap-3">
-                    <Button size="lg">
-                      <Database className="w-5 h-5 mr-2" />
-                      Start Scraping Funds
+                    <Button size="lg" onClick={handleStartFundsScrape} disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Starting Scrape...
+                        </>
+                      ) : (
+                        <>
+                          <Database className="w-5 h-5 mr-2" />
+                          Start Scraping Funds
+                        </>
+                      )}
                     </Button>
                     <Button size="lg" variant="outline">
                       View Sample Data
@@ -156,13 +193,22 @@ const InvestorFundScraper = () => {
                 <div className="space-y-4">
                   <h2 className="text-3xl font-bold text-foreground">Investors Scraper — Investor Intelligence Without the Manual Work</h2>
                   <p className="text-lg text-muted-foreground">
-                    Access detailed investor data from 727,000+ investors worldwide. Get comprehensive details including AUM, 
+                    Access detailed investor data from 727,000+ investors worldwide. Get comprehensive details including AUM,
                     investment focus, geographic preferences, contact information, and performance metrics.
                   </p>
                   <div className="flex gap-3">
-                    <Button size="lg">
-                      <Users className="w-5 h-5 mr-2" />
-                      Start Scraping Investors
+                    <Button size="lg" onClick={handleStartInvestorsScrape} disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Starting Scrape...
+                        </>
+                      ) : (
+                        <>
+                          <Users className="w-5 h-5 mr-2" />
+                          Start Scraping Investors
+                        </>
+                      )}
                     </Button>
                     <Button size="lg" variant="outline">
                       View Sample Data
@@ -458,9 +504,18 @@ const InvestorFundScraper = () => {
                     Comprehensive company research and analysis by aggregating data from LinkedIn, PitchBook, and Crunchbase
                   </p>
                   <div className="flex gap-3">
-                    <Button size="lg">
-                      <BarChart3 className="w-5 h-5 mr-2" />
-                      Start Analysis
+                    <Button size="lg" onClick={handleStartCompanyAnalysis} disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Starting Analysis...
+                        </>
+                      ) : (
+                        <>
+                          <BarChart3 className="w-5 h-5 mr-2" />
+                          Start Analysis
+                        </>
+                      )}
                     </Button>
                     <Button size="lg" variant="outline">
                       View Sample Report
@@ -798,9 +853,18 @@ const InvestorFundScraper = () => {
                   Start your next search in seconds and unlock deeper market intelligence — all with zero manual work.
                 </p>
                 <div className="flex gap-4 justify-center">
-                  <Button size="lg">
-                    <Database className="w-5 h-5 mr-2" />
-                    Get Started Now
+                  <Button size="lg" onClick={handleStartFundsScrape} disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Starting...
+                      </>
+                    ) : (
+                      <>
+                        <Database className="w-5 h-5 mr-2" />
+                        Get Started Now
+                      </>
+                    )}
                   </Button>
                   <Button size="lg" variant="outline">
                     View Documentation
