@@ -133,7 +133,7 @@ serve(async (req) => {
       // Handle timeout or network errors
       const isTimeout = webhookError instanceof Error && webhookError.name === 'AbortError';
       const errorMessage = isTimeout
-        ? 'N8N webhook timeout (10s) - workflow may not be active'
+        ? 'N8N webhook timeout (10s) - check workflow execution logs for processing delays'
         : `N8N webhook error: ${webhookError instanceof Error ? webhookError.message : 'Unknown error'}`;
 
       console.error(errorMessage, webhookError);
