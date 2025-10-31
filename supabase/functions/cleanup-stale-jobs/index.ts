@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 /**
- * Cleanup stale scraping jobs that have been running for more than 2 minutes
+ * Cleanup stale scraping jobs that have been running for more than 5 minutes
  * This edge function can be called periodically or manually to clean up stuck jobs
  */
 serve(async (req) => {
@@ -21,8 +21,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Find jobs that are still running or pending after 45 seconds
-    const timeoutThreshold = new Date(Date.now() - 45 * 1000).toISOString();
+    // Find jobs that are still running or pending after 5 minutes
+    const timeoutThreshold = new Date(Date.now() - 5 * 60 * 1000).toISOString();
     
     const { data: staleJobs, error: fetchError } = await supabaseClient
       .from("scraping_jobs")
@@ -53,7 +53,7 @@ serve(async (req) => {
       .from("scraping_jobs")
       .update({
         status: "failed",
-        error_message: "Job timed out after 45 seconds (auto-cleanup)",
+        error_message: "Job timed out after 5 minutes (auto-cleanup)",
         completed_at: new Date().toISOString(),
       })
       .in("id", jobIds);

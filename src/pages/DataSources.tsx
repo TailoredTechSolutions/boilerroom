@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Play, ChevronRight, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Loader2, Play, ChevronRight, CheckCircle2, XCircle, Clock, Trash2 } from "lucide-react";
 import { useScrapingJobs } from "@/hooks/useScrapingJobs";
 import { RecentEntitiesPreview } from "@/components/RecentEntitiesPreview";
+import { useCleanupJobs } from "@/hooks/useCleanupJobs";
 import ukLogo from "@/assets/uk-companies-house-logo.png";
 import gleifLogo from "@/assets/gleif-logo.png";
 import { format } from "date-fns";
@@ -35,6 +36,7 @@ const DataSources = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { jobs, activeJobs } = useScrapingJobs();
+  const { cleanupStaleJobs, isLoading: isCleaningUp } = useCleanupJobs();
 
   useEffect(() => {
     fetchSourceStats();
@@ -193,10 +195,32 @@ const DataSources = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Scraping Jobs</CardTitle>
-                <CardDescription>
-                  {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Recent Scraping Jobs</CardTitle>
+                    <CardDescription>
+                      {activeJobs > 0 ? `${activeJobs} job${activeJobs > 1 ? 's' : ''} currently running` : 'View recent scraping activity'}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    onClick={cleanupStaleJobs}
+                    disabled={isCleaningUp}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {isCleaningUp ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Cleaning...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Clear Stuck Jobs
+                      </>
+                    )}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 {jobs.length === 0 ? (

@@ -83,38 +83,68 @@ serve(async (req) => {
 
     console.log('Job created:', job.id);
 
-    // Call N8N webhook
+    // Call N8N webhook with timeout
     const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook/vc-registry-scraper';
-    
-    console.log('Calling n8n webhook...');
-    const response = await fetch(n8nWebhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jobId: job.id,
-        source: originalSource, // short code for n8n compatibility (e.g., 'CH')
-        registrySource: normalizedSource, // normalized for clarity (e.g., 'COMPANIES_HOUSE')
-        searchTerm,
-        filters,
-        callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
-      })
-    });
 
-    if (!response.ok) {
-      console.error('N8N webhook failed:', await response.text());
+    console.log('Calling n8n webhook...');
+
+    // Create AbortController for timeout (10 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(n8nWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobId: job.id,
+          source: originalSource, // short code for n8n compatibility (e.g., 'CH')
+          registrySource: normalizedSource, // normalized for clarity (e.g., 'COMPANIES_HOUSE')
+          searchTerm,
+          filters,
+          callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('N8N webhook failed:', errorText);
+        await supabaseAdmin
+          .from('scraping_jobs')
+          .update({
+            status: 'failed',
+            error_message: `N8N webhook failed: ${errorText}`,
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', job.id);
+      } else {
+        console.log('N8N webhook called successfully');
+        await supabaseAdmin
+          .from('scraping_jobs')
+          .update({ status: 'running' })
+          .eq('id', job.id);
+      }
+    } catch (webhookError) {
+      clearTimeout(timeoutId);
+
+      // Handle timeout or network errors
+      const isTimeout = webhookError instanceof Error && webhookError.name === 'AbortError';
+      const errorMessage = isTimeout
+        ? 'N8N webhook timeout (10s) - workflow may not be active'
+        : `N8N webhook error: ${webhookError instanceof Error ? webhookError.message : 'Unknown error'}`;
+
+      console.error(errorMessage, webhookError);
+
       await supabaseAdmin
         .from('scraping_jobs')
-        .update({ 
-          status: 'failed', 
-          error_message: 'N8N webhook failed',
+        .update({
+          status: 'failed',
+          error_message: errorMessage,
           completed_at: new Date().toISOString()
         })
-        .eq('id', job.id);
-    } else {
-      console.log('N8N webhook called successfully');
-      await supabaseAdmin
-        .from('scraping_jobs')
-        .update({ status: 'running' })
         .eq('id', job.id);
     }
 
