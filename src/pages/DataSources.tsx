@@ -85,15 +85,13 @@ const DataSources = () => {
     console.log("Triggering scrape for:", { source: selectedSource });
 
     try {
-      // Use direct Companies House scraper for CH source
-      const functionName = selectedSource === 'CH' 
-        ? 'scrape-companies-house' 
-        : 'trigger-scrape';
-      
-      const { data, error } = await supabase.functions.invoke(functionName, {
-        body: selectedSource === 'CH'
-          ? { searchTerm: "venture capital", itemsPerPage: 100 }
-          : { source: selectedSource, searchTerm: "", filters: {} }
+      // Always use trigger-scrape to hit n8n webhook
+      const { data, error} = await supabase.functions.invoke('trigger-scrape', {
+        body: {
+          source: selectedSource,
+          searchTerm: "venture capital",  // Always filter for venture capital firms
+          filters: {}
+        }
       });
 
       if (error) throw error;
@@ -195,7 +193,7 @@ const DataSources = () => {
 
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <CardTitle>Recent Scraping Jobs</CardTitle>
                     <CardDescription>
@@ -205,8 +203,9 @@ const DataSources = () => {
                   <Button
                     onClick={cleanupStaleJobs}
                     disabled={isCleaningUp}
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
+                    className="shrink-0"
                   >
                     {isCleaningUp ? (
                       <>
