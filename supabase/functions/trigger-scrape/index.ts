@@ -83,66 +83,111 @@ serve(async (req) => {
 
     console.log('Job created:', job.id);
 
-    // Call N8N webhook with timeout
+    // Call N8N webhook with retry logic and proper timeout
     const n8nWebhookUrl = Deno.env.get('N8N_WEBHOOK_URL') || 'https://n8n-ffai-u38114.vm.elestio.app/webhook/vc-registry-scraper';
+    const webhookToken = Deno.env.get('N8N_WEBHOOK_TOKEN'); // Optional auth token
+    
+    const MAX_RETRIES = 3;
+    const TIMEOUT_MS = 60000; // 60 seconds for fast-ack response
+    let lastError: string = '';
+    let webhookSuccess = false;
 
-    console.log('Calling n8n webhook...');
+    console.log(`Calling n8n webhook: ${n8nWebhookUrl}`);
 
-    // Create AbortController for timeout (10 seconds)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Retry loop with exponential backoff
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-    try {
-      const response = await fetch(n8nWebhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'X-Idempotency-Key': job.id, // Prevent duplicate processing in n8n
+        };
+        
+        // Add optional webhook authentication
+        if (webhookToken) {
+          headers['X-Webhook-Token'] = webhookToken;
+        }
+
+        const webhookPayload = {
           jobId: job.id,
           source: originalSource, // short code for n8n compatibility (e.g., 'CH')
           registrySource: normalizedSource, // normalized for clarity (e.g., 'COMPANIES_HOUSE')
           searchTerm,
           filters,
           callbackUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/scrape-callback`
-        }),
-        signal: controller.signal
-      });
+        };
 
-      clearTimeout(timeoutId);
+        console.log(`Attempt ${attempt}/${MAX_RETRIES} - Payload:`, JSON.stringify(webhookPayload, null, 2));
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('N8N webhook failed:', errorText);
-        await supabaseAdmin
-          .from('scraping_jobs')
-          .update({
-            status: 'failed',
-            error_message: `N8N webhook failed: ${errorText}`,
-            completed_at: new Date().toISOString()
-          })
-          .eq('id', job.id);
-      } else {
-        console.log('N8N webhook called successfully');
-        await supabaseAdmin
-          .from('scraping_jobs')
-          .update({ status: 'running' })
-          .eq('id', job.id);
+        const response = await fetch(n8nWebhookUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(webhookPayload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        const statusCode = response.status;
+        const responseBody = await response.text();
+
+        if (response.ok) {
+          console.log(`✅ N8N webhook success (attempt ${attempt}): ${statusCode} - ${responseBody.substring(0, 200)}`);
+          webhookSuccess = true;
+          
+          await supabaseAdmin
+            .from('scraping_jobs')
+            .update({ status: 'running' })
+            .eq('id', job.id);
+          
+          break; // Success, exit retry loop
+        } else {
+          lastError = `HTTP ${statusCode}: ${responseBody.substring(0, 500)}`;
+          console.error(`❌ N8N webhook failed (attempt ${attempt}): ${lastError}`);
+          
+          // Don't retry on 4xx client errors (except 429 rate limit)
+          if (statusCode >= 400 && statusCode < 500 && statusCode !== 429) {
+            console.log('Client error detected, not retrying');
+            break;
+          }
+          
+          // Retry on 5xx server errors or 429 rate limit
+          if (attempt < MAX_RETRIES) {
+            const backoffMs = Math.min(2000 * Math.pow(2, attempt - 1), 30000); // 2s, 4s, 8s (max 30s)
+            console.log(`Retrying in ${backoffMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, backoffMs));
+          }
+        }
+      } catch (webhookError) {
+        clearTimeout(timeoutId);
+
+        const isTimeout = webhookError instanceof Error && webhookError.name === 'AbortError';
+        const errorMsg = isTimeout
+          ? `Timeout after ${TIMEOUT_MS}ms - n8n may not have "Response Mode: On Received" enabled`
+          : webhookError instanceof Error ? webhookError.message : 'Unknown error';
+        
+        lastError = errorMsg;
+        console.error(`❌ Webhook error (attempt ${attempt}/${MAX_RETRIES}):`, errorMsg);
+
+        // Retry on timeout or network errors
+        if (attempt < MAX_RETRIES) {
+          const backoffMs = Math.min(2000 * Math.pow(2, attempt - 1), 30000);
+          console.log(`Retrying in ${backoffMs}ms...`);
+          await new Promise(resolve => setTimeout(resolve, backoffMs));
+        }
       }
-    } catch (webhookError) {
-      clearTimeout(timeoutId);
+    }
 
-      // Handle timeout or network errors
-      const isTimeout = webhookError instanceof Error && webhookError.name === 'AbortError';
-      const errorMessage = isTimeout
-        ? 'N8N webhook timeout (10s) - check workflow execution logs for processing delays'
-        : `N8N webhook error: ${webhookError instanceof Error ? webhookError.message : 'Unknown error'}`;
-
-      console.error(errorMessage, webhookError);
-
+    // Update job status based on final result
+    if (!webhookSuccess) {
+      console.error(`🔴 All ${MAX_RETRIES} attempts failed. Last error: ${lastError}`);
       await supabaseAdmin
         .from('scraping_jobs')
         .update({
           status: 'failed',
-          error_message: errorMessage,
+          error_message: `N8N webhook failed after ${MAX_RETRIES} attempts: ${lastError}`,
           completed_at: new Date().toISOString()
         })
         .eq('id', job.id);
