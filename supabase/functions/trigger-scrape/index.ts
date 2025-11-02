@@ -88,7 +88,7 @@ serve(async (req) => {
     const webhookToken = Deno.env.get('N8N_WEBHOOK_TOKEN'); // Optional auth token
     
     const MAX_RETRIES = 3;
-    const TIMEOUT_MS = 60000; // 60 seconds for fast-ack response
+    const TIMEOUT_MS = 1500000; // 25 minutes for full workflow completion
     let lastError: string = '';
     let webhookSuccess = false;
 
@@ -165,7 +165,7 @@ serve(async (req) => {
 
         const isTimeout = webhookError instanceof Error && webhookError.name === 'AbortError';
         const errorMsg = isTimeout
-          ? `Timeout after ${TIMEOUT_MS}ms - n8n may not have "Response Mode: On Received" enabled`
+          ? `Timeout after ${TIMEOUT_MS}ms (25 minutes) - workflow exceeded maximum execution time`
           : webhookError instanceof Error ? webhookError.message : 'Unknown error';
         
         lastError = errorMsg;
