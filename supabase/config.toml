@@ -2,3 +2,9 @@ project_id = "utzxdzkebdgwxgqhieee"
 
 [functions.scrape-callback]
 verify_jwt = false
+
+[functions.check-online-presence]
+verify_jwt = false
+
+[functions.check-domain-availability]
+verify_jwt = false
