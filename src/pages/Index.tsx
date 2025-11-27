@@ -251,31 +251,32 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <img 
               src={investorStreamLogo} 
               alt="InvestorStream Logo" 
-              className="w-10 h-10 rounded-md object-contain"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-md object-contain"
             />
             <div>
-              <h1 className="text-xl font-bold text-slate-900">InvestorStream</h1>
-              <p className="text-xs text-slate-600">Intelligent Investments</p>
+              <h1 className="text-base sm:text-xl font-bold text-slate-900">InvestorStream</h1>
+              <p className="text-[10px] sm:text-xs text-slate-600 hidden xs:block">Intelligent Investments</p>
             </div>
           </div>
           <Button 
             onClick={() => navigate('/overview')}
-            className="gap-2"
+            className="gap-1.5 sm:gap-2 text-xs sm:text-sm h-8 sm:h-10 px-3 sm:px-4"
           >
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
+            <LayoutDashboard className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Dashboard</span>
+            <span className="sm:hidden">Go</span>
           </Button>
         </div>
       </header>
 
-      <main className="pt-16">
+      <main className="pt-14 sm:pt-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#00478F] via-[#0066CC] to-[#0080E5] text-white py-20 px-4">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#00478F] via-[#0066CC] to-[#0080E5] text-white py-12 sm:py-20 px-4">
           {/* Particle Effect */}
           <div className="absolute inset-0 overflow-hidden">
             {[...Array(30)].map((_, i) => (
@@ -292,67 +293,67 @@ const Index = () => {
           </div>
 
           <div className="container mx-auto max-w-4xl relative z-10">
-            <div className="text-center space-y-6">
-              <Badge variant="secondary" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                <BarChart3 className="w-4 h-4 mr-2" />
+            <div className="text-center space-y-4 sm:space-y-6">
+              <Badge variant="secondary" className="bg-white/10 text-white border-white/20 hover:bg-white/20 text-xs sm:text-sm">
+                <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 IPO Intelligence Platform
               </Badge>
 
-              <h2 className="text-4xl md:text-6xl font-bold leading-tight">
+              <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold leading-tight px-2">
                 Never Miss the Next <span className="text-blue-100">Big IPO Opportunity</span>
               </h2>
 
-              <p className="text-lg md:text-xl text-blue-50 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-lg md:text-xl text-blue-50 max-w-2xl mx-auto px-2">
                 Get free, instant alerts on the hottest upcoming IPOs before they hit the market. Stay ahead with independent research, curated watchlists, and exclusive insights.
               </p>
 
-              <div className="flex justify-center pt-4">
+              <div className="flex justify-center pt-2 sm:pt-4">
                 <Button
                   size="lg"
                   onClick={() => setShowSignupModal(true)}
-                  className="bg-white text-black hover:bg-gray-100 text-xl font-semibold h-20 px-16"
+                  className="bg-white text-black hover:bg-gray-100 text-base sm:text-xl font-semibold h-14 sm:h-20 px-6 sm:px-16"
                 >
-                  <Bell className="w-6 h-6 mr-3" />
+                  <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                   Get Free Alerts Now
                 </Button>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-200" />
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 pt-4 sm:pt-6 text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200" />
                   <span>Independent Research</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-200" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200" />
                   <span>Real-time Alerts</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-blue-200" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200" />
                   <span>10,000+ Investors</span>
                 </div>
               </div>
             </div>
 
             {/* Live IPO Alert Card */}
-            <div className="mt-12 bg-white text-foreground rounded-xl p-6 shadow-2xl max-w-3xl mx-auto">
-              <div className="flex items-center justify-between mb-4">
+            <div className="mt-8 sm:mt-12 bg-white text-foreground rounded-xl p-4 sm:p-6 shadow-2xl max-w-3xl mx-auto">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="font-semibold">Live IPO Alert</span>
+                  <span className="font-semibold text-sm sm:text-base">Live IPO Alert</span>
                 </div>
-                <span className="text-sm text-muted-foreground">2 min ago</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">2 min ago</span>
               </div>
 
-              <h3 className="text-xl font-bold mb-2">TechCorp Inc. (TECH)</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="text-lg sm:text-xl font-bold mb-2">TechCorp Inc. (TECH)</h3>
+              <p className="text-muted-foreground mb-3 sm:mb-4 text-sm sm:text-base">
                 AI-powered SaaS company files for $2B IPO. Expected pricing: $18-22/share. Roadshow begins next week.
               </p>
 
-              <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="bg-blue-50 text-blue-700">High Growth</Badge>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+                <Badge variant="secondary" className="bg-blue-50 text-blue-700 text-xs sm:text-sm">High Growth</Badge>
                 <Button 
                   onClick={() => handleViewAnalysis('techcorp')}
-                  className="bg-primary text-white hover:bg-primary/90"
+                  className="bg-primary text-white hover:bg-primary/90 w-full sm:w-auto text-sm sm:text-base"
                 >
                   Read Full Analysis
                 </Button>
@@ -362,54 +363,54 @@ const Index = () => {
         </section>
 
         {/* Most Actively Traded Asset Section */}
-        <section className="py-16 bg-gradient-to-b from-background to-muted/30">
+        <section className="py-10 sm:py-16 bg-gradient-to-b from-background to-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
                   UK's Most Actively Traded Asset
                 </h2>
-                <p className="text-xl text-muted-foreground">
+                <p className="text-base sm:text-xl text-muted-foreground">
                   Current Market Overview (April 2025)
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-card p-6 rounded-xl border shadow-sm">
-                  <div className="text-4xl font-bold text-primary mb-2">EUR/USD</div>
-                  <div className="text-sm text-muted-foreground mb-4">Forex Currency Pair</div>
-                  <div className="text-2xl font-semibold mb-1">$4.7T</div>
-                  <div className="text-sm text-muted-foreground">Daily UK FX Trading Volume</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div className="bg-card p-4 sm:p-6 rounded-xl border shadow-sm">
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">EUR/USD</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4">Forex Currency Pair</div>
+                  <div className="text-xl sm:text-2xl font-semibold mb-1">$4.7T</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Daily UK FX Trading Volume</div>
                 </div>
 
-                <div className="bg-card p-6 rounded-xl border shadow-sm">
-                  <div className="text-4xl font-bold text-primary mb-2">38%</div>
-                  <div className="text-sm text-muted-foreground mb-4">Global Market Share</div>
-                  <div className="text-2xl font-semibold mb-1">London</div>
-                  <div className="text-sm text-muted-foreground">World's Leading FX Hub</div>
+                <div className="bg-card p-4 sm:p-6 rounded-xl border shadow-sm">
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">38%</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4">Global Market Share</div>
+                  <div className="text-xl sm:text-2xl font-semibold mb-1">London</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">World's Leading FX Hub</div>
                 </div>
 
-                <div className="bg-card p-6 rounded-xl border shadow-sm">
-                  <div className="text-4xl font-bold text-primary mb-2">22-24%</div>
-                  <div className="text-sm text-muted-foreground mb-4">of Global FX Volume</div>
-                  <div className="text-2xl font-semibold mb-1">$1.7T+</div>
-                  <div className="text-sm text-muted-foreground">EUR/USD Daily Trading</div>
+                <div className="bg-card p-4 sm:p-6 rounded-xl border shadow-sm">
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">22-24%</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-4">of Global FX Volume</div>
+                  <div className="text-xl sm:text-2xl font-semibold mb-1">$1.7T+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">EUR/USD Daily Trading</div>
                 </div>
               </div>
 
-              <div className="bg-card p-8 rounded-xl border shadow-sm">
-                <h3 className="text-2xl font-bold mb-4">Why EUR/USD Dominates</h3>
-                <div className="space-y-4 text-muted-foreground">
+              <div className="bg-card p-4 sm:p-8 rounded-xl border shadow-sm">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Why EUR/USD Dominates</h3>
+                <div className="space-y-3 sm:space-y-4 text-muted-foreground text-sm sm:text-base">
                   <p>
                     The Euro/US Dollar currency pair is the single most actively traded asset by volume in the UK, 
                     with trading volumes that dwarf all other asset classes combined. As of April 2025, average daily 
                     turnover in the UK's FX market reached <span className="font-semibold text-foreground">$4.745 trillion per day</span>.
                   </p>
                   
-                  <div className="grid md:grid-cols-2 gap-6 my-6">
-                    <div className="bg-muted/50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-foreground mb-2">Volume Comparison</h4>
-                      <ul className="space-y-2 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 my-4 sm:my-6">
+                    <div className="bg-muted/50 p-3 sm:p-4 rounded-lg">
+                      <h4 className="font-semibold text-foreground mb-2 text-sm sm:text-base">Volume Comparison</h4>
+                      <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                         <li>• <span className="font-medium">EUR/USD Forex:</span> $1.7T+ daily</li>
                         <li>• <span className="font-medium">UK Gilts (Bonds):</span> ~$50B daily</li>
                         <li>• <span className="font-medium">Top LSE Stock:</span> ~$100M daily</li>
@@ -418,9 +419,9 @@ const Index = () => {
                       </ul>
                     </div>
 
-                    <div className="bg-muted/50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-foreground mb-2">Recent Surge Factors</h4>
-                      <ul className="space-y-2 text-sm">
+                    <div className="bg-muted/50 p-3 sm:p-4 rounded-lg">
+                      <h4 className="font-semibold text-foreground mb-2 text-sm sm:text-base">Recent Surge Factors</h4>
+                      <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                         <li>• US trade policy announcements & tariff threats</li>
                         <li>• Central bank interest rate decisions</li>
                         <li>• Geopolitical tensions & macro surprises</li>
@@ -442,75 +443,75 @@ const Index = () => {
         </section>
 
         {/* Market Intelligence Section */}
-        <section className="py-20 px-4 bg-background">
+        <section className="py-12 sm:py-20 px-4 bg-background">
           <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">
-                <FileText className="w-4 h-4 mr-2" />
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Independent Analysis
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 px-2">
                 Trusted, Independent <span className="text-primary">Market Intelligence</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-sm sm:text-lg text-muted-foreground max-w-3xl mx-auto px-2">
                 Investor Stream provides in-depth analysis on private companies preparing to go public. We cut through the noise to deliver concise, fact-based research that helps you understand valuation trends, growth potential, and risk factors—without the hype.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
               <button 
                 onClick={() => setShowValuationDialog(true)}
-                className="bg-card p-8 rounded-xl border-2 border-border hover:border-primary shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-card p-5 sm:p-8 rounded-xl border-2 border-border hover:border-primary shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <FileText className="w-7 h-7 text-primary" />
+                <div className="flex items-start justify-between mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <FileText className="w-5 h-5 sm:w-7 sm:h-7 text-primary" />
                   </div>
-                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Valuation Analysis</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 group-hover:text-primary transition-colors">Valuation Analysis</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Deep-dive into company financials, revenue models, and market positioning to assess fair value and growth potential.
                 </p>
-                <div className="mt-4 text-sm font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                   Click to learn more →
                 </div>
               </button>
 
               <button 
                 onClick={() => setShowRiskDialog(true)}
-                className="bg-card p-8 rounded-xl border-2 border-border hover:border-blue-600 shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-card p-5 sm:p-8 rounded-xl border-2 border-border hover:border-blue-600 shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                    <AlertTriangle className="w-7 h-7 text-blue-600" />
+                <div className="flex items-start justify-between mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <AlertTriangle className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
                   </div>
-                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 transition-colors">Risk Assessment</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors">Risk Assessment</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Comprehensive risk analysis covering market conditions, competitive landscape, and regulatory challenges.
                 </p>
-                <div className="mt-4 text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                   Click to learn more →
                 </div>
               </button>
 
               <button 
                 onClick={() => setShowGrowthDialog(true)}
-                className="bg-card p-8 rounded-xl border-2 border-border hover:border-blue-500 shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group md:col-span-2 hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-card p-5 sm:p-8 rounded-xl border-2 border-border hover:border-blue-500 shadow-sm hover:shadow-lg transition-all cursor-pointer text-left group sm:col-span-2 hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                    <TrendingUp className="w-7 h-7 text-blue-500" />
+                <div className="flex items-start justify-between mb-4 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                    <TrendingUp className="w-5 h-5 sm:w-7 sm:h-7 text-blue-500" />
                   </div>
-                  <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 group-hover:text-blue-500 transition-colors">Growth Potential</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 group-hover:text-blue-500 transition-colors">Growth Potential</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Market opportunity analysis and growth trajectory projections based on industry trends and company fundamentals.
                 </p>
-                <div className="mt-4 text-sm font-semibold text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="mt-3 sm:mt-4 text-xs sm:text-sm font-semibold text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
                   Click to learn more →
                 </div>
               </button>
@@ -519,19 +520,19 @@ const Index = () => {
         </section>
 
         {/* CTA Section 1 */}
-        <section className="py-16 px-4">
+        <section className="py-10 sm:py-16 px-4">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-12 text-center">
-              <h3 className="text-3xl font-bold mb-4">Ready for Independent IPO Intelligence?</h3>
-              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-6 sm:p-12 text-center">
+              <h3 className="text-xl sm:text-3xl font-bold mb-3 sm:mb-4">Ready for Independent IPO Intelligence?</h3>
+              <p className="text-sm sm:text-lg text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Join thousands of investors who rely on our unbiased research and timely alerts to stay ahead of the market.
               </p>
               <Button
                 size="lg"
                 onClick={scrollToSampleAlerts}
-                className="bg-white text-black hover:bg-gray-100 h-16 px-10 text-lg font-bold animate-bounce shadow-2xl"
+                className="bg-white text-black hover:bg-gray-100 h-12 sm:h-16 px-6 sm:px-10 text-sm sm:text-lg font-bold animate-bounce shadow-2xl"
               >
-                <Bell className="w-6 h-6 mr-2" />
+                <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 Don't Miss Out on Free Alerts!
               </Button>
             </div>
@@ -539,51 +540,51 @@ const Index = () => {
         </section>
 
         {/* Sample Alerts Section */}
-        <section className="py-20 px-4 bg-blue-50/30" id="sample-alerts">
+        <section className="py-12 sm:py-20 px-4 bg-blue-50/30" id="sample-alerts">
           <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4 bg-blue-100 text-blue-900 hover:bg-blue-200">
-                <Bell className="w-4 h-4 mr-2" />
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4 bg-blue-100 text-blue-900 hover:bg-blue-200 text-xs sm:text-sm">
+                <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Sample Alerts
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-slate-900">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 text-slate-900 px-2">
                 See the <span className="text-[#0066CC]">Alerts in Action</span>
               </h2>
-              <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+              <p className="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto px-2">
                 Curious what our alerts look like? Here are a few examples from major IPOs that showcase the clarity and timeliness you can expect when you join Investor Stream.
               </p>
             </div>
 
-            <div className="space-y-6 mb-12">
+            <div className="space-y-4 sm:space-y-6 mb-8 sm:mb-12">
               {/* USDT Markets Alert */}
-              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="font-semibold text-slate-900">IPO Alert</span>
+                    <span className="font-semibold text-slate-900 text-sm sm:text-base">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-slate-600">Oct 2025</span>
+                  <span className="text-xs sm:text-sm text-slate-600">Oct 2025</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BarChart3 className="w-6 h-6 text-blue-600" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1 text-black">USDT Markets (USDT)</h3>
-                    <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-900">Digital Assets & Crypto</Badge>
-                    <p className="text-slate-700 mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 text-black">USDT Markets (USDT)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 bg-blue-100 text-blue-900 text-xs sm:text-sm">Digital Assets & Crypto</Badge>
+                    <p className="text-slate-700 mb-3 sm:mb-4 text-sm sm:text-base">
                       Leading digital asset exchange specializing in stablecoin trading. Platform tracks top 24h crypto gainers including SynFutures (F) +49.0%, Paparazzi Token +38.0%, and Bitlight +28.6% with advanced risk filtering.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 flex items-center gap-1">
-                        <BarChart3 className="w-4 h-4" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+                      <span className="text-xs sm:text-sm text-slate-600 flex items-center gap-1">
+                        <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         Expected: $25-30/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('rivian')}
-                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3] p-0 h-auto text-sm sm:text-base"
                       >
                         View Analysis →
                       </Button>
@@ -593,34 +594,34 @@ const Index = () => {
               </div>
 
               {/* Apple Alert */}
-              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span className="font-semibold text-slate-900">IPO Alert</span>
+                    <span className="font-semibold text-slate-900 text-sm sm:text-base">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-slate-600">Dec 1980</span>
+                  <span className="text-xs sm:text-sm text-slate-600">Dec 1980</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-blue-500" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1 text-black">Apple Inc. (AAPL)</h3>
-                    <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-900">Technology</Badge>
-                    <p className="text-slate-700 mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 text-black">Apple Inc. (AAPL)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 bg-blue-100 text-blue-900 text-xs sm:text-sm">Technology</Badge>
+                    <p className="text-slate-700 mb-3 sm:mb-4 text-sm sm:text-base">
                       Historic IPO at $22/share on Dec 12, 1980. Opened at $22, closed around $29 on first day. Current price ~$262 represents 12× return (much higher accounting for splits). Revolutionary personal computing company.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 flex items-center gap-1">
-                        <BarChart3 className="w-4 h-4" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+                      <span className="text-xs sm:text-sm text-slate-600 flex items-center gap-1">
+                        <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         IPO Price: $22/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('apple')}
-                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3] p-0 h-auto text-sm sm:text-base"
                       >
                         View Analysis →
                       </Button>
@@ -630,34 +631,34 @@ const Index = () => {
               </div>
 
               {/* Commodities Alert */}
-              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                    <span className="font-semibold text-slate-900">Commodity Alert</span>
+                    <span className="font-semibold text-slate-900 text-sm sm:text-base">Commodity Alert</span>
                   </div>
-                  <span className="text-sm text-slate-600">Mar 2022</span>
+                  <span className="text-xs sm:text-sm text-slate-600">Mar 2022</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-amber-600" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1 text-black">Global Commodity Futures (GCFP)</h3>
-                    <Badge variant="secondary" className="mb-3 bg-amber-100 text-amber-900">Commodities & Agriculture</Badge>
-                    <p className="text-slate-700 mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 text-black">Global Commodity Futures (GCFP)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 bg-amber-100 text-amber-900 text-xs sm:text-sm">Commodities & Agriculture</Badge>
+                    <p className="text-slate-700 mb-3 sm:mb-4 text-sm sm:text-base">
                       Ukraine war disrupted wheat exports causing 40% price surge by May 2022. Cocoa prices doubled since Aug 2023 due to West African supply deficits. Platform integrates geopolitical risk signals into real-time commodity trading.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 flex items-center gap-1">
-                        <BarChart3 className="w-4 h-4" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+                      <span className="text-xs sm:text-sm text-slate-600 flex items-center gap-1">
+                        <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         Expected: $35-42/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('commodities')}
-                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3] p-0 h-auto text-sm sm:text-base"
                       >
                         View Analysis →
                       </Button>
@@ -667,34 +668,34 @@ const Index = () => {
               </div>
 
               {/* Snowflake Alert */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                    <span className="font-semibold">IPO Alert</span>
+                    <span className="font-semibold text-sm sm:text-base">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">Sep 2020</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Sep 2020</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BarChart3 className="w-6 h-6 text-blue-400" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1">Snowflake (SNOW)</h3>
-                    <Badge variant="secondary" className="mb-3">Cloud Data</Badge>
-                    <p className="text-muted-foreground mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1">Snowflake (SNOW)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 text-xs sm:text-sm">Cloud Data</Badge>
+                    <p className="text-muted-foreground mb-3 sm:mb-4 text-sm sm:text-base">
                       Key updates during its roadshow phase. Cloud data platform with explosive growth and backing from Salesforce and Berkshire Hathaway.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
-                        <BarChart3 className="w-4 h-4" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+                      <span className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
+                        <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         Expected: $75-85/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('snowflake')}
-                        className="text-primary font-semibold"
+                        className="text-primary font-semibold p-0 h-auto text-sm sm:text-base"
                       >
                         View Analysis →
                       </Button>
@@ -705,35 +706,35 @@ const Index = () => {
             </div>
 
             {/* What Makes Different */}
-            <div className="bg-white rounded-xl p-8 shadow-sm border mb-8">
-              <h3 className="text-2xl font-bold text-center mb-12">What Makes Our Alerts Different</h3>
-              <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border mb-6 sm:mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-8 sm:mb-12">What Makes Our Alerts Different</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Clock className="w-8 h-8 text-blue-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
-                  <h4 className="font-bold mb-2">Timely Delivery</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="font-bold mb-2 text-sm sm:text-base">Timely Delivery</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Alerts sent before major announcements and filing updates
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-blue-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Search className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
-                  <h4 className="font-bold mb-2">Deep Analysis</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="font-bold mb-2 text-sm sm:text-base">Deep Analysis</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Comprehensive research beyond basic filing information
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Filter className="w-8 h-8 text-blue-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Filter className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
-                  <h4 className="font-bold mb-2">Quality Focus</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="font-bold mb-2 text-sm sm:text-base">Quality Focus</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Only high-potential opportunities that meet our criteria
                   </p>
                 </div>
@@ -741,27 +742,27 @@ const Index = () => {
             </div>
 
             {/* CTA */}
-            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-12 text-center">
-              <h3 className="text-3xl font-bold mb-4">Want to See More Sample Alerts?</h3>
-              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-6 sm:p-12 text-center">
+              <h3 className="text-xl sm:text-3xl font-bold mb-3 sm:mb-4">Want to See More Sample Alerts?</h3>
+              <p className="text-sm sm:text-lg text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Explore our complete library of past IPO alerts and see the detailed analysis that helped investors stay ahead of the market.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Button
                   size="lg"
                   variant="secondary"
-                  className="bg-white text-primary hover:bg-blue-50 h-14 px-8 text-base font-semibold"
+                  className="bg-white text-primary hover:bg-blue-50 h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-semibold"
                 >
-                  <FileText className="w-5 h-5 mr-2" />
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   View More Sample Alerts
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
                   onClick={() => setShowSignupModal(true)}
-                  className="border-white/30 text-white hover:bg-white/10 h-14 px-8 text-base font-semibold"
+                  className="border-white/30 text-white hover:bg-white/10 h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-semibold"
                 >
-                  <Bell className="w-5 h-5 mr-2" />
+                  <Bell className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Get Free Alerts Now
                 </Button>
               </div>
@@ -770,116 +771,116 @@ const Index = () => {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 px-4 bg-background">
+        <section className="py-12 sm:py-20 px-4 bg-background">
           <div className="container mx-auto max-w-4xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">
-                <BookOpen className="w-4 h-4 mr-2" />
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
+                <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Education Center
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 px-2">
                 Your IPO Questions, <span className="text-primary">Answered</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
                 New to IPO investing? We've got you covered. Get up to speed with our comprehensive FAQ section covering everything from basics to advanced strategies.
               </p>
             </div>
 
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+            <Accordion type="single" collapsible className="space-y-3 sm:space-y-4">
+              <AccordionItem value="item-1" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base py-3 sm:py-4">
                   What exactly is an IPO?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base">
                   An Initial Public Offering (IPO) is when a private company first sells shares to the public on a stock exchange. This allows the company to raise capital from public investors and gives early investors and employees a way to sell their shares. IPOs are significant events that can create substantial investment opportunities for those who get in early.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-2" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-2" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base py-3 sm:py-4">
                   How does pre-IPO investing work?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base">
                   Pre-IPO investing involves purchasing shares in a company before it goes public. This typically happens through private placements, secondary markets, or specialized platforms. While potentially more rewarding, pre-IPO investments usually require higher minimum investments and are often limited to accredited investors. Our alerts help you identify companies preparing for IPOs so you can research opportunities early.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-3" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-3" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base py-3 sm:py-4">
                   How often will I get alerts?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base">
                   Alert frequency varies based on market activity, but you can typically expect 2-5 high-quality alerts per week. We prioritize quality over quantity, focusing on companies with strong fundamentals and significant market potential. During active IPO markets, you may receive more alerts, while quieter periods may see fewer but more selective opportunities.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-4" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base py-3 sm:py-4">
                   Can I unsubscribe anytime?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base">
                   Absolutely! You can unsubscribe from our alerts at any time with a single click. There are no long-term commitments or cancellation fees. We believe in providing value that makes you want to stay, not contracts that force you to. You can also customize your alert preferences to receive only the types of opportunities that interest you most.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-5" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-5" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base py-3 sm:py-4">
                   Do you provide investment advice?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base">
                   No. Investor Stream does not provide investment advice or recommendations to buy or sell securities. We are an educational and informational platform that provides independent research and analysis. All investment decisions should be made based on your own research and risk tolerance, preferably in consultation with a qualified financial advisor.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-6" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-6" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base py-3 sm:py-4">
                   What makes your research different?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base">
                   Our research is completely independent—we don't have relationships with investment banks or companies going public that could influence our analysis. We focus on fundamental analysis, market trends, and risk assessment rather than hype or speculation. Our team has extensive experience in financial analysis and public markets, ensuring you get professional-grade insights.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
 
             {/* Education Resources */}
-            <div className="mt-16 bg-blue-50/50 rounded-2xl p-12">
-              <h3 className="text-2xl font-bold text-center mb-4">IPO Education Resources</h3>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <div className="mt-10 sm:mt-16 bg-blue-50/50 rounded-2xl p-6 sm:p-12">
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">IPO Education Resources</h3>
+              <p className="text-center text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base">
                 Expand your knowledge with our comprehensive guides and educational content designed to help you become a more informed investor.
               </p>
 
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-lg border text-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BookOpen className="w-6 h-6 text-blue-600" />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-white p-4 sm:p-6 rounded-lg border text-center">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
-                  <h4 className="font-bold mb-2">IPO Guides</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <h4 className="font-bold mb-2 text-sm sm:text-base">IPO Guides</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                     Step-by-step guides covering the IPO process
                   </p>
-                  <Button variant="link" className="text-primary">Learn More →</Button>
+                  <Button variant="link" className="text-primary text-sm">Learn More →</Button>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg border text-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Video className="w-6 h-6 text-blue-600" />
+                <div className="bg-white p-4 sm:p-6 rounded-lg border text-center">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Video className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
-                  <h4 className="font-bold mb-2">Video Tutorials</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <h4 className="font-bold mb-2 text-sm sm:text-base">Video Tutorials</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                     Visual learning resources and market insights
                   </p>
-                  <Button variant="link" className="text-primary">Watch Now →</Button>
+                  <Button variant="link" className="text-primary text-sm">Watch Now →</Button>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg border text-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FileText className="w-6 h-6 text-blue-600" />
+                <div className="bg-white p-4 sm:p-6 rounded-lg border text-center">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
-                  <h4 className="font-bold mb-2">Market Reports</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <h4 className="font-bold mb-2 text-sm sm:text-base">Market Reports</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                     In-depth analysis of IPO market trends
                   </p>
-                  <Button variant="link" className="text-primary">Read More →</Button>
+                  <Button variant="link" className="text-primary text-sm">Read More →</Button>
                 </div>
               </div>
             </div>
@@ -887,19 +888,19 @@ const Index = () => {
         </section>
 
         {/* CTA Section 2 */}
-        <section className="py-16 px-4">
+        <section className="py-10 sm:py-16 px-4">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-12 text-center">
-              <h3 className="text-3xl font-bold mb-4">Ready to Start Your IPO Journey?</h3>
-              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-6 sm:p-12 text-center">
+              <h3 className="text-xl sm:text-3xl font-bold mb-3 sm:mb-4">Ready to Start Your IPO Journey?</h3>
+              <p className="text-sm sm:text-lg text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Join thousands of informed investors who use our alerts and research to stay ahead of the IPO market. Get started with free alerts today.
               </p>
               <Button
                 size="lg"
                 onClick={() => setShowSignupModal(true)}
-                className="bg-white text-primary hover:bg-blue-50 h-14 px-8 text-base font-semibold"
+                className="bg-white text-primary hover:bg-blue-50 h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-semibold"
               >
-                <Bell className="w-5 h-5 mr-2" />
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Sign Up for Free Alerts
               </Button>
             </div>
@@ -907,123 +908,123 @@ const Index = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-20 px-4 bg-background">
+        <section className="py-12 sm:py-20 px-4 bg-background">
           <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">
-                <Star className="w-4 h-4 mr-2" />
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
+                <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Client Success Stories
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 px-2">
                 Trusted by <span className="text-primary">10,000+ Investors</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
                 See what our community of investors says about the value of our independent research and timely IPO alerts.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-card p-6 rounded-xl border">
-                <div className="flex gap-1 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+              <div className="bg-card p-4 sm:p-6 rounded-xl border">
+                <div className="flex gap-1 mb-3 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                   "Investor Stream's alerts helped me get in early on three major IPOs last year. Their independent analysis cuts through the hype and gives you the real story behind the numbers."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm sm:text-lg">
                     MR
                   </div>
                   <div>
-                    <div className="font-bold">Michael Rodriguez</div>
-                    <div className="text-sm text-muted-foreground">Portfolio Manager</div>
+                    <div className="font-bold text-sm sm:text-base">Michael Rodriguez</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Portfolio Manager</div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card p-6 rounded-xl border">
-                <div className="flex gap-1 mb-4">
+              <div className="bg-card p-4 sm:p-6 rounded-xl border">
+                <div className="flex gap-1 mb-3 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                   "The quality of research is exceptional. I've been following IPOs for 15 years, and Investor Stream provides insights I can't find anywhere else. Worth every minute of my time."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-lg">
                     SC
                   </div>
                   <div>
-                    <div className="font-bold">Sarah Chen</div>
-                    <div className="text-sm text-muted-foreground">Angel Investor</div>
+                    <div className="font-bold text-sm sm:text-base">Sarah Chen</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Angel Investor</div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card p-6 rounded-xl border">
-                <div className="flex gap-1 mb-4">
+              <div className="bg-card p-4 sm:p-6 rounded-xl border">
+                <div className="flex gap-1 mb-3 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                   "Finally, an IPO service that doesn't try to sell me anything! The alerts are timely, the analysis is thorough, and the team clearly knows what they're doing."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-400 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-400 text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-lg">
                     DJ
                   </div>
                   <div>
-                    <div className="font-bold">David Johnson</div>
-                    <div className="text-sm text-muted-foreground">Retail Investor</div>
+                    <div className="font-bold text-sm sm:text-base">David Johnson</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Retail Investor</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Stats Bar */}
-            <div className="bg-blue-50/50 rounded-2xl p-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="bg-blue-50/50 rounded-2xl p-5 sm:p-8">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">10,000+</div>
-                  <div className="text-sm text-muted-foreground">Active Subscribers</div>
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">10,000+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Active Subscribers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">500+</div>
-                  <div className="text-sm text-muted-foreground">IPOs Tracked</div>
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">500+</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">IPOs Tracked</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">95%</div>
-                  <div className="text-sm text-muted-foreground">Satisfaction Rate</div>
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">95%</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Satisfaction Rate</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">24/7</div>
-                  <div className="text-sm text-muted-foreground">Market Monitoring</div>
+                  <div className="text-2xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">24/7</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Market Monitoring</div>
                 </div>
               </div>
             </div>
 
             {/* Trust Badges */}
-            <div className="mt-12 text-center">
-              <p className="text-sm font-semibold text-muted-foreground mb-6">Trusted by investors worldwide</p>
-              <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-blue-400" />
+            <div className="mt-8 sm:mt-12 text-center">
+              <p className="text-xs sm:text-sm font-semibold text-muted-foreground mb-4 sm:mb-6">Trusted by investors worldwide</p>
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                   <span>SEC Compliant</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Lock className="w-5 h-5 text-blue-400" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                   <span>Data Protected</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-400" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                   <span>Independent Research</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-blue-400" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                   <span>Privacy First</span>
                 </div>
               </div>
@@ -1032,53 +1033,53 @@ const Index = () => {
         </section>
 
         {/* About Section */}
-        <section className="py-20 px-4 bg-background">
+        <section className="py-12 sm:py-20 px-4 bg-background">
           <div className="container mx-auto max-w-4xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">
-                <Info className="w-4 h-4 mr-2" />
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
+                <Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 About Investor Stream
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 px-2">
                 Independent Research. <span className="text-primary">Unbiased Insights.</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
                 Founded by experienced financial analysts and former investment bankers, Investor Stream was created to fill a critical gap in the IPO research landscape: truly independent, conflict-free analysis.
               </p>
             </div>
 
-            <div className="space-y-6">
-              <div className="flex gap-4 bg-card p-6 rounded-xl border">
-                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-7 h-7 text-blue-600" />
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex gap-3 sm:gap-4 bg-card p-4 sm:p-6 rounded-xl border">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">No Conflicts of Interest</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold text-base sm:text-lg mb-1 sm:mb-2">No Conflicts of Interest</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base">
                     We don't sell securities, manage funds, or have investment banking relationships. Our only focus is providing you with objective research.
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-4 bg-card p-6 rounded-xl border">
-                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Users className="w-7 h-7 text-blue-600" />
+              <div className="flex gap-3 sm:gap-4 bg-card p-4 sm:p-6 rounded-xl border">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Users className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">Experienced Team</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold text-base sm:text-lg mb-1 sm:mb-2">Experienced Team</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base">
                     Our analysts have decades of combined experience in investment banking, equity research, and venture capital across major financial institutions.
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-4 bg-card p-6 rounded-xl border">
-                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <BarChart3 className="w-7 h-7 text-blue-600" />
+              <div className="flex gap-3 sm:gap-4 bg-card p-4 sm:p-6 rounded-xl border">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <BarChart3 className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-2">Data-Driven Approach</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="font-bold text-base sm:text-lg mb-1 sm:mb-2">Data-Driven Approach</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base">
                     We combine fundamental analysis with proprietary data models to identify the most promising IPO opportunities and potential risks.
                   </p>
                 </div>
@@ -1088,22 +1089,22 @@ const Index = () => {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-20 px-4">
+        <section className="py-12 sm:py-20 px-4">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-16 text-center">
-              <h2 className="text-4xl font-bold mb-6">Start Receiving IPO Alerts Today</h2>
-              <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-6 sm:p-16 text-center">
+              <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">Start Receiving IPO Alerts Today</h2>
+              <p className="text-base sm:text-xl text-blue-100 mb-6 sm:mb-10 max-w-2xl mx-auto">
                 Join our community of informed investors. Get instant alerts on the hottest upcoming IPOs, backed by independent research you can trust.
               </p>
               <Button
                 size="lg"
                 onClick={() => setShowSignupModal(true)}
-                className="bg-white text-primary hover:bg-blue-50 h-16 px-12 text-lg font-bold"
+                className="bg-white text-primary hover:bg-blue-50 h-12 sm:h-16 px-8 sm:px-12 text-sm sm:text-lg font-bold"
               >
-                <Bell className="w-6 h-6 mr-2" />
+                <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 Get Free Alerts Now
               </Button>
-              <p className="text-sm text-blue-200 mt-6">
+              <p className="text-xs sm:text-sm text-blue-200 mt-4 sm:mt-6">
                 No credit card required • Unsubscribe anytime • 100% free
               </p>
             </div>
@@ -1111,14 +1112,14 @@ const Index = () => {
         </section>
 
         {/* Disclaimer Section - Moved to Bottom */}
-        <section className="py-12 px-4 bg-muted/30">
+        <section className="py-8 sm:py-12 px-4 bg-muted/30">
           <div className="container mx-auto max-w-6xl">
-            <div className="bg-blue-50 border-l-4 border-primary p-6 rounded-lg">
-              <div className="flex gap-4">
-                <Info className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+            <div className="bg-blue-50 border-l-4 border-primary p-4 sm:p-6 rounded-lg">
+              <div className="flex gap-3 sm:gap-4">
+                <Info className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0 mt-0.5 sm:mt-1" />
                 <div>
-                  <h4 className="font-bold mb-2">Important Disclaimer</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <h4 className="font-bold mb-1.5 sm:mb-2 text-sm sm:text-base">Important Disclaimer</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     <strong>Investor Stream is not a brokerage or licensed advisor.</strong> Our content is educational and informational only. We provide independent research and analysis to help you make informed decisions, but we do not provide investment advice or recommendations to buy or sell securities.
                   </p>
                 </div>
@@ -1137,25 +1138,25 @@ const Index = () => {
       
       {/* Valuation Analysis Dialog */}
       <Dialog open={showValuationDialog} onOpenChange={setShowValuationDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">Valuation Analysis</DialogTitle>
-            <DialogDescription className="text-base">
+            <DialogTitle className="text-xl sm:text-2xl font-bold">Valuation Analysis</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
               Comprehensive financial evaluation methodology
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-muted-foreground leading-relaxed">
+          <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
               Our valuation analysis provides deep insights into company financials, revenue models, and market positioning. We assess fair value through multiple frameworks including:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+            <ul className="list-disc list-inside space-y-1.5 sm:space-y-2 text-muted-foreground text-sm sm:text-base">
               <li><strong>DCF Analysis:</strong> Discounted cash flow projections based on realistic growth assumptions</li>
               <li><strong>Comparable Companies:</strong> Peer group analysis across similar businesses and stages</li>
               <li><strong>Revenue Multiples:</strong> Industry-standard metrics and historical IPO pricing data</li>
               <li><strong>Growth Trajectory:</strong> Assessment of revenue acceleration, customer acquisition costs, and retention metrics</li>
               <li><strong>Market Positioning:</strong> Competitive advantages, moats, and differentiation factors</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-4">
+            <p className="text-muted-foreground leading-relaxed mt-3 sm:mt-4 text-sm sm:text-base">
               Each IPO alert includes specific valuation metrics tailored to the company's sector, stage, and business model. We provide context on whether the proposed valuation appears reasonable, aggressive, or conservative relative to comparable offerings.
             </p>
           </div>
@@ -1164,18 +1165,18 @@ const Index = () => {
 
       {/* Risk Assessment Dialog */}
       <Dialog open={showRiskDialog} onOpenChange={setShowRiskDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">Risk Assessment</DialogTitle>
-            <DialogDescription className="text-base">
+            <DialogTitle className="text-xl sm:text-2xl font-bold">Risk Assessment</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
               Comprehensive risk evaluation framework
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-muted-foreground leading-relaxed">
+          <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
               We provide thorough risk analysis covering all material factors that could impact investment performance:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+            <ul className="list-disc list-inside space-y-1.5 sm:space-y-2 text-muted-foreground text-sm sm:text-base">
               <li><strong>Market Risks:</strong> Economic conditions, sector trends, and timing considerations</li>
               <li><strong>Competitive Landscape:</strong> Threats from established players and emerging competitors</li>
               <li><strong>Regulatory Environment:</strong> Compliance requirements, pending legislation, and policy changes</li>
@@ -1183,7 +1184,7 @@ const Index = () => {
               <li><strong>Operational Risks:</strong> Key person dependencies, technology vulnerabilities, and execution challenges</li>
               <li><strong>Customer Concentration:</strong> Revenue dependency and customer diversification analysis</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-4">
+            <p className="text-muted-foreground leading-relaxed mt-3 sm:mt-4 text-sm sm:text-base">
               Our risk assessments are designed to help you understand potential downsides and make informed decisions. We highlight both company-specific risks and broader market factors that could affect performance.
             </p>
           </div>
@@ -1192,18 +1193,18 @@ const Index = () => {
 
       {/* Growth Potential Dialog */}
       <Dialog open={showGrowthDialog} onOpenChange={setShowGrowthDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">Growth Potential</DialogTitle>
-            <DialogDescription className="text-base">
+            <DialogTitle className="text-xl sm:text-2xl font-bold">Growth Potential</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
               Market opportunity and expansion analysis
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-muted-foreground leading-relaxed">
+          <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
+            <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
               Our growth potential analysis evaluates the company's runway for expansion and value creation:
             </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+            <ul className="list-disc list-inside space-y-1.5 sm:space-y-2 text-muted-foreground text-sm sm:text-base">
               <li><strong>Total Addressable Market (TAM):</strong> Size and characteristics of the target market opportunity</li>
               <li><strong>Market Share Projections:</strong> Realistic capture rates based on competitive positioning</li>
               <li><strong>Revenue Growth Trajectory:</strong> Historical performance and forward-looking indicators</li>
@@ -1211,7 +1212,7 @@ const Index = () => {
               <li><strong>Unit Economics:</strong> Customer lifetime value, acquisition costs, and scalability metrics</li>
               <li><strong>Innovation Pipeline:</strong> R&D capabilities and product roadmap assessment</li>
             </ul>
-            <p className="text-muted-foreground leading-relaxed mt-4">
+            <p className="text-muted-foreground leading-relaxed mt-3 sm:mt-4 text-sm sm:text-base">
               We combine industry research, company disclosures, and market trends to project realistic growth scenarios. Our analysis helps you understand whether the company's growth story is credible and sustainable.
             </p>
           </div>
