@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, LogOut } from "lucide-react";
-import logoImage from "@/assets/vc-logo.png";
+import logoImage from "@/assets/investorstream-logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import {
@@ -39,8 +39,8 @@ export const LandingNav = ({ onGetAlertsClick }: LandingNavProps) => {
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img src={logoImage} alt="Logo" className="h-8 w-8 rounded-md" />
-          <span className="font-bold text-xl">Venture Capital</span>
+          <img src={logoImage} alt="InvestorStream Logo" className="h-8 w-8 rounded-md" />
+          <span className="font-bold text-xl">InvestorStream</span>
         </Link>
 
         {/* Desktop Navigation */}
