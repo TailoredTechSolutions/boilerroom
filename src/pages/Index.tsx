@@ -521,19 +521,19 @@ const Index = () => {
         </section>
 
         {/* CTA Section 1 */}
-        <section className="py-16 px-4">
+        <section className="py-10 sm:py-16 px-3 sm:px-4">
           <div className="container mx-auto max-w-5xl">
-            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-12 text-center">
-              <h3 className="text-3xl font-bold mb-4">Ready for Independent IPO Intelligence?</h3>
-              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-xl sm:rounded-2xl p-6 sm:p-12 text-center">
+              <h3 className="text-xl sm:text-3xl font-bold mb-3 sm:mb-4">Ready for Independent IPO Intelligence?</h3>
+              <p className="text-sm sm:text-lg text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Join thousands of investors who rely on our unbiased research and timely alerts to stay ahead of the market.
               </p>
               <Button
                 size="lg"
                 onClick={scrollToSampleAlerts}
-                className="bg-white text-black hover:bg-gray-100 h-16 px-10 text-lg font-bold animate-bounce shadow-2xl"
+                className="bg-white text-black hover:bg-gray-100 h-12 sm:h-16 px-6 sm:px-10 text-sm sm:text-lg font-bold animate-bounce shadow-2xl"
               >
-                <Bell className="w-6 h-6 mr-2" />
+                <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
                 Don't Miss Out on Free Alerts!
               </Button>
             </div>
@@ -541,51 +541,51 @@ const Index = () => {
         </section>
 
         {/* Sample Alerts Section */}
-        <section className="py-20 px-4 bg-blue-50/30" id="sample-alerts">
+        <section className="py-12 sm:py-20 px-3 sm:px-4 bg-blue-50/30" id="sample-alerts">
           <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4 bg-blue-100 text-blue-900 hover:bg-blue-200">
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4 bg-blue-100 text-blue-900 hover:bg-blue-200">
                 <Bell className="w-4 h-4 mr-2" />
                 Sample Alerts
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-slate-900">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4 text-slate-900">
                 See the <span className="text-[#0066CC]">Alerts in Action</span>
               </h2>
-              <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+              <p className="text-sm sm:text-lg text-slate-600 max-w-3xl mx-auto">
                 Curious what our alerts look like? Here are a few examples from major IPOs that showcase the clarity and timeliness you can expect when you join Investor Stream.
               </p>
             </div>
 
-            <div className="space-y-6 mb-12">
+            <div className="space-y-4 sm:space-y-6 mb-8 sm:mb-12">
               {/* USDT Markets Alert */}
-              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="font-semibold text-slate-900">IPO Alert</span>
+                    <span className="font-semibold text-sm sm:text-base text-slate-900">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-slate-600">Oct 2025</span>
+                  <span className="text-xs sm:text-sm text-slate-600">Oct 2025</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BarChart3 className="w-6 h-6 text-blue-600" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1 text-black">USDT Markets (USDT)</h3>
-                    <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-900">Digital Assets & Crypto</Badge>
-                    <p className="text-slate-700 mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 text-black">USDT Markets (USDT)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 bg-blue-100 text-blue-900 text-xs">Digital Assets & Crypto</Badge>
+                    <p className="text-sm text-slate-700 mb-3 sm:mb-4">
                       Leading digital asset exchange specializing in stablecoin trading. Platform tracks top 24h crypto gainers including SynFutures (F) +49.0%, Paparazzi Token +38.0%, and Bitlight +28.6% with advanced risk filtering.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm text-slate-600 flex items-center gap-1">
                         <BarChart3 className="w-4 h-4" />
                         Expected: $25-30/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('rivian')}
-                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3] p-0 h-auto justify-start sm:justify-end"
                       >
                         View Analysis →
                       </Button>
