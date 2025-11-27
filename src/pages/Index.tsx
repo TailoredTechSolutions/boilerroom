@@ -721,21 +721,21 @@ const Index = () => {
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-blue-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Search className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
                   <h4 className="font-bold mb-2">Deep Analysis</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Comprehensive research beyond basic filing information
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Filter className="w-8 h-8 text-blue-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Filter className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
                   <h4 className="font-bold mb-2">Quality Focus</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Only high-potential opportunities that meet our criteria
                   </p>
                 </div>
@@ -743,16 +743,16 @@ const Index = () => {
             </div>
 
             {/* CTA */}
-            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-2xl p-12 text-center">
-              <h3 className="text-3xl font-bold mb-4">Want to See More Sample Alerts?</h3>
-              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-[#003066] to-[#00478F] text-white rounded-xl sm:rounded-2xl p-6 sm:p-12 text-center">
+              <h3 className="text-xl sm:text-3xl font-bold mb-3 sm:mb-4">Want to See More Sample Alerts?</h3>
+              <p className="text-sm sm:text-lg text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Explore our complete library of past IPO alerts and see the detailed analysis that helped investors stay ahead of the market.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col gap-3 sm:gap-4 justify-center">
                 <Button
                   size="lg"
                   variant="secondary"
-                  className="bg-white text-primary hover:bg-blue-50 h-14 px-8 text-base font-semibold"
+                  className="bg-white text-primary hover:bg-blue-50 h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-semibold w-full sm:w-auto sm:mx-auto"
                 >
                   <FileText className="w-5 h-5 mr-2" />
                   View More Sample Alerts
@@ -761,7 +761,7 @@ const Index = () => {
                   size="lg"
                   variant="outline"
                   onClick={() => setShowSignupModal(true)}
-                  className="border-white/30 text-white hover:bg-white/10 h-14 px-8 text-base font-semibold"
+                  className="border-white/30 text-white hover:bg-white/10 h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-semibold w-full sm:w-auto sm:mx-auto"
                 >
                   <Bell className="w-5 h-5 mr-2" />
                   Get Free Alerts Now
@@ -772,81 +772,81 @@ const Index = () => {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 px-4 bg-background">
+        <section className="py-12 sm:py-20 px-3 sm:px-4 bg-background">
           <div className="container mx-auto max-w-4xl">
-            <div className="text-center mb-12">
-              <Badge variant="secondary" className="mb-4">
+            <div className="text-center mb-8 sm:mb-12">
+              <Badge variant="secondary" className="mb-3 sm:mb-4">
                 <BookOpen className="w-4 h-4 mr-2" />
                 Education Center
               </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4">
                 Your IPO Questions, <span className="text-primary">Answered</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto">
                 New to IPO investing? We've got you covered. Get up to speed with our comprehensive FAQ section covering everything from basics to advanced strategies.
               </p>
             </div>
 
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+            <Accordion type="single" collapsible className="space-y-3 sm:space-y-4">
+              <AccordionItem value="item-1" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base">
                   What exactly is an IPO?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   An Initial Public Offering (IPO) is when a private company first sells shares to the public on a stock exchange. This allows the company to raise capital from public investors and gives early investors and employees a way to sell their shares. IPOs are significant events that can create substantial investment opportunities for those who get in early.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-2" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-2" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base">
                   How does pre-IPO investing work?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   Pre-IPO investing involves purchasing shares in a company before it goes public. This typically happens through private placements, secondary markets, or specialized platforms. While potentially more rewarding, pre-IPO investments usually require higher minimum investments and are often limited to accredited investors. Our alerts help you identify companies preparing for IPOs so you can research opportunities early.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-3" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-3" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base">
                   How often will I get alerts?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   Alert frequency varies based on market activity, but you can typically expect 2-5 high-quality alerts per week. We prioritize quality over quantity, focusing on companies with strong fundamentals and significant market potential. During active IPO markets, you may receive more alerts, while quieter periods may see fewer but more selective opportunities.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-4" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base">
                   Can I unsubscribe anytime?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   Absolutely! You can unsubscribe from our alerts at any time with a single click. There are no long-term commitments or cancellation fees. We believe in providing value that makes you want to stay, not contracts that force you to. You can also customize your alert preferences to receive only the types of opportunities that interest you most.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-5" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-5" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base">
                   Do you provide investment advice?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   No. Investor Stream does not provide investment advice or recommendations to buy or sell securities. We are an educational and informational platform that provides independent research and analysis. All investment decisions should be made based on your own research and risk tolerance, preferably in consultation with a qualified financial advisor.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-6" className="bg-card border rounded-lg px-6">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline">
+              <AccordionItem value="item-6" className="bg-card border rounded-lg px-4 sm:px-6">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline text-sm sm:text-base">
                   What makes your research different?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   Our research is completely independent—we don't have relationships with investment banks or companies going public that could influence our analysis. We focus on fundamental analysis, market trends, and risk assessment rather than hype or speculation. Our team has extensive experience in financial analysis and public markets, ensuring you get professional-grade insights.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
 
             {/* Education Resources */}
-            <div className="mt-16 bg-blue-50/50 rounded-2xl p-12">
-              <h3 className="text-2xl font-bold text-center mb-4">IPO Education Resources</h3>
-              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <div className="mt-10 sm:mt-16 bg-blue-50/50 rounded-xl sm:rounded-2xl p-6 sm:p-12">
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">IPO Education Resources</h3>
+              <p className="text-center text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Expand your knowledge with our comprehensive guides and educational content designed to help you become a more informed investor.
               </p>
 
