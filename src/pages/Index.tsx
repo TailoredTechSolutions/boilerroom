@@ -5,7 +5,7 @@ import { InvestorSignupWizard } from "@/components/landing/InvestorSignupWizard"
 import { IPODetailModal } from "@/components/landing/IPODetailModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import trapLogo from "@/assets/trap-logo.jpeg";
+import investorStreamLogo from "@/assets/investorstream-logo.png";
 import {
   Accordion,
   AccordionContent,
@@ -254,12 +254,12 @@ const Index = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src={trapLogo} 
-              alt="TRAP Logo" 
-              className="w-12 h-12 object-contain"
+              src={investorStreamLogo} 
+              alt="InvestorStream Logo" 
+              className="w-10 h-10 rounded-md object-contain"
             />
             <div>
-              <h1 className="text-xl font-bold text-slate-900">Investor Stream</h1>
+              <h1 className="text-xl font-bold text-slate-900">InvestorStream</h1>
               <p className="text-xs text-slate-600">Intelligent Investments</p>
             </div>
           </div>
