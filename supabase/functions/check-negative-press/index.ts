@@ -111,6 +111,27 @@ serve(async (req) => {
   }
 
   try {
+    // ============ SECURITY: Internal API Authentication ============
+    // Validate internal API key to prevent unauthorized access to paid APIs (NewsData.io)
+    const internalApiKey = Deno.env.get('N8N_WEBHOOK_TOKEN');
+    const providedKey = req.headers.get('X-Webhook-Token') || req.headers.get('x-webhook-token');
+    
+    if (!internalApiKey) {
+      console.error('CRITICAL: N8N_WEBHOOK_TOKEN not configured');
+      return new Response(
+        JSON.stringify({ error: 'Server misconfiguration: API authentication not configured' }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    
+    if (!providedKey || providedKey !== internalApiKey) {
+      console.warn('Unauthorized request to check-negative-press - invalid or missing token');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid or missing API token' }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Parse request body
     const { entity_name, registry_id, country }: RequestBody = await req.json();
 

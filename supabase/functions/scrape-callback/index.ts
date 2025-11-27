@@ -248,6 +248,29 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // ============ SECURITY: Webhook Authentication ============
+  // Validate webhook secret to prevent unauthorized data injection
+  const webhookSecret = Deno.env.get('N8N_WEBHOOK_TOKEN');
+  const providedSecret = req.headers.get('X-Webhook-Token') || req.headers.get('x-webhook-token');
+  
+  if (!webhookSecret) {
+    console.error('CRITICAL: N8N_WEBHOOK_TOKEN not configured - rejecting all requests');
+    return new Response(
+      JSON.stringify({ error: 'Server misconfiguration: webhook authentication not configured' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+  
+  if (!providedSecret || providedSecret !== webhookSecret) {
+    console.warn('Unauthorized webhook request - invalid or missing X-Webhook-Token');
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized: Invalid or missing webhook token' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+  
+  console.log('Webhook authentication successful');
+
   try {
     const rawBody = await req.json();
     const validatedData = CallbackSchema.parse(rawBody);

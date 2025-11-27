@@ -1,10 +1,37 @@
 project_id = "utzxdzkebdgwxgqhieee"
 
+# ============================================================
+# EDGE FUNCTION SECURITY CONFIGURATION
+# ============================================================
+# All functions below have verify_jwt = false BUT implement
+# internal authentication using the N8N_WEBHOOK_TOKEN secret.
+# This allows n8n workflows to call them while preventing
+# unauthorized public access.
+# ============================================================
+
 [functions.scrape-callback]
+# Called by n8n webhook - validates X-Webhook-Token header
 verify_jwt = false
 
 [functions.check-online-presence]
+# Called by n8n workflow - validates X-Webhook-Token header
+# Protects SerpAPI quota from abuse
 verify_jwt = false
 
 [functions.check-domain-availability]
+# Called by n8n workflow - validates X-Webhook-Token header
+verify_jwt = false
+
+[functions.check-negative-press]
+# Called by n8n workflow - validates X-Webhook-Token header
+# Protects NewsData.io API quota from abuse
+verify_jwt = false
+
+[functions.aggregate-filter-results]
+# Called by n8n workflow - validates X-Webhook-Token header
+verify_jwt = false
+
+[functions.check-domain]
+# Called by n8n workflow - validates X-Webhook-Token header
+# Protects GoDaddy API quota from abuse
 verify_jwt = false
