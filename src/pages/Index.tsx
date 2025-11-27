@@ -251,31 +251,33 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <img 
               src={investorStreamLogo} 
               alt="InvestorStream Logo" 
-              className="w-10 h-10 rounded-md object-contain"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-md object-contain"
             />
             <div>
-              <h1 className="text-xl font-bold text-slate-900">InvestorStream</h1>
-              <p className="text-xs text-slate-600">Intelligent Investments</p>
+              <h1 className="text-base sm:text-xl font-bold text-slate-900">InvestorStream</h1>
+              <p className="text-[10px] sm:text-xs text-slate-600 hidden xs:block">Intelligent Investments</p>
             </div>
           </div>
           <Button 
             onClick={() => navigate('/overview')}
-            className="gap-2"
+            className="gap-1 sm:gap-2 text-sm sm:text-base px-3 sm:px-4"
+            size="sm"
           >
             <LayoutDashboard className="h-4 w-4" />
-            Dashboard
+            <span className="hidden sm:inline">Dashboard</span>
+            <span className="sm:hidden">Dash</span>
           </Button>
         </div>
       </header>
 
-      <main className="pt-16">
+      <main className="pt-14 sm:pt-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#00478F] via-[#0066CC] to-[#0080E5] text-white py-20 px-4">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#00478F] via-[#0066CC] to-[#0080E5] text-white py-12 sm:py-20 px-3 sm:px-4">
           {/* Particle Effect */}
           <div className="absolute inset-0 overflow-hidden">
             {[...Array(30)].map((_, i) => (
@@ -298,11 +300,11 @@ const Index = () => {
                 IPO Intelligence Platform
               </Badge>
 
-              <h2 className="text-4xl md:text-6xl font-bold leading-tight">
+              <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold leading-tight">
                 Never Miss the Next <span className="text-blue-100">Big IPO Opportunity</span>
               </h2>
 
-              <p className="text-lg md:text-xl text-blue-50 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-blue-50 max-w-2xl mx-auto">
                 Get free, instant alerts on the hottest upcoming IPOs before they hit the market. Stay ahead with independent research, curated watchlists, and exclusive insights.
               </p>
 
@@ -310,49 +312,49 @@ const Index = () => {
                 <Button
                   size="lg"
                   onClick={() => setShowSignupModal(true)}
-                  className="bg-white text-black hover:bg-gray-100 text-xl font-semibold h-20 px-16"
+                  className="bg-white text-black hover:bg-gray-100 text-base sm:text-xl font-semibold h-14 sm:h-20 px-6 sm:px-16"
                 >
-                  <Bell className="w-6 h-6 mr-3" />
+                  <Bell className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
                   Get Free Alerts Now
                 </Button>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-200" />
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 pt-4 sm:pt-6 text-xs sm:text-sm">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200" />
                   <span>Independent Research</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-200" />
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200" />
                   <span>Real-time Alerts</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-blue-200" />
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200" />
                   <span>10,000+ Investors</span>
                 </div>
               </div>
             </div>
 
             {/* Live IPO Alert Card */}
-            <div className="mt-12 bg-white text-foreground rounded-xl p-6 shadow-2xl max-w-3xl mx-auto">
-              <div className="flex items-center justify-between mb-4">
+            <div className="mt-8 sm:mt-12 bg-white text-foreground rounded-xl p-4 sm:p-6 shadow-2xl max-w-3xl mx-auto">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="font-semibold">Live IPO Alert</span>
+                  <span className="font-semibold text-sm sm:text-base">Live IPO Alert</span>
                 </div>
-                <span className="text-sm text-muted-foreground">2 min ago</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">2 min ago</span>
               </div>
 
-              <h3 className="text-xl font-bold mb-2">TechCorp Inc. (TECH)</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="text-lg sm:text-xl font-bold mb-2">TechCorp Inc. (TECH)</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4">
                 AI-powered SaaS company files for $2B IPO. Expected pricing: $18-22/share. Roadshow begins next week.
               </p>
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <Badge variant="secondary" className="bg-blue-50 text-blue-700">High Growth</Badge>
                 <Button 
                   onClick={() => handleViewAnalysis('techcorp')}
-                  className="bg-primary text-white hover:bg-primary/90"
+                  className="bg-primary text-white hover:bg-primary/90 w-full sm:w-auto"
                 >
                   Read Full Analysis
                 </Button>
