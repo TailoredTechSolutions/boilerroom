@@ -595,34 +595,34 @@ const Index = () => {
               </div>
 
               {/* Apple Alert */}
-              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span className="font-semibold text-slate-900">IPO Alert</span>
+                    <span className="font-semibold text-sm sm:text-base text-slate-900">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-slate-600">Dec 1980</span>
+                  <span className="text-xs sm:text-sm text-slate-600">Dec 1980</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-blue-500" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1 text-black">Apple Inc. (AAPL)</h3>
-                    <Badge variant="secondary" className="mb-3 bg-blue-100 text-blue-900">Technology</Badge>
-                    <p className="text-slate-700 mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 text-black">Apple Inc. (AAPL)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 bg-blue-100 text-blue-900 text-xs">Technology</Badge>
+                    <p className="text-sm text-slate-700 mb-3 sm:mb-4">
                       Historic IPO at $22/share on Dec 12, 1980. Opened at $22, closed around $29 on first day. Current price ~$262 represents 12× return (much higher accounting for splits). Revolutionary personal computing company.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm text-slate-600 flex items-center gap-1">
                         <BarChart3 className="w-4 h-4" />
                         IPO Price: $22/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('apple')}
-                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3] p-0 h-auto justify-start sm:justify-end"
                       >
                         View Analysis →
                       </Button>
@@ -632,34 +632,34 @@ const Index = () => {
               </div>
 
               {/* Commodities Alert */}
-              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-6 shadow-sm border border-blue-200/30">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="backdrop-blur-md bg-blue-50/50 rounded-xl p-4 sm:p-6 shadow-sm border border-blue-200/30">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                    <span className="font-semibold text-slate-900">Commodity Alert</span>
+                    <span className="font-semibold text-sm sm:text-base text-slate-900">Commodity Alert</span>
                   </div>
-                  <span className="text-sm text-slate-600">Mar 2022</span>
+                  <span className="text-xs sm:text-sm text-slate-600">Mar 2022</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-amber-600" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1 text-black">Global Commodity Futures (GCFP)</h3>
-                    <Badge variant="secondary" className="mb-3 bg-amber-100 text-amber-900">Commodities & Agriculture</Badge>
-                    <p className="text-slate-700 mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 text-black">Global Commodity Futures (GCFP)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 bg-amber-100 text-amber-900 text-xs">Commodities & Agriculture</Badge>
+                    <p className="text-sm text-slate-700 mb-3 sm:mb-4">
                       Ukraine war disrupted wheat exports causing 40% price surge by May 2022. Cocoa prices doubled since Aug 2023 due to West African supply deficits. Platform integrates geopolitical risk signals into real-time commodity trading.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600 flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm text-slate-600 flex items-center gap-1">
                         <BarChart3 className="w-4 h-4" />
                         Expected: $35-42/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('commodities')}
-                        className="text-[#0066CC] font-semibold hover:text-[#0052A3]"
+                        className="text-[#0066CC] font-semibold hover:text-[#0052A3] p-0 h-auto justify-start sm:justify-end"
                       >
                         View Analysis →
                       </Button>
@@ -669,34 +669,34 @@ const Index = () => {
               </div>
 
               {/* Snowflake Alert */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
+              <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                    <span className="font-semibold">IPO Alert</span>
+                    <span className="font-semibold text-sm sm:text-base">IPO Alert</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">Sep 2020</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Sep 2020</span>
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BarChart3 className="w-6 h-6 text-blue-400" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1">Snowflake (SNOW)</h3>
-                    <Badge variant="secondary" className="mb-3">Cloud Data</Badge>
-                    <p className="text-muted-foreground mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1">Snowflake (SNOW)</h3>
+                    <Badge variant="secondary" className="mb-2 sm:mb-3 text-xs">Cloud Data</Badge>
+                    <p className="text-sm text-muted-foreground mb-3 sm:mb-4">
                       Key updates during its roadshow phase. Cloud data platform with explosive growth and backing from Salesforce and Berkshire Hathaway.
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
                         <BarChart3 className="w-4 h-4" />
                         Expected: $75-85/share
                       </span>
                       <Button 
                         variant="link" 
                         onClick={() => handleViewAnalysis('snowflake')}
-                        className="text-primary font-semibold"
+                        className="text-primary font-semibold p-0 h-auto justify-start sm:justify-end"
                       >
                         View Analysis →
                       </Button>
@@ -707,15 +707,15 @@ const Index = () => {
             </div>
 
             {/* What Makes Different */}
-            <div className="bg-white rounded-xl p-8 shadow-sm border mb-8">
-              <h3 className="text-2xl font-bold text-center mb-12">What Makes Our Alerts Different</h3>
-              <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border mb-6 sm:mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-center mb-8 sm:mb-12">What Makes Our Alerts Different</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Clock className="w-8 h-8 text-blue-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
                   <h4 className="font-bold mb-2">Timely Delivery</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Alerts sent before major announcements and filing updates
                   </p>
                 </div>
